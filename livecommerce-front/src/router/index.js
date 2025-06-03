@@ -72,8 +72,8 @@ const routes = [
   {path: '/payment-success',component:PaymentSuccess},
   {path: '/payment-failure',component:PaymentFailure},
   {path: '/shop-v1',component:ShopV1},
-  {path: '/product-details',component:ProductDetails},
-  {path: '/product-details/:id',component:ProductDetails},
+  // {path: '/product-details',component:ProductDetails},
+
   {path: '/cart',component:ShopCart},
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
@@ -81,6 +81,14 @@ const routes = [
 
   {path: '/admin-dashboard', component: adminDashboard},
   {path: '/store-dashboard', component: storeDashboard},
+  { path: '/products', component: ProductCategory },
+  { path: '/product-details/:id', component: ProductDetails },
+  {
+    path: '/shop/:category',
+    name: 'ShopCategory',
+    component: () => import('@/views/shop/product-category.vue')
+  },
+
 
 
 

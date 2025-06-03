@@ -22,11 +22,11 @@
                         <li class="relative">
                             <router-link to="#">고민별<span></span></router-link>
                             <ul class="sub-menu lg:absolute z-50 lg:top-full lg:left-0 lg:min-w-[220px] lg:invisible lg:transition-all lg:bg-white lg:dark:bg-title lg:py-[15px] lg:pr-[30px]">
-                                <li :class="current === '/product-test' ? 'active' : ''"><router-link to="/product-test" class="menu-item">혈압</router-link></li>
-                                <li :class="current === '/product-test' ? 'active' : ''"><router-link to="/product-test" class="menu-item">눈</router-link></li>
-                                <li :class="current === '/product-test' ? 'active' : ''"><router-link to="/product-test" class="menu-item">뼈/관절/연골</router-link></li>
-                                <li :class="current === '/product-test' ? 'active' : ''"><router-link to="/product-test" class="menu-item">장건강</router-link></li>
-                                <li :class="current === '/product-test' ? 'active' : ''"><router-link to="/product-test" class="menu-item">영양보충</router-link></li>
+                              <li><router-link :to="`/shop/혈압`" class="menu-item">혈압</router-link></li>
+                              <li><router-link :to="`/shop/눈`" class="menu-item">눈</router-link></li>
+                              <li><router-link :to="`/shop/뼈관절연골`" class="menu-item">뼈/관절/연골</router-link></li>
+                              <li><router-link :to="`/shop/장건강`" class="menu-item">장건강</router-link></li>
+                              <li><router-link :to="`/shop/영양보충`" class="menu-item">영양보충</router-link></li>
                             </ul>
                         </li> 
                         <!-- <li class="relative" :class="['/shop-v1','/shop-v2','/shop-v3','/shop-v4','/product-details','/cart','/checkout'].includes(current) ? 'active' : ''"> -->

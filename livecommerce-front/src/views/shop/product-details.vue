@@ -193,15 +193,6 @@
             <DetailTab/>
         </div>
 
-        <div class="s-py-50-100">
-            <div class="container-fluid">
-                <div class="max-w-[547px] mx-auto text-center">
-                    <h6 class="text-2xl sm:text-3xl md:text-4xl leading-none">Related Products</h6>
-                    <p class="mt-3">Explore complementary options that enhance your experience. Discover related products curated just for you. </p>
-                </div>
-                <LayoutOne :classList="'max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8 pt-8 md:pt-[50px]'" :productList="productList.slice(0,4)"/>
-            </div>
-        </div>
 
         <FooterOne/>
 
@@ -217,7 +208,6 @@
     import NavbarOne from '@/components/navbar/navbar-one.vue';
     import IncDec from '@/components/inc-dec.vue';
     import DetailTab from '@/components/product/detail-tab.vue';
-    import LayoutOne from '@/components/product/layout-one.vue';
     import FooterOne from '@/components/footer/footer-one.vue';
     import ScrollToTop from '@/components/scroll-to-top.vue';
 
@@ -260,5 +250,11 @@
 
     const route = useRoute()
 
-    const data = productList.find((item)=>item.id === parseInt(route.params.id))
+    // const data = productList.find((item)=>item.id === parseInt(route.params.id))
+    const data = ref(null)
+
+    onMounted(() => {
+      const productId = parseInt(route.params.id)
+      data.value = productList.find(item => item.id === productId)
+    })
 </script>
