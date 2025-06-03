@@ -21,16 +21,13 @@ import PaymentMethod from '@/views/shop/payment-method.vue'
 import InvoicePage from '@/views/shop/invoice-page.vue'
 import ShopV1 from '@/views/shop/shop-v1.vue'
 import ProductDetails from '@/views/shop/product-details.vue'
-// import ShopCart from '@/views/shop/shop-cart.vue'
 import CheckoutPage from '@/views/shop/checkout-page.vue'
 import ContactPage from '@/views/inner-pages/contact-page.vue'
 import ProductCategory from '@/views/shop/product-category.vue'
 
 // 대시보드 views
-import adminDashboard from '@/views/dashboard/adminDashboard.vue'
-import storeDashboard from '@/views/dashboard/storeDashboard.vue'
-
-
+import adminDashboard from "@/views/dashboard/adminDashboard.vue"
+import storeDashboard from "@/views/dashboard/storeDashboard.vue"
 
 // modules/도메인/views/ 하위 test용 view
 import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
@@ -77,18 +74,13 @@ const routes = [
   {path: '/shop-v1',component:ShopV1},
   {path: '/product-details',component:ProductDetails},
   {path: '/product-details/:id',component:ProductDetails},
-  // {path: '/cart',component:ShopCart},
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
 
-  {path: '/admin-dashboard', component: adminDashboard},
-  {path: '/store-dashboard', component: storeDashboard},
+  { path: "/admin-dashboard", component: adminDashboard },
+  { path: "/store-dashboard", component: storeDashboard },
 
-
-
-
-  
   // modules/도메인/views/ 하위 test용 view
   {path: '/live-streaming',component: LiveStreaming},
   {path: '/live-chart', component: LiveChart},
@@ -112,24 +104,24 @@ const routes = [
   {path: '/review-test',component: ReviewTest},
   {path: '/user-test',component: UserTest},
 
-  // 관리자 대시보드 라우트
+  // 관리자 대시보드 라우트입니다.
   {
-    path: '/admin',
-    component: () => import('@/views/dashboard/adminDashboard.vue'),
+    path: "/admin",
+    component: () => import("@/views/dashboard/adminDashboard.vue"),
     meta: { requiresAuth: true, adminOnly: true },
     children: [
       {
-        path: 'chat/reports',
-        name: 'ChatReportLog',
-        component: () => import('@/modules/chat/components/ChatReportLog.vue')
-      }
-    ]
-  }
-]
+        path: "chat/reports",
+        name: "ChatReportLog",
+        component: () => import("@/modules/chat/components/ChatReportLog.vue"),
+      },
+    ],
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;
