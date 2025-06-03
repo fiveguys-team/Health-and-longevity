@@ -8,9 +8,8 @@
                 {{ decodeURIComponent(categoryTitle) }}
               </h2>
                 <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
-                    <li><router-link to="/">Home</router-link></li>
-                    <li>/</li>
-                    <li><router-link to="/shop-v1">Shop</router-link></li>
+                    <li><router-link to="/">고민별</router-link></li>
+
                     <li>/</li>
                   <li class="text-primary">{{ decodeURIComponent(categoryTitle) }}</li>
                 </ul>

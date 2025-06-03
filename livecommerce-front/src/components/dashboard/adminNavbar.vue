@@ -19,7 +19,7 @@
       <ul>
         <li><router-link to="/admin/chat/reports" class="menu-item">채팅 관리</router-link></li>
         <li><router-link to="/@2" class="menu-item">업체 관리</router-link></li>
-        <li><router-link to="/@3" class="menu-item">상품 관리</router-link></li>
+        <li><router-link to="/admin/product/list" class="menu-item">상품 관리</router-link></li>
       </ul>
     </div>
   </div>

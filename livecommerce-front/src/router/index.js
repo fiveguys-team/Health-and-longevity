@@ -31,6 +31,14 @@ import adminDashboard from '@/views/dashboard/adminDashboard.vue'
 import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 
 
+// modules/product/views - 입점업체
+import ProductRegister from '@/modules/product/views/ProductRegister.vue'
+import ProductStatus from '@/modules/product/views/ProductStatus.vue'
+import ProductReview from '@/modules/product/views/ProductReview.vue'
+
+// modules/product/views - 관리자
+import AdminProductList from '@/modules/product/views/AdminProductList.vue'
+import AdminProductDetail from '@/modules/product/views/AdminProductDetail.vue'
 
 // modules/도메인/views/ 하위 test용 view
 import LiveTest from '@/modules/live/views/LiveTest.vue'
@@ -70,7 +78,7 @@ const routes = [
   {path: '/payment-method',component:PaymentMethod},
   {path: '/invoice',component:InvoicePage},
   {path: '/shop-v1',component:ShopV1},
-  // {path: '/product-details',component:ProductDetails},
+
 
   {path: '/cart',component:ShopCart},
   {path: '/checkout',component:CheckoutPage},
@@ -79,13 +87,20 @@ const routes = [
 
   {path: '/admin-dashboard', component: adminDashboard},
   {path: '/store-dashboard', component: storeDashboard},
+
+   // 상품, 리뷰 view
   { path: '/products', component: ProductCategory },
   { path: '/product-details/:id', component: ProductDetails },
   {
     path: '/shop/:category',
     name: 'ShopCategory',
-    component: () => import('@/views/shop/product-category.vue')
+    component: ProductCategory
   },
+   //입점업체
+  { path: '/partner/product/register', component: ProductRegister },
+  { path: '/partner/product/status', component: ProductStatus },
+  { path: '/partner/product/review', component: ProductReview },
+
 
 
 
@@ -119,7 +134,9 @@ const routes = [
         path: 'chat/reports',
         name: 'ChatReportLog',
         component: () => import('@/modules/chat/components/ChatReportLog.vue')
-      }
+      },
+      { path: 'products', component: AdminProductList }, //
+      { path: 'product/detail/:id', component: AdminProductDetail }
     ]
   }
 ]

@@ -27,14 +27,14 @@
           </ul>
         </li>
         <!-- 상품/리뷰 메뉴판 -->
-        <li :class="['/about', '/pricing', '/team'].includes(current) ? 'active' : ''">
-          <router-link to="#">상품/리뷰<span></span></router-link>
+        <li :class="['/partner/product/register', '/partner/product/status', '/partner/product/review'].includes(current) ? 'active' : ''">
+        <router-link to="#">상품/리뷰<span></span></router-link>
           <div class="mega-menu">
             <div class="megamenu-item">
-              <ul>
-                <li :class="current === '/about' ? 'active' : ''"><router-link to="/@">상품 등록</router-link></li>
-                <li :class="current === '/pricing' ? 'active' : ''"><router-link to="/@1">상품 등록 현황</router-link></li>
-                <li :class="current === '/team' ? 'active' : ''"><router-link to="/@2">리뷰</router-link></li>
+              <ul class="sub-menu">
+                <li><router-link to="/partner/product/register" class="menu-item">상품 등록</router-link></li>
+                <li><router-link to="/partner/product/status" class="menu-item">상품 등록 현황</router-link></li>
+                <li><router-link to="/partner/product/review" class="menu-item">리뷰</router-link></li>
               </ul>
             </div>
           </div>
