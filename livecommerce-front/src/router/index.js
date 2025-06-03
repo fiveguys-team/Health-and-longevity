@@ -37,7 +37,12 @@ import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 
 
 // modules/도메인/views/ 하위 test용 view
-import LiveTest from '@/modules/live/views/LiveTest.vue'
+import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
+import LiveChart from "@/modules/live/views/LiveChart.vue"
+import LiveRegister from "@/modules/live/views/LiveRegister.vue"
+import StoreLiveStreaming from "@/modules/live/views/StoreLiveStreaming.vue";
+import LiveReport from "@/modules/live/views/LiveReport.vue";
+
 import AuthTest from '@/modules/auth/views/AuthTest.vue'
 import ChatTest from '@/modules/chat/views/ChatTest.vue'
 import OrderTest from '@/modules/order/views/OrderTest.vue'
@@ -87,7 +92,13 @@ const routes = [
 
   
   // modules/도메인/views/ 하위 test용 view
-  {path: '/live-test',component: LiveTest},
+  {path: '/live-streaming',component: LiveStreaming},
+  {path: '/live-chart', component: LiveChart},
+  {path: '/live-register', component: LiveRegister},
+  {path: '/live-report', component: LiveReport},
+  {path: '/store-live-streaming', component: StoreLiveStreaming},
+
+
   {path: '/auth-test',component: AuthTest},
   {path: '/chat-test',component: ChatTest},
   {path: '/order-test',component: OrderTest},
