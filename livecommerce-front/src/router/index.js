@@ -21,12 +21,13 @@ import PaymentMethod from '@/views/shop/payment-method.vue'
 import InvoicePage from '@/views/shop/invoice-page.vue'
 import ShopV1 from '@/views/shop/shop-v1.vue'
 import ProductDetails from '@/views/shop/product-details.vue'
-import ShopCart from '@/views/shop/shop-cart.vue'
 import CheckoutPage from '@/views/shop/checkout-page.vue'
 import ContactPage from '@/views/inner-pages/contact-page.vue'
 import ProductCategory from '@/views/shop/product-category.vue'
 
 // 대시보드 views
+import adminDashboard from "@/views/dashboard/adminDashboard.vue"
+import storeDashboard from "@/views/dashboard/storeDashboard.vue"
 import adminDashboard from '@/views/dashboard/adminDashboard.vue'
 import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 
@@ -41,20 +42,20 @@ import AdminProductList from '@/modules/product/views/AdminProductList.vue'
 import AdminProductDetail from '@/modules/product/views/AdminProductDetail.vue'
 
 // modules/도메인/views/ 하위 test용 view
-import LiveTest from '@/modules/live/views/LiveTest.vue'
-import AuthTest from '@/modules/auth/views/AuthTest.vue'
-import ChatTest from '@/modules/chat/views/ChatTest.vue'
-import ProductTest from '@/modules/product/views/ProductTest.vue'
-import ReviewTest from '@/modules/review/views/ReviewTest.vue'
-import UserTest from '@/modules/user/views/UserTest.vue'
-import OrderView from '@/modules/order/views/OrderView.vue'
-import OrderConfirmationView from "@/modules/order/views/OrderConfirmationView.vue";
-import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue";
-import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue";
-import CartView from "@/modules/order/views/CartView.vue";
-import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue";
-import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue";
-import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue";
+import LiveTest from "@/modules/live/views/LiveTest.vue"
+import AuthTest from "@/modules/auth/views/AuthTest.vue"
+import ChatTest from "@/modules/chat/views/ChatTest.vue"
+import ProductTest from "@/modules/product/views/ProductTest.vue"
+import ReviewTest from "@/modules/review/views/ReviewTest.vue"
+import UserTest from "@/modules/user/views/UserTest.vue"
+import OrderView from "@/modules/order/views/OrderView.vue"
+import OrderConfirmationView from "@/modules/order/views/OrderConfirmationView.vue"
+import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue"
+import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue"
+import CartView from "@/modules/order/views/CartView.vue"
+import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
+import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
+import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -81,12 +82,14 @@ const routes = [
 
 
   {path: '/cart',component:ShopCart},
+  {path: '/product-details',component:ProductDetails},
+  {path: '/product-details/:id',component:ProductDetails},
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
 
-  {path: '/admin-dashboard', component: adminDashboard},
-  {path: '/store-dashboard', component: storeDashboard},
+  { path: "/admin-dashboard", component: adminDashboard },
+  { path: "/store-dashboard", component: storeDashboard },
 
    // 상품, 리뷰 view
   { path: '/products', component: ProductCategory },
@@ -106,30 +109,34 @@ const routes = [
 
 
 
-  
-  // modules/도메인/views/ 하위 test용 view
-  {path: '/live-test',component: LiveTest},
-  {path: '/auth-test',component: AuthTest},
-  {path: '/chat-test',component: ChatTest},
-  {path: '/order',component: OrderView},
-  {path: '/order-confirmation',component: OrderConfirmationView},
-  {path: '/order-history',component: OrderHistoryView},
-  {path: '/partner/order-history',component: PartnerOrderHistoryView},
-  {path: '/partner/return-request',component: PartnerReturnRequestView},
-  {path: '/cart',component: CartView},
-  {path: '/payment-success',component: PaymentSuccessView},
-  {path: '/payment-failure',component: PaymentFailureView},
-  {path: '/product-test',component: ProductTest},
-  {path: '/product-test',component: ProductTest},
-  {path: '/review-test',component: ReviewTest},
-  {path: '/user-test',component: UserTest},
 
-  // 관리자 대시보드 라우트
+  // modules/도메인/views/ 하위 test용 view
+  { path: "/live-test", component: LiveTest },
+  { path: "/auth-test", component: AuthTest },
+  { path: "/chat-test", component: ChatTest },
+  { path: "/order", component: OrderView },
+  { path: "/order-confirmation", component: OrderConfirmationView },
+  { path: "/order-history", component: OrderHistoryView },
+  { path: "/partner/order-history", component: PartnerOrderHistoryView },
+  { path: "/partner/return-request", component: PartnerReturnRequestView },
+  { path: "/cart", component: CartView },
+  { path: "/payment-success", component: PaymentSuccessView },
+  { path: "/payment-failure", component: PaymentFailureView },
+  { path: "/product-test", component: ProductTest },
+  { path: "/review-test", component: ReviewTest },
+  { path: "/user-test", component: UserTest },
+
+  // 관리자 대시보드 라우트입니다.
   {
-    path: '/admin',
-    component: () => import('@/views/dashboard/adminDashboard.vue'),
+    path: "/admin",
+    component: () => import("@/views/dashboard/adminDashboard.vue"),
     meta: { requiresAuth: true, adminOnly: true },
     children: [
+      {
+        path: "chat/reports",
+        name: "ChatReportLog",
+        component: () => import("@/modules/chat/components/ChatReportLog.vue"),
+      },
       {
         path: 'chat/reports',
         name: 'ChatReportLog',
@@ -137,13 +144,17 @@ const routes = [
       },
       { path: 'products', component: AdminProductList }, //
       { path: 'product/detail/:id', component: AdminProductDetail }
-    ]
-  }
-]
+    ],
+  },
+];
+
+
+
+
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

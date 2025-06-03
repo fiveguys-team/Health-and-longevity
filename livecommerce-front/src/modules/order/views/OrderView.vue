@@ -2,8 +2,6 @@
     <div>
         <NavbarOne/>
 
-      <div>
-        <NavbarOne/>
 
         <div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" :style="{backgroundImage:'url(' + bg + ')'}">
           <div class="text-center w-full">
@@ -256,11 +254,6 @@
           </div>
         </div>
 
-        <FooterOne/>
-
-        <ScrollToTop/>
-
-      </div>
 
         <FooterThree/>
 
@@ -287,7 +280,6 @@
     import cart1 from "@/assets/img/gallery/cart/cart-01.jpg";
     import cart2 from "@/assets/img/gallery/cart/cart-02.jpg";
     import cart3 from "@/assets/img/gallery/cart/cart-03.jpg";
-    import FooterOne from "@/components/footer/footer-one.vue";
 
     onMounted(() => {
         Aos.init()
