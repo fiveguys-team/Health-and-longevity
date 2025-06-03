@@ -133,86 +133,86 @@ export const productList = [
     {
         id:1,
         image:shop1,
-        tag:'Hot Sale',
-        price:'$25.75',
-        name:'White Minimal Chair'
+        tag:'할인',
+        price:'25,000원',
+        name:'모던 화이트 체어'
     },
     {
         id:2,
         image:shop2,
-        tag:'NEW',
-        price:'$122.75',
-        name:'Preminu Luxury Sofa'
+        tag:'신상',
+        price:'122,000원',
+        name:'프리미엄 럭셔리 소파'
     },
     {
         id:3,
         image:shop3,
-        tag:'10% OFF',
-        price:'$140.99',
-        name:'Table With Pops'
+        tag:'10% 할인',
+        price:'140,000원',
+        name:'모던 테이블 세트'
     },
     {
         id:4,
         image:shop4,
         tag:'',
-        price:'$122.75',
-        name:'Luxury Lamp for Wall'
+        price:'122,000원',
+        name:'럭셔리 벽걸이 조명'
     },
     {
         id:5,
         image:shop5,
-        tag:'Hot Sale',
-        price:'$140.99',
-        name:'White Minimal Chair'
+        tag:'할인',
+        price:'140,000원',
+        name:'화이트 미니멀 체어'
     },
     {
         id:6,
         image:shop6,
         tag:'',
-        price:'$122.75',
-        name:'Luxury Vase for Table'
+        price:'122,000원',
+        name:'럭셔리 테이블 화병'
     },
     {
         id:7,
         image:shop7,
         tag:'',
-        price:'$122.75 - $140.99',
-        name:'New Modern Luxury Table with Pops Lorem ipsum Furniture'
+        price:'122,000원 - 140,000원',
+        name:'모던 럭셔리 테이블 세트'
     },
     {
         id:8,
         image:shop8,
-        tag:'10% OFF',
-        price:'$122.75',
-        name:'Modern Logn Table'
+        tag:'10% 할인',
+        price:'122,000원',
+        name:'모던 롱 테이블'
     },
     {
         id:9,
         image:shop9,
         tag:'',
-        price:'$122.75',
-        name:'Luxury Lamp for Wall'
+        price:'122,000원',
+        name:'럭셔리 벽걸이 조명'
     },
     {
         id:10,
         image:shop10,
         tag:'',
-        price:'$122.75',
-        name:'Luxury Lamp for Wall'
+        price:'122,000원',
+        name:'럭셔리 벽걸이 조명'
     },
     {
         id:11,
         image:shop1,
         tag:'',
-        price:'$122.75',
-        name:'Luxury Lamp for Wall'
+        price:'122,000원',
+        name:'럭셔리 벽걸이 조명'
     },
     {
         id:12,
         image:shop2,
         tag:'',
-        price:'$122.75',
-        name:'White Minimal Chair'
+        price:'122,000원',
+        name:'화이트 미니멀 체어'
     },
 ]
 
@@ -253,66 +253,66 @@ export const blogData = [
     {
         id:1,
         image:blog1,
-        date:'13th Sept 2025',
-        tag:'Chair',
-        title:`Creating Your Dream Sanctuary: Inspirational Room Decor with Furnixar`,
-        desc:`Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .`
+        date:'2025년 9월 13일',
+        tag:'건강',
+        title:`건강한 삶을 위한 영양제 선택 가이드`,
+        desc:`현대인의 건강을 위한 필수 영양소와 올바른 영양제 선택법을 알아봅니다...`
     },
     {
         id:2,
         image:blog2,
-        date:'29th Dec 2025',
-        tag:'Sofa',
-        title:`From Drab to Fab: Room Makeover Inspiration by Furnixar`,
-        desc:`Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .`
+        date:'2025년 12월 29일',
+        tag:'영양',
+        title:`일상 속 면역력 강화를 위한 건강관리 팁`,
+        desc:`면역력 강화를 위한 생활 습관과 추천 영양제를 소개합니다...`
     },
     {
         id:3,
         image:blog3,
-        date:'29th Nov 2025',
-        tag:'Vases',
-        title:`Small Space, Big Style: Room Decor Solutions from Furnixar`,
-        desc:`Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .`
+        date:'2025년 11월 29일',
+        tag:'라이프',
+        title:`건강한 라이프스타일을 위한 필수 영양소`,
+        desc:`일상 생활에서 놓치기 쉬운 필수 영양소와 보충 방법을 알아봅니다...`
     },
     {
         id:4,
         image:blog4,
-        date:'13th March 2025',
-        tag:'Interior',
-        title:`Innovative Room Decor: Unleashing Creativity with Furnixar`,
-        desc:`Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .`
+        date:'2025년 3월 13일',
+        tag:'건강식품',
+        title:`건강기능식품 올바르게 섭취하는 방법`,
+        desc:`건강기능식품의 효과적인 섭취 시기와 방법에 대해 알아봅니다...`
     },
     {
         id:5,
         image:blog5,
-        date:'5th May 2025',
-        tag:'Chair',
-        title:`Timeless Elegance: Classic Room Decor Ideas from Furnixar`,
-        desc:`Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .`
+        date:'2025년 5월 5일',
+        tag:'건강',
+        title:`봄철 건강관리를 위한 영양제 추천`,
+        desc:`환절기 건강관리를 위한 맞춤형 영양제 추천과 섭취 방법을 소개합니다...`
     },
     {
         id:6,
         image:blog6,
-        date:'19th June 2025',
-        tag:'Sofa',
-        title:`Budget-Friendly Brilliance: Room Decor Hacks by Furnixar`,
-        desc:`Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .`
+        date:'2025년 6월 19일',
+        tag:'영양',
+        title:`직장인을 위한 활력 충전 건강식품`,
+        desc:`바쁜 현대인을 위한 맞춤형 건강기능식품 추천과 섭취 팁을 알아봅니다...`
     },
     {
         id:7,
         image:blog7,
-        date:'20th June 2025',
-        tag:'Vases',
-        title:`Personalize Your Space: Custom Room Decor Options with Furnixar`,
-        desc:`Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .`
+        date:'2025년 6월 20일',
+        tag:'라이프',
+        title:`건강한 수면을 위한 영양제 가이드`,
+        desc:`수면의 질을 높이는데 도움이 되는 영양제와 섭취 방법을 소개합니다...`
     },
     {
         id:8,
         image:blog8,
-        date:'31st Aug 2025',
-        tag:'Lamp',
-        title:`ransform Your Home: Room Decor Tips and Trends with Furnixar`,
-        desc:`Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .`
+        date:'2025년 8월 31일',
+        tag:'건강식품',
+        title:`여름철 건강관리를 위한 필수 영양소`,
+        desc:`무더운 여름을 건강하게 보내기 위한 영양 관리 방법을 알아봅니다...`
     },
 ]
 
@@ -383,17 +383,18 @@ export const productSlider = [
 export const teamData = [
     {
         image:team2,
-        name:'Jennifer Smith',
-        location:'Berminghum ,UK',
-        desc:`Furnixar exceeded my expectations with their exceptional furniture pieces. The quality craftsmanship and attention to detail truly shine through in every product. My home has been transformed into a stylish sanctuary thanks to Furnixar!`
+        name:'김미영',
+        location:'서울',
+        desc:`무병장수의 제품들은 정말 만족스럽습니다. 철저한 품질관리와 세심한 고객 서비스 덕분에 건강한 삶을 유지할 수 있게 되었습니다. 특히 종합비타민은 매일 섭취하고 있는데 컨디션 관리에 많은 도움이 됩니다!`
     },
     {
         image:team3,
-        name:'Jennifer Smith',
-        location:'Berminghum ,UK',
-        desc:`Furnixar exceeded my expectations with their exceptional furniture pieces. The quality craftsmanship and attention to detail truly shine through in every product. My home has been transformed into a stylish sanctuary thanks to Furnixar!`
+        name:'이준호',
+        location:'부산',
+        desc:`무병장수에서 구매한 오메가3는 품질이 정말 좋습니다. 믿을 수 있는 제품을 합리적인 가격에 구매할 수 있어서 매우 만족스럽습니다. 앞으로도 계속 이용할 예정입니다!`
     },
 ]
+
 export const blogTwoData = [
     {
         id:1,
@@ -747,16 +748,16 @@ export const venderInfo = [
 
 export const detailReview = [
     {
-        name:'Merlina Quexy',
-        desc:`Furnixar's products have transformed my living space with their stylish designs and impeccable craftsmanship.`
+        name:'박서연',
+        desc:`무병장수의 제품들은 건강한 삶을 위한 최고의 선택이었습니다. 품질과 서비스 모두 만족스럽습니다.`
     },
     {
-        name:'Merlina Quexy',
-        desc:`Furnixar's products have transformed my living space with their stylish designs and impeccable craftsmanship.`
+        name:'최동훈',
+        desc:`건강기능식품을 고르는 데 항상 고민이 많았는데, 무병장수의 제품들은 믿고 구매할 수 있어서 좋습니다.`
     },
     {
-        name:'Merlina Quexy',
-        desc:`Furnixar's products have transformed my living space with their stylish designs and impeccable craftsmanship.`
+        name:'정혜원',
+        desc:`무병장수에서 구매한 제품들 덕분에 건강관리가 한결 수월해졌습니다. 특히 상담원분들의 친절한 설명이 매우 도움이 되었습니다.`
     },
 ]
 

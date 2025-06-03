@@ -15,10 +15,10 @@
                             <path opacity="0.1" d="M93.5685 350.941C17.9186 286.326 -22.6142 169.412 13.177 95.6561C48.7857 21.5837 161.217 -9.19765 268.179 2.36595C374.958 13.6135 477.265 67.4732 497.265 147.363C516.948 227.436 454.823 333.672 367.72 380.59C280.8 427.824 169.535 415.374 93.5685 350.941Z" fill="#BB976D"/>
                         </svg>   
                         <div class="absolute top-1/4 left-[10%] xl:left-[20%] z-30">
-                            <h4 class="leading-none text-primary dark:text-primary font-semibold">$140</h4>
-                            <h3 class="leading-none mt-4">Aurora Flexible Sofa</h3>
+                            <h4 class="leading-none text-primary dark:text-primary font-semibold">89,000원</h4>
+                            <h3 class="leading-none mt-4">프리미엄 종합 비타민</h3>
                             <div class="group mt-[10px]">
-                                <router-link to="/product-details" class="text-lg leading-none text-title font-medium  text-underline dark:text-white">Buy Now</router-link>
+                                <router-link to="/product-details" class="text-lg leading-none text-title font-medium text-underline dark:text-white">구매하기</router-link>
                             </div>
                         </div>                  
                     </div>
@@ -37,14 +37,14 @@
                                 <span class="font-bold text-5xl sm:text-7xl xl:text-9xl text-title leading-none dark:text-white">2024</span>
                                 <img class="-ml-5 sm:-ml-10 w-[150px] sm:w-[200px] lg:w-[250px] xl:w-full" :src="banner3" alt="summer">
                             </div>
-                            <h2 class="mt-[10px] font-normal text-3xl sm:text-4xl xl:text-5xl !leading-[1.3] dark:text-white">Brand-New Arrival Alert Your Next Favorite is Here!</h2>
-                            <p class="dark:text-white-light mt-3 md:mt-4 sm:max-w-[450px] xl:max-w-full">Discover the latest must-have arrivals! Elevate your style with our newest collection of trendsetting items. Find your perfect fit with our diverse product. </p>
+                            <h2 class="mt-[10px] font-normal text-3xl sm:text-4xl xl:text-5xl !leading-[1.3] dark:text-white">건강한 삶을 위한 새로운 영양제가 도착했습니다!</h2>
+                            <p class="dark:text-white-light mt-3 md:mt-4 sm:max-w-[450px] xl:max-w-full">최신 연구를 바탕으로 개발된 프리미엄 건강기능식품을 만나보세요. 당신의 건강한 라이프스타일을 위한 최적의 선택입니다.</p>
                             <div class="button mt-4 md:mt-6">
                                 <router-link class="btn btn-outline" to="/shop-v1" data-text="Shop Now"><span>Shop Now</span></router-link>
                             </div>
                         </div>
                         <div class="sm:max-w-[750px] w-full">
-                            <img class="slider-img" :src="banner1" alt="banner-slider">
+                            <img class="slider-img w-full h-auto max-h-[600px] object-contain transform scale-110" :src="omega3" alt="omega3">
                         </div>
                     </div>
                 </div>
@@ -56,10 +56,10 @@
                             <path d="M93.5685 350.941C17.9186 286.326 -22.6142 169.412 13.177 95.6561C48.7857 21.5837 161.217 -9.19765 268.179 2.36595C374.958 13.6135 477.265 67.4732 497.265 147.363C516.948 227.436 454.823 333.672 367.72 380.59C280.8 427.824 169.535 415.374 93.5685 350.941Z" fill="#627952" fill-opacity="0.1"/>
                         </svg>
                         <div class="absolute top-1/4 left-[10%] xl:left-[20%] z-30">
-                            <h4 class="leading-none text-[#627952] dark:text-[#627952] font-semibold">$110</h4>
-                            <h3 class="leading-none mt-4">Aurora Flexible Vase</h3>
+                            <h4 class="leading-none text-[#627952] dark:text-[#627952] font-semibold">45,000원</h4>
+                            <h3 class="leading-none mt-4">오메가3 rTG</h3>
                             <div class="group mt-[10px]">
-                                <router-link to="/product-details" class="text-lg leading-none text-title font-medium  text-underline dark:text-white">Buy Now</router-link>
+                                <router-link to="/product-details" class="text-lg leading-none text-title font-medium text-underline dark:text-white">구매하기</router-link>
                             </div>
                         </div>
                     </div>
@@ -78,14 +78,14 @@
                                 <span class="font-bold text-5xl sm:text-7xl xl:text-9xl text-title leading-none dark:text-white">2024</span>
                                 <img class="-ml-5 sm:-ml-10 w-[150px] sm:w-[200px] lg:w-[250px] xl:w-full" :src="banner3" alt="summer">
                             </div>
-                            <h2 class="mt-[10px] font-normal text-3xl sm:text-4xl xl:text-5xl !leading-[1.3] dark:text-white">Exciting New Arrivals Unmissable Just Landed</h2>
-                            <p class="dark:text-white-light mt-3 md:mt-4 sm:max-w-[450px] xl:max-w-full">Discover stylish and high-quality furniture to transform your home. Shop from top brands and enjoy exclusive discounts on timeless designs. Elevate your living space today! </p>
+                            <h2 class="mt-[10px] font-normal text-3xl sm:text-4xl xl:text-5xl !leading-[1.3] dark:text-white">특별한 가격으로 만나는 프리미엄 건강기능식품</h2>
+                            <p class="dark:text-white-light mt-3 md:mt-4 sm:max-w-[450px] xl:max-w-full">검증된 원료와 철저한 품질관리로 만든 건강기능식품을 만나보세요. 건강한 삶을 위한 현명한 투자, 지금 시작하세요.</p>
                             <div class="button mt-4 md:mt-6">
                                 <router-link class="btn btn-outline" to="/shop-v2" data-text="Shop Now"><span>Shop Now</span></router-link>
                             </div>
                         </div>
                         <div class="sm:max-w-[750px] w-full">
-                            <img class="slider-img" :src="banner2" alt="banner-slider">
+                            <img class="slider-img w-full h-auto max-h-[600px] object-contain transform scale-110" :src="multivitamin" alt="multivitamin">
                         </div>
                     </div>
                 </div>
@@ -96,164 +96,55 @@
             <div class="container-fluid">
                 <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
                     <div>
-                        <img :src="chair" alt="" class="mx-auto w-14 sm:w-24"/>                                               
+                        <img :src="like" alt="" class="mx-auto w-14 sm:w-24"/>                                               
                     </div>
-                    <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">Product Category</h3>
-                    <p class="mt-3">Explore our curated selection of premium products, tailored to suit every need and taste. From essentials to indulgences, find your perfect fit. </p>
-                </div>
-                <div class="max-w-[1720px] mx-auto relative group" data-aos="fade-up" data-aos-delay="100">
-                    <swiper 
-                        :modules="[Autoplay,Navigation]" 
-                        :slides-per-view="3" 
-                        :space-between="20" 
-                        :loop="true"  
-                        :navigation="true" 
-                        :autoplay="{ delay: 3000}" 
-                        :breakpoints="{
-                            320: { slidesPerView: 1, spaceBetween: 10 },
-                            576: { slidesPerView: 2, spaceBetween: 15 },
-                            1024: { slidesPerView: 3, spaceBetween: 20 },
-                        }"
-                        class="owl-carousel hv1-pdct-ctgry-slider block"> 
-                        <swiper-slide v-for="(item, index) in categoryOne" :key="index" class="relative block">
-                            <img class="w-full object-cover" :src="item.image" alt="product"/>
-                            <div class="absolute bottom-7 left-0 px-5 transform w-full flex justify-start">
-                                <div class="p-[15px] bg-white dark:bg-title w-auto">
-                                    <span class="md:text-xl text-primary font-medium leading-none">{{item.item}}</span>
-                                    <h4 class="text-xl md:text-2xl mt-[10px] font-semibold leading-[1.5]">{{item.name}}</h4>
-                                </div>
-                            </div>
-                        </swiper-slide>
-                    </swiper>
-                </div>
-            </div>
-        </div>
-
-        <div class="s-py-50-100">
-            <div class="container-fluid">
-                <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up" data-aos-delay="100">
-                    <div>  
-                        <img :src="sofa" alt="" class="mx-auto w-14 sm:w-24"/>                                             
-                    </div>
-                    <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">New Products</h3>
-                    <p class="mt-3">Be the first to experience innovation with our latest arrivals. Stay ahead of the curve and discover what's new in style, technology, and more. </p>
+                    <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">회원님을 위한 추천 상품</h3>
+                    <p class="mt-3">회원님의 관심사와 선호도를 바탕으로 엄선된 제품을 추천해드립니다.</p>
                 </div>
                 <div data-aos="fade-up" data-aos-delay="100">
                     <LayoutOne :productList="productList.slice(0,4)" :classList="'max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8'"/>
                 </div>
-                <div class="text-center mt-7 md:mt-12">
-                    <router-link to="/shop-v1" class="btn btn-outline" data-text="All Products">
-                        <span>All Products</span>
-                    </router-link>
-                </div>
             </div>
         </div>
 
-        <div class="s-py-100 bg-overlay dark:before:bg-title dark:before:bg-opacity-80" :style="{ backgroundImage: 'url(' + bg + ')' }">
-            <img class="absolute top-0 right-0 w-[20%] z-[-1]" :src="shape1" alt="shape">
-            <div class="container-fluid">
-                <div class="max-w-[1720px] mx-auto">
-                    <div class="max-w-[1186px] ml-auto">
-                        <div class="max-w-xl mb-8 md:mb-12" data-aos="fade-up">
-                            <div> 
-                                <img :src="like" class="w-14 sm:w-24" alt="" />                                                       
-                            </div>
-                            <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">Why you Choose Us</h3>
-                            <p class="mt-3">Choose us for unparalleled quality, exceptional service, and a commitment to your satisfaction. Join countless others who rely on us for reliability. </p>
-                        </div>
-                        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-[30px]">
-                            <div v-for="(item, index) in featureOne.slice(0,4)" :key="index" class="why-choose-card p-6 rounded-[10px]" data-aos="fade-up" :ata-aos-delay="item.delay">
-                                <img :src="item.image" class='size-12' alt="">
-                                <h4 class="font-semibold leading-none mt-5 sm:mt-7 text-xl md:text-2xl">{{item.title}}</h4>
-                                <p class="mt-[15px]">{{item.desc}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="s-py-100-50">
+        <div class="s-py-50-100 bg-[#F5F5F5] dark:bg-title">
             <div class="container-fluid">
                 <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
                     <div>
-                        <img :src="bed" class="mx-auto w-14 sm:w-24" alt="" />                                              
+                        <img :src="sofa" alt="" class="mx-auto w-14 sm:w-24"/>                                               
                     </div>
-                    <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">Featured Products</h3>
-                    <p class="mt-3">Discover our handpicked selection of standout products. Elevate your lifestyle with our top picks that combine quality, style, and innovation. </p>
+                    <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">실시간 인기 상품</h3>
+                    <p class="mt-3">지금 가장 많은 관심을 받고 있는 인기 제품을 만나보세요.</p>
                 </div>
                 <div class="max-w-[1720px] mx-auto flex gap-5 sm:gap-8 flex-col lg:flex-row" data-aos="fade-up" data-aos-delay="100">
-
-                    <LayoutOne :productList="productList.slice(8,12)" :classList="'grid sm:grid-cols-2 gap-5 sm:gap-8 lg:max-w-[766px] w-full'"/>
-
+                    <LayoutOne :productList="productList.slice(4,8)" :classList="'grid sm:grid-cols-2 gap-5 sm:gap-8 lg:max-w-[766px] w-full'"/>
                     <div class="grid sm:grid-cols-2 gap-5 sm:gap-8 lg:max-w-[925px] w-full">
                         <div class="group flex flex-col">
                             <div class="relative overflow-hidden flex-1">
                                 <router-link to="/product-details">
                                     <img class="w-full transform group-hover:scale-110 duration-300 h-full object-cover" :src="product1" alt="product-card"/>
                                 </router-link>
-
                                 <div class="absolute z-10 top-[50%] right-3 transform -translate-y-[40%] opacity-0 duration-300 transition-all group-hover:-translate-y-1/2 group-hover:opacity-100 flex flex-col items-end gap-3">
                                     <router-link to="#" class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon">
                                         <i class="mdi mdi-cards-heart-outline dark:text-white text-[24px]"></i>                                                                     
-                                        <span class="mt-1">Add to wishlist</span>
+                                        <span class="mt-1">찜하기</span>
                                     </router-link>
                                     <router-link to="#" class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon">
                                         <i class="mdi mdi-shopping-outline dark:text-white text-[24px]"></i>    
-                                        <span class="mt-1">Add to Cart</span>
+                                        <span class="mt-1">장바구니 담기</span>
                                     </router-link>
                                     <button class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon quick-view">
                                         <i class="mdi mdi-eye-outline dark:text-white text-[24px]"></i>                                      
-                                        <span class="mt-1">Quick View</span>
+                                        <span class="mt-1">미리보기</span>
                                     </button>
                                 </div>
                             </div>
                             <div class="lg:pt-6 pt-5 flex gap-3 md:gap-4 flex-col">
-                                <h4 class="font-medium leading-none dark:text-white text-lg">$122.75  <span class="text-title/50 line-through pl-2 inline-block">$140.99</span></h4>
+                                <h4 class="font-medium leading-none dark:text-white text-lg">78,000원 <span class="text-title/50 line-through pl-2 inline-block">98,000원</span></h4>
                                 <div>
                                     <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
                                         <router-link to="/product-details" class="text-underline">
-                                            Convertible Sofa
-                                        </router-link>
-                                    </h5>
-                                    <ul class="flex items-center gap-2 mt-1">
-                                        <li><i class="fa-solid fa-star text-[#EE9818] text-[14px]"></i></li>
-                                        <li><i class="fa-solid fa-star text-[#EE9818] text-[14px]"></i></li>
-                                        <li><i class="fa-solid fa-star text-[#EE9818] text-[14px]"></i></li>
-                                        <li><i class="fa-solid fa-star text-[#EE9818] text-[14px]"></i></li>
-                                        <li><i class="fa-solid fa-star text-slate-300 text-[14px]"></i></li>
-                                        <li class="dark:text-gray-100">( 1,230 )</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="group flex flex-col">
-                            <div class="relative overflow-hidden flex-1">
-                                <router-link to="/product-details">
-                                    <img class="w-full transform group-hover:scale-110 duration-300 h-full object-cover" :src="product2" alt="product-card"/>
-                                </router-link>
-
-                                <div class="absolute z-10 top-[50%] right-3 transform -translate-y-[40%] opacity-0 duration-300 transition-all group-hover:-translate-y-1/2 group-hover:opacity-100 flex flex-col items-end gap-3">
-                                    <router-link to="#" class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon">
-                                        <i class="mdi mdi-cards-heart-outline dark:text-white text-[24px]"></i>                                                                     
-                                        <span class="mt-1">Add to wishlist</span>
-                                    </router-link>
-                                    <router-link to="#" class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon">
-                                        <i class="mdi mdi-shopping-outline dark:text-white text-[24px]"></i>     
-                                        <span class="mt-1">Add to Cart</span>
-                                    </router-link>
-                                    <button class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon quick-view">
-                                        <i class="mdi mdi-eye-outline dark:text-white text-[24px]"></i>                                         
-                                        <span class="mt-1">Quick View</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="lg:pt-6 pt-5 flex gap-3 md:gap-4 flex-col">
-                                <h4 class="font-medium leading-none dark:text-white text-lg">$122.75 - $140.99</h4>
-                                <div>
-                                    <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
-                                        <router-link to="/product-details" class="text-underline">
-                                            Flower vase for Table
+                                            프리미엄 루테인 지아잔틴
                                         </router-link>
                                     </h5>
                                     <ul class="flex items-center gap-2 mt-1">
@@ -268,6 +159,26 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="s-py-50-100">
+            <div class="container-fluid">
+                <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
+                    <div>
+                        <img :src="bed" alt="" class="mx-auto w-14 sm:w-24"/>                                               
+                    </div>
+                    <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">신상품</h3>
+                    <p class="mt-3">새롭게 입점된 제품들을 가장 먼저 만나보세요.</p>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="100">
+                    <LayoutOne :productList="productList.slice(8,12)" :classList="'max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8'"/>
+                </div>
+                <div class="text-center mt-7 md:mt-12">
+                    <router-link to="/shop-v1" class="btn btn-outline" data-text="전체상품보기">
+                        <span>전체상품보기</span>
+                    </router-link>
                 </div>
             </div>
         </div>
@@ -279,8 +190,8 @@
                         <div> 
                             <img :src="comment" class="mx-auto w-14 sm:w-24" alt="" />                                               
                         </div>
-                        <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">Latest Blog</h3>
-                        <p class="mt-3">Stay informed and inspired with our latest blog posts. Explore insightful content that keeps you ahead of trends and informed on topics you love. </p>
+                        <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">건강정보</h3>
+                        <p class="mt-3">건강한 삶을 위한 유용한 정보들을 만나보세요. 전문가들이 제공하는 건강 관리 팁과 영양 정보를 통해 더 건강한 라이프스타일을 만들어보세요.</p>
                     </div>
 
                     <BlogOne/>
@@ -294,8 +205,8 @@
                     <div>
                         <img :src="hand" class="size-16 mx-auto" alt="">                                            
                     </div>
-                    <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">Trusted Partner</h3>
-                    <p class="mt-3">Count on our trusted partnerships to deliver excellence. Collaborating with industry leaders ensures top-quality products and services for your satisfaction. </p>
+                    <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">믿을 수 있는 파트너</h3>
+                    <p class="mt-3">식약처 인증을 받은 우수한 제조시설에서 엄선된 원료로 만든 제품만을 제공합니다. 건강과 신뢰를 최우선으로 생각하는 파트너들과 함께합니다.</p>
                 </div>
                 <div data-aos="fade-up" data-aos-delay="100">
                     <PartnerOne/>
@@ -309,41 +220,37 @@
 </template>
 
 <script setup>
-    import { onMounted } from 'vue';
+import { onMounted } from 'vue';
 
-    import banner1 from '@/assets/img/home-v1/banner-01.png'
-    import banner2 from '@/assets/img/home-v1/banner-02.png'
-    import banner3 from '@/assets/img/shortcode/carousel/Summer.png'
-    import shape1 from '@/assets/img/home-v1/shape-01.png'
-    import bg from '@/assets/img/home-v1/choose-us-bg.jpg'
-    import chair from '@/assets/img/svg/chair.svg'
-    import sofa from '@/assets/img/svg/sofa.svg'
-    import like from "@/assets/img/svg/like.svg"
-    import bed from "@/assets/img/svg/bed.svg"
-    import hand from '@/assets/img/svg/hand.svg'
-    import product1 from '@/assets/img/home-v1/ftur-pdct-01.jpg'
-    import product2 from '@/assets/img/home-v1/ftur-pdct-02.jpg'
-    import comment from '@/assets/img/svg/comment.svg'
+// 이미지 imports
+import banner3 from '@/assets/img/shortcode/carousel/Summer.png'
+import omega3 from '@/assets/img/home-v1/omega3.png'
+import multivitamin from '@/assets/img/home-v1/multivitamin.png'
+import sofa from '@/assets/img/svg/sofa.svg'
+import like from "@/assets/img/svg/like.svg"
+import bed from "@/assets/img/svg/bed.svg"
+import product1 from '@/assets/img/home-v1/ftur-pdct-01.jpg'
+import hand from "@/assets/img/svg/hand.png"
 
+// 컴포넌트 imports
+import NavbarOne from '@/components/navbar/navbar-one.vue';
+import LayoutOne from '@/components/product/layout-one.vue';
+import ScrollToTop from '@/components/scroll-to-top.vue';
+import FooterThree from '@/components/footer/footer-three.vue';
 
-    import NavbarOne from '@/components/navbar/navbar-one.vue';
-    import LayoutOne from '@/components/product/layout-one.vue';
-    import ScrollToTop from '@/components/scroll-to-top.vue';
+// Swiper imports
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Autoplay, Pagination } from 'swiper/modules';
+import 'swiper/swiper-bundle.css';
 
+// 데이터 imports
+import { productList } from '@/data/data';
 
-    import { Swiper, SwiperSlide } from 'swiper/vue';
-    import { Autoplay, Pagination,Navigation } from 'swiper/modules';
-    import 'swiper/swiper-bundle.css';
+// AOS 애니메이션
+import Aos from 'aos';
+import 'aos/dist/aos.css';
 
-    import { categoryOne,productList,featureOne } from '@/data/data';
-   
-    import Aos from 'aos';
-    import 'aos/dist/aos.css';
-    
-    import FooterThree from '@/components/footer/footer-three.vue';
-    onMounted(() => {
-        Aos.init()
-    });
-
-
+onMounted(() => {
+    Aos.init();
+});
 </script>

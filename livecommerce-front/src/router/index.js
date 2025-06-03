@@ -99,7 +99,21 @@ const routes = [
   {path: '/product-test',component: ProductTest},
   {path: '/product-test',component: ProductTest},
   {path: '/review-test',component: ReviewTest},
-  {path: '/user-test',component: UserTest}
+  {path: '/user-test',component: UserTest},
+
+  // 관리자 대시보드 라우트
+  {
+    path: '/admin',
+    component: () => import('@/views/dashboard/adminDashboard.vue'),
+    meta: { requiresAuth: true, adminOnly: true },
+    children: [
+      {
+        path: 'chat/reports',
+        name: 'ChatReportLog',
+        component: () => import('@/modules/chat/components/ChatReportLog.vue')
+      }
+    ]
+  }
 ]
 
 const router = createRouter({
