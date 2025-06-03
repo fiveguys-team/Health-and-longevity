@@ -7,60 +7,60 @@ import w5 from '@/assets/img/gallery/wishList-05.jpg'
 export const wishListData = [
     {
         image:w1,
-        name:'Sofa',
-        price: '$65.90',
-        desc:'Modern Sofa Set'
+        name:'소파',
+        price: '65,900원',
+        desc:'모던 소파 세트'
     },
     {
         image:w2,
-        name:'Interior',
-        price: '$99.90',
-        desc:'Classic Chair with Vase'
+        name:'인테리어',
+        price: '99,900원',
+        desc:'클래식 의자와 화병'
     },
     {
         image:w3,
-        name:'Lamp',
-        price: '$30.90',
-        desc:'Luxury Hanging Lamp'
+        name:'조명',
+        price: '30,900원',
+        desc:'럭셔리 펜던트 조명'
     },
     {
         image:w4,
-        name:'Vase',
-        price: '$56.90',
-        desc:'Premium Quality Vase'
+        name:'화병',
+        price: '56,900원',
+        desc:'프리미엄 화병'
     },
     {
         image:w5,
-        name:'Chair',
-        price: '$50.00',
-        desc:'Classic White Chair'
+        name:'의자',
+        price: '50,000원',
+        desc:'클래식 화이트 체어'
     },
 ]
 
 export const cartList = [
     {
         image:w1,
-        name:'Sofa',
-        value:'$65.90',
-        desc:'Modern Sofa Set'
+        name:'소파',
+        value:'65,900원',
+        desc:'모던 소파 세트'
     },
     {
         image:w2,
-        name:'Interior',
-        value:'$99.90',
-        desc:'Classic Chair with Vase'
+        name:'인테리어',
+        value:'99,900원',
+        desc:'클래식 의자와 화병'
     },
     {
         image:w3,
-        name:'Lamp',
-        value:'$30.90',
-        desc:'Luxury Hanging Lamp'
+        name:'조명',
+        value:'30,900원',
+        desc:'럭셔리 펜던트 조명'
     },
     {
         image:w4,
-        name:'Vase',
-        value:'$20.00',
-        desc:'Premium Quality Vase'
+        name:'화병',
+        value:'20,000원',
+        desc:'프리미엄 화병'
     },
 ]
 
@@ -106,23 +106,23 @@ export const footerLink2 = [
 ]
 export const footerLink3 = [
     {
-        name:'Shop',
+        name:'쇼핑',
         link:'/shop-v1'
     },
     {
-        name:'Product Single',
+        name:'상품 상세',
         link:'/product-details'
     },
     {
-        name:'Cart',
+        name:'장바구니',
         link:'/cart'
     },
     {
-        name:'Checkout',
+        name:'결제하기',
         link:'/checkout'
     },
     {
-        name:'Wishlist',
+        name:'위시리스트',
         link:'/wishlist'
     },
 ]

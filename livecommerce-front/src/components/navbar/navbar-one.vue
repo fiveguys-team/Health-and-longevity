@@ -58,8 +58,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
-import logoDark from '@/assets/img/svg/logo.svg'
-import logoLight from '@/assets/img/svg/logo-light.svg'
+import logoDark from '@/assets/img/svg/logo.png'
+import logoLight from '@/assets/img/svg/logo.png'
 
 import NavMenuOne from './nav-menu-one.vue';
 

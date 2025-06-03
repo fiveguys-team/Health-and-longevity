@@ -65,7 +65,7 @@
                 <div class="flex items-center justify-center">
                     <div class="max-w-md">
                         <h2 class="font-bold leading-none dark:text-white" data-aos="fade-up">Subscribe to be Notified</h2>
-                        <p class="mt-3 md:mt-5 dark:text-white-light" data-aos="fade-up" data-aos-delay="100">Stay updated with our latest news, tips, and exclusive offers! Subscribe to our newsletter and never miss out on what’s new. </p>
+                        <p class="mt-3 md:mt-5 dark:text-white-light" data-aos="fade-up" data-aos-delay="100">Stay updated with our latest news, tips, and exclusive offers! Subscribe to our newsletter and never miss out on what's new. </p>
                         <div class="mt-4 lg:mt-6 sm:flex" data-aos="fade-up" data-aos-delay="200">
                             <input class="w-full h-12 md:h-14 bg-snow border dark:bg-snow dark:bg-opacity-5 border-title focus:border-primary border-opacity-10 duration-300 p-4 outline-none dark:text-white sm:flex-1 sm:border-r-0" type="text" placeholder="Enter your email address">
                             <button class="w-full h-12 bg-title text-white flex items-center justify-center text-base md:text-lg font-medium p-3 mt-3 sm:mt-0 sm:w-32 sm:h-auto sm:flex-none dark:bg-primary dark:text-title">Subscribe</button>
@@ -89,8 +89,8 @@
     import thumbImg from '@/assets/img/thumb/coming-soon.png'
     import bg from '@/assets/img/bg/coming-soon-bg.jpg'
     import shape from '@/assets/img/shape/coming-soon-shape.png'
-    import logoDark from '@/assets/img/svg/logo.svg'
-    import logoLight from '@/assets/img/svg/logo-light.svg'
+    import logoDark from '@/assets/img/svg/logo.png'
+    import logoLight from '@/assets/img/svg/logo.png'
     import shape2 from '@/assets/img/thumb/coming-soon-shape.png'
     import Aos from 'aos';
 

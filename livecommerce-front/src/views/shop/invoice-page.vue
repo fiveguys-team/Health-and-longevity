@@ -146,8 +146,8 @@
 
 <script setup>
 import SwitcherS from '@/components/switcher-s.vue';
-import logoDark from '@/assets/img/svg/logo.svg'
-import logoLight from '@/assets/img/svg/logo-light.svg'
+import logoDark from '@/assets/img/svg/logo.png'
+import logoLight from '@/assets/img/svg/logo.png'
 import post1 from '@/assets/img/blog-details/post-01.jpg'
 import post2 from '@/assets/img/blog-details/post-02.jpg'
 
