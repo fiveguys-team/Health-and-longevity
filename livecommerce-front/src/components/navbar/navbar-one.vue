@@ -39,13 +39,6 @@
                                 <li :class="current === '/shop-v4' ? 'active' : ''"><router-link to="/shop-v4">업체4</router-link></li>
                             </ul>
                         </li>
-                      <li class="relative">
-                        <router-link to="#">대시보드<span></span></router-link>
-                        <ul class="sub-menu lg:absolute z-50 lg:top-full lg:left-0 lg:min-w-[220px] lg:invisible lg:transition-all lg:bg-white lg:dark:bg-title lg:py-[15px] lg:pr-[30px]">
-                          <li :class="current === '/shop-v1' ? 'active' : ''"><router-link to="/admin-dashboard">관리자</router-link></li>
-                          <li :class="current === '/shop-v2' ? 'active' : ''"><router-link to="/store-dashboard">입점업체</router-link></li>
-                        </ul>
-                      </li>
                         <li :class="current === '/contact' ? 'active' : ''"><router-link to="/contact">입점신청</router-link></li>
                         <li :class="current === '/login' ? 'active' : ''" class="lg:hidden"><router-link to="/login">로그인</router-link></li>
                     </ul>
