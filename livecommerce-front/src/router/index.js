@@ -30,6 +30,12 @@ import CheckoutPage from '@/views/shop/checkout-page.vue'
 import ContactPage from '@/views/inner-pages/contact-page.vue'
 import ProductCategory from '@/views/shop/product-category.vue'
 
+// 대시보드 views
+import adminDashboard from '@/views/dashboard/adminDashboard.vue'
+import storeDashboard from '@/views/dashboard/storeDashboard.vue'
+
+
+
 // modules/도메인/views/ 하위 test용 view
 import LiveTest from '@/modules/live/views/LiveTest.vue'
 import AuthTest from '@/modules/auth/views/AuthTest.vue'
@@ -72,6 +78,13 @@ const routes = [
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
+
+  {path: '/admin-dashboard', component: adminDashboard},
+  {path: '/store-dashboard', component: storeDashboard},
+
+
+
+
   
   // modules/도메인/views/ 하위 test용 view
   {path: '/live-test',component: LiveTest},
