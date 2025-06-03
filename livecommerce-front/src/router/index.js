@@ -21,7 +21,7 @@ import PaymentMethod from '@/views/shop/payment-method.vue'
 import InvoicePage from '@/views/shop/invoice-page.vue'
 import ShopV1 from '@/views/shop/shop-v1.vue'
 import ProductDetails from '@/views/shop/product-details.vue'
-import ShopCart from '@/views/shop/shop-cart.vue'
+// import ShopCart from '@/views/shop/shop-cart.vue'
 import CheckoutPage from '@/views/shop/checkout-page.vue'
 import ContactPage from '@/views/inner-pages/contact-page.vue'
 import ProductCategory from '@/views/shop/product-category.vue'
@@ -72,7 +72,7 @@ const routes = [
   {path: '/shop-v1',component:ShopV1},
   {path: '/product-details',component:ProductDetails},
   {path: '/product-details/:id',component:ProductDetails},
-  {path: '/cart',component:ShopCart},
+  // {path: '/cart',component:ShopCart},
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
