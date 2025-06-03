@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "aos": "^2.3.4",
     "core-js": "^3.8.3",
     "jquery": "^3.7.1",

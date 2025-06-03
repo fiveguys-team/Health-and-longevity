@@ -121,7 +121,7 @@
     import bg from '@/assets/img/shortcode/breadcumb.jpg'
     import bg2 from '@/assets/img/about/video-bg.jpg'
     import like from '@/assets/img/svg/like.svg'
-    import hand from '@/assets/img/svg/hand.svg'
+    import hand from '@/assets/img/svg/hand.png'
     import banner1 from '@/assets/img/about/about-banner-01.jpg'
     import banner2 from '@/assets/img/about/about-banner-02.jpg'
     import banner3 from '@/assets/img/about/about-banner-03.jpg'

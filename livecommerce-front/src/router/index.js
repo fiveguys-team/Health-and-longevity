@@ -10,7 +10,6 @@ import ErrorPage from '@/views/special/error-page.vue'
 import MyProfile from '@/views/profile/my-profile.vue'
 import MyAccount from '@/views/profile/my-account.vue'
 import EditAccount from '@/views/profile/edit-account.vue'
-import OrderHistory from '@/views/profile/order-history.vue'
 import WishlistPage from '@/views/profile/wishlist-page.vue'
 import LoginPage from '@/views/auth/login-page.vue'
 import RegisterPage from '@/views/auth/register-page.vue'
@@ -20,9 +19,6 @@ import ThankYou from '@/views/special/thank-you.vue'
 import ShippingMethod from '@/views/shop/shipping-method.vue'
 import PaymentMethod from '@/views/shop/payment-method.vue'
 import InvoicePage from '@/views/shop/invoice-page.vue'
-import PaymentConfirmation from '@/views/shop/payment-confirmation.vue'
-import PaymentSuccess from '@/views/shop/payment-success.vue'
-import PaymentFailure from '@/views/shop/payment-failure.vue'
 import ShopV1 from '@/views/shop/shop-v1.vue'
 import ProductDetails from '@/views/shop/product-details.vue'
 import ShopCart from '@/views/shop/shop-cart.vue'
@@ -40,11 +36,17 @@ import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 import LiveTest from '@/modules/live/views/LiveTest.vue'
 import AuthTest from '@/modules/auth/views/AuthTest.vue'
 import ChatTest from '@/modules/chat/views/ChatTest.vue'
-import OrderTest from '@/modules/order/views/OrderTest.vue'
-import PaymentTest from '@/modules/payment/views/PaymentTest.vue'
 import ProductTest from '@/modules/product/views/ProductTest.vue'
 import ReviewTest from '@/modules/review/views/ReviewTest.vue'
 import UserTest from '@/modules/user/views/UserTest.vue'
+import OrderView from '@/modules/order/views/OrderView.vue'
+import OrderConfirmationView from "@/modules/order/views/OrderConfirmationView.vue";
+import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue";
+import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue";
+import CartView from "@/modules/order/views/CartView.vue";
+import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue";
+import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue";
+import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue";
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -58,7 +60,6 @@ const routes = [
   {path: '/my-profile',component: MyProfile},
   {path: '/my-account',component: MyAccount},
   {path: '/edit-account',component: EditAccount},
-  {path: '/order-history',component: OrderHistory},
   {path: '/wishlist',component: WishlistPage},
   {path: '/login',component:LoginPage},
   {path: '/register',component:RegisterPage},
@@ -68,9 +69,6 @@ const routes = [
   {path: '/shipping-method',component:ShippingMethod},
   {path: '/payment-method',component:PaymentMethod},
   {path: '/invoice',component:InvoicePage},
-  {path: '/payment-confirmation',component:PaymentConfirmation},
-  {path: '/payment-success',component:PaymentSuccess},
-  {path: '/payment-failure',component:PaymentFailure},
   {path: '/shop-v1',component:ShopV1},
   // {path: '/product-details',component:ProductDetails},
 
@@ -98,11 +96,32 @@ const routes = [
   {path: '/live-test',component: LiveTest},
   {path: '/auth-test',component: AuthTest},
   {path: '/chat-test',component: ChatTest},
-  {path: '/order-test',component: OrderTest},
-  {path: '/payment-test',component: PaymentTest},
+  {path: '/order',component: OrderView},
+  {path: '/order-confirmation',component: OrderConfirmationView},
+  {path: '/order-history',component: OrderHistoryView},
+  {path: '/partner/order-history',component: PartnerOrderHistoryView},
+  {path: '/partner/return-request',component: PartnerReturnRequestView},
+  {path: '/cart',component: CartView},
+  {path: '/payment-success',component: PaymentSuccessView},
+  {path: '/payment-failure',component: PaymentFailureView},
+  {path: '/product-test',component: ProductTest},
   {path: '/product-test',component: ProductTest},
   {path: '/review-test',component: ReviewTest},
-  {path: '/user-test',component: UserTest}
+  {path: '/user-test',component: UserTest},
+
+  // 관리자 대시보드 라우트
+  {
+    path: '/admin',
+    component: () => import('@/views/dashboard/adminDashboard.vue'),
+    meta: { requiresAuth: true, adminOnly: true },
+    children: [
+      {
+        path: 'chat/reports',
+        name: 'ChatReportLog',
+        component: () => import('@/modules/chat/components/ChatReportLog.vue')
+      }
+    ]
+  }
 ]
 
 const router = createRouter({

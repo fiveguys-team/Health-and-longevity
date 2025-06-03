@@ -44,32 +44,54 @@
                         </ul>
                     </div>
                     <div>
-                        <h4 class="leading-none mb-5 md:mb-6 text-xl">Shop</h4>
+                        <h4 class="leading-none mb-5 md:mb-6 text-xl">쇼핑하기</h4>
                         <ul class="text-title dark:text-white leading-none flex flex-col gap-4">
-                            <li v-for="(item, index) in footerLink3" :key="index" class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" :to="item.link">{{item.name}}</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/category/vitamin">비타민</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/category/mineral">미네랄</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/category/protein">단백질</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/category/omega">오메가</router-link></li>
                         </ul>
                     </div>
                     <div>
-                        <h4 class="leading-none mb-5 md:mb-6 text-xl">Customer Service</h4>
+                        <h4 class="leading-none mb-5 md:mb-6 text-xl">고객센터</h4>
                         <ul class="text-title dark:text-white leading-none flex flex-col gap-4">
-                            <li v-for="(item, index) in footerLink4" :key="index" class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" :to="item.link">{{item.name}}</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/notice">공지사항</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/faq">자주묻는질문</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/qna">1:1문의</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/review">상품후기</router-link></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="leading-none mb-5 md:mb-6 text-xl">회사소개</h4>
+                        <ul class="text-title dark:text-white leading-none flex flex-col gap-4">
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/about">회사소개</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/terms">이용약관</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/privacy">개인정보처리방침</router-link></li>
+                            <li class="duration-100 hover:text-primary inline-block group"><router-link class="text-underline-primary" to="/partners">제휴문의</router-link></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="leading-none mb-5 md:mb-6 text-xl">고객상담</h4>
+                        <ul class="text-title dark:text-white leading-none flex flex-col gap-4">
+                            <li class="duration-100 text-xl font-bold">1544-0000</li>
+                            <li class="duration-100">평일 09:00 - 18:00</li>
+                            <li class="duration-100">점심 12:00 - 13:00</li>
+                            <li class="duration-100">주말/공휴일 휴무</li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <p class="text-title dark:text-white pb-5 2xl:pb-0 mt-12 2xl:mt-6 text-center 2xl:text-left">© {{year}} Furnixar Develop with <i class="fa-solid fa-heart text-red-600"></i> by <a href="https://shreethemes.in/" target="_blank" className='ms-1'>Shreethemes</a></p>
+            <p class="text-title dark:text-white pb-5 2xl:pb-0 mt-12 2xl:mt-6 text-center 2xl:text-left">© {{year}} 무병장수 주식회사 | 사업자등록번호: 000-00-00000 | 대표: 홍길동</p>
         </div>
     </div>
 </template>
 
 <script setup>
-import logoDark from '@/assets/img/svg/logo.svg'
-import logoLight from '@/assets/img/svg/logo-light.svg'
-import { footerLink1,footerLink2, footerLink3,footerLink4 } from '@/data/nav-data';
+import logoDark from '@/assets/img/svg/logo.png'
+import logoLight from '@/assets/img/svg/logo.png'
 import { ref } from 'vue';
 
 const year = ref(new Date().getFullYear());
-
 </script>
 
 <style lang="scss" scoped>
