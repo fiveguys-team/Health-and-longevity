@@ -26,8 +26,18 @@ import ContactPage from '@/views/inner-pages/contact-page.vue'
 import ProductCategory from '@/views/shop/product-category.vue'
 
 // 대시보드 views
-import adminDashboard from "@/views/dashboard/adminDashboard.vue"
-import storeDashboard from "@/views/dashboard/storeDashboard.vue"
+import adminDashboard from '@/views/dashboard/adminDashboard.vue'
+import storeDashboard from '@/views/dashboard/storeDashboard.vue'
+
+
+// modules/product/views - 입점업체
+import ProductRegister from '@/modules/product/views/ProductRegister.vue'
+import ProductStatus from '@/modules/product/views/ProductStatus.vue'
+import ProductReview from '@/modules/product/views/ProductReview.vue'
+
+// modules/product/views - 관리자
+import AdminProductList from '@/modules/product/views/AdminProductList.vue'
+import AdminProductDetail from '@/modules/product/views/AdminProductDetail.vue'
 
 // modules/도메인/views/ 하위 test용 view
 import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
@@ -49,6 +59,21 @@ import CartView from "@/modules/order/views/CartView.vue";
 import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue";
 import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue";
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue";
+import LiveTest from "@/modules/live/views/LiveTest.vue"
+import AuthTest from "@/modules/auth/views/AuthTest.vue"
+import ChatTest from "@/modules/chat/views/ChatTest.vue"
+import ProductTest from "@/modules/product/views/ProductTest.vue"
+import ReviewTest from "@/modules/review/views/ReviewTest.vue"
+import UserTest from "@/modules/user/views/UserTest.vue"
+import OrderView from "@/modules/order/views/OrderView.vue"
+import OrderConfirmationView from "@/modules/order/views/OrderConfirmationView.vue"
+import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue"
+import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue"
+import CartView from "@/modules/order/views/CartView.vue"
+import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
+import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
+import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
+import ShopCart from "@/views/shop/shop-cart.vue";
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -72,7 +97,9 @@ const routes = [
   {path: '/payment-method',component:PaymentMethod},
   {path: '/invoice',component:InvoicePage},
   {path: '/shop-v1',component:ShopV1},
-  {path: '/product-details',component:ProductDetails},
+
+
+  {path: '/cart',component:ShopCart},
   {path: '/product-details/:id',component:ProductDetails},
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
@@ -80,6 +107,25 @@ const routes = [
 
   { path: "/admin-dashboard", component: adminDashboard },
   { path: "/store-dashboard", component: storeDashboard },
+
+   // 상품, 리뷰 view
+  { path: '/products', component: ProductCategory },
+  { path: '/product-details/:id', component: ProductDetails },
+  {
+    path: '/shop/:category',
+    name: 'ShopCategory',
+    component: ProductCategory
+  },
+   //입점업체
+  { path: '/partner/product/register', component: ProductRegister },
+  { path: '/partner/product/status', component: ProductStatus },
+  { path: '/partner/product/review', component: ProductReview },
+
+
+
+
+
+
 
   // modules/도메인/views/ 하위 test용 view
   {path: '/live-streaming',component: LiveStreaming},
@@ -115,9 +161,20 @@ const routes = [
         name: "ChatReportLog",
         component: () => import("@/modules/chat/components/ChatReportLog.vue"),
       },
+      {
+        path: 'chat/reports',
+        name: 'ChatReportLog',
+        component: () => import('@/modules/chat/components/ChatReportLog.vue')
+      },
+      { path: 'products', component: AdminProductList }, //
+      { path: 'product/detail/:id', component: AdminProductDetail }
     ],
   },
 ];
+
+
+
+
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

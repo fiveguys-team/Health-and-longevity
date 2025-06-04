@@ -3,10 +3,8 @@
         <div class="max-w-[985px] mx-auto">
             <div class="product-dtls-navtab  border-y border-bdr-clr dark:border-bdr-clr-drk">
                 <ul id="user-nav-tabs" class=" text-title dark:text-white text-base sm:text-lg lg:text-xl flex leading-none gap-3 sm:gap-6 md:gap-12 lg:gap-24 justify-between sm:justify-start max-w-md sm:max-w-full">
-                    <li @click="activeTab = 1" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0" :class="activeTab === 1 ? 'active' : ''"><router-link to="#" class="duration-300 hover:text-primary">Description</router-link></li>
-                    <li @click="activeTab = 2" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0" :class="activeTab === 2? 'active' : ''"><router-link to="#" class="duration-300 hover:text-primary">Vendor Info</router-link></li>
-                    <li @click="activeTab = 3" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0" :class="activeTab === 3 ? 'active' : ''"><router-link to="#" class="duration-300 hover:text-primary">Review</router-link></li>
-                    <li @click="activeTab = 4" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0" :class="activeTab === 4 ? 'active' : ''"><router-link to="#" class="duration-300 hover:text-primary">Shipping</router-link></li>
+                    <li @click="activeTab = 1" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0" :class="activeTab === 1 ? 'active' : ''"><router-link to="#" class="duration-300 hover:text-primary">상품 정보</router-link></li>
+                    <li @click="activeTab = 2" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0" :class="activeTab === 2 ? 'active' : ''"><router-link to="#" class="duration-300 hover:text-primary">리뷰</router-link></li>
                 </ul>
             </div>
             <div id="content" class="mt-5 sm:mt-8 lg:mt-12 mx-0 sm:mr-5 md:mr-8 lg:mr-12">
@@ -19,21 +17,8 @@
                         <li>Color : Wooden , Whtie , Blue , Orange</li>
                     </ul>
                 </div>
+
                 <div v-if="activeTab === 2">
-                    <div class="max-w-[680px] flex items-start justify-between gap-y-8 gap-x-10 flex-wrap">
-                        <div v-for="(item, index) in venderInfo" :key="index">
-                            <span class="text-primary sm:text-lg leading-none block">Shop Name</span>
-                            <h4 class="font-medium mt-2 sm:mt-3 text-xl sm:text-2xl leading-none">{{item.name}}</h4>
-                            <ul class="mt-4 sm:mt-6 grid gap-3 sm:text-lg">
-                                <li>Vendor : {{item.vendor}}</li>
-                                <li>Shop : {{item.shop}}</li>
-                                <li>Mail : {{item.mail}}</li>
-                                <li>Call : {{item.call}}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div v-if="activeTab === 3">
                     <div class="max-w-[905px] flex items-start xl:justify-between gap-8 flex-wrap">
                         <div v-for="(item, index) in detailReview" :key="index" class="sm:max-w-[260px] w-full">
                             <svg class="fill-current text-[#E8E9EA] dark:text-white-light" width="60" height="51" viewBox="0 0 60 51" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -52,12 +37,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="activeTab === 4">
-                    <div v-for="(item, index) in shippingAbout" :key="index" class="first:mt-0 mt-4">
-                        <h4 class="text-xl sm:text-2xl leading-none font-medium">{{item.title}}</h4>
-                        <p class="sm:text-lg mt-3">{{item.desc}}</p>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -65,7 +45,7 @@
 
 <script setup>
     import { ref } from 'vue';
-    import { detailReview, shippingAbout, venderInfo } from '@/data/data';
+    import { detailReview } from '@/data/data';
 
     const activeTab = ref(1)
 
