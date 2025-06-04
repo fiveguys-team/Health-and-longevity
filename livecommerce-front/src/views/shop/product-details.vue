@@ -140,7 +140,7 @@
                                             <input class="appearance-none hidden" type="radio" name="color" checked>
                                             <span class="border border-[#61646E] flex rounded-full border-opacity-0 duration-300 p-1">
                                                 <span class="w-4 h-4 rounded-full bg-[#61646E] flex"></span>
-                                            </span>
+                                          +  </span>
                                         </label>
                                         <label class="product-color">
                                             <input class="appearance-none hidden" type="radio" name="color">

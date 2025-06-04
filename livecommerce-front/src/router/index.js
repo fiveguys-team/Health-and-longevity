@@ -46,20 +46,7 @@ import LiveRegister from "@/modules/live/views/LiveRegister.vue"
 import StoreLiveStreaming from "@/modules/live/views/StoreLiveStreaming.vue";
 import LiveReport from "@/modules/live/views/LiveReport.vue";
 
-import AuthTest from '@/modules/auth/views/AuthTest.vue'
-import ChatTest from '@/modules/chat/views/ChatTest.vue'
-import ProductTest from '@/modules/product/views/ProductTest.vue'
-import ReviewTest from '@/modules/review/views/ReviewTest.vue'
-import UserTest from '@/modules/user/views/UserTest.vue'
-import OrderView from '@/modules/order/views/OrderView.vue'
-import OrderConfirmationView from "@/modules/order/views/OrderConfirmationView.vue";
-import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue";
-import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue";
-import CartView from "@/modules/order/views/CartView.vue";
-import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue";
-import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue";
-import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue";
-import LiveTest from "@/modules/live/views/LiveTest.vue"
+
 import AuthTest from "@/modules/auth/views/AuthTest.vue"
 import ChatTest from "@/modules/chat/views/ChatTest.vue"
 import ProductTest from "@/modules/product/views/ProductTest.vue"
@@ -111,11 +98,9 @@ const routes = [
    // 상품, 리뷰 view
   { path: '/products', component: ProductCategory },
   { path: '/product-details/:id', component: ProductDetails },
-  {
-    path: '/shop/:category',
-    name: 'ShopCategory',
-    component: ProductCategory
-  },
+  {path: '/shop/:category', component: ProductCategory},
+  { path: '/product/:category', component: ProductCategory },
+
    //입점업체
   { path: '/partner/product/register', component: ProductRegister },
   { path: '/partner/product/status', component: ProductStatus },
