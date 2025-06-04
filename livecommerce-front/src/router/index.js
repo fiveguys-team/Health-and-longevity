@@ -26,8 +26,6 @@ import ContactPage from '@/views/inner-pages/contact-page.vue'
 import ProductCategory from '@/views/shop/product-category.vue'
 
 // 대시보드 views
-import adminDashboard from "@/views/dashboard/adminDashboard.vue"
-import storeDashboard from "@/views/dashboard/storeDashboard.vue"
 import adminDashboard from '@/views/dashboard/adminDashboard.vue'
 import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 
@@ -56,6 +54,7 @@ import CartView from "@/modules/order/views/CartView.vue"
 import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
 import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
+import ShopCart from "@/views/shop/shop-cart.vue";
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -82,7 +81,6 @@ const routes = [
 
 
   {path: '/cart',component:ShopCart},
-  {path: '/product-details',component:ProductDetails},
   {path: '/product-details/:id',component:ProductDetails},
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
