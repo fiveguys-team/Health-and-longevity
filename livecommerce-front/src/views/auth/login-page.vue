@@ -26,12 +26,18 @@
                                     <path d="M3.05203 7.04122C2.87283 7.04122 2.69433 6.97322 2.5562 6.83864L0.532492 4.8553C0.253409 4.58189 0.249159 4.13351 0.522576 3.85372C0.796701 3.57393 1.24578 3.57039 1.52416 3.84309L3.05203 5.34122L7.61512 0.868804C7.89491 0.595387 8.34328 0.59822 8.6167 0.87872C8.89082 1.1578 8.88657 1.60689 8.60749 1.8803L3.54787 6.83864C3.40974 6.97322 3.23124 7.04122 3.05203 7.04122Z"/>
                                 </svg>
                             </span>
-                            <span class="text-base sm:text-lg text-title dark:text-white leading-none sm:leading-none select-none inline-block transform translate-y-[3px]">Remember Me</span> 
+                            <span class="text-base sm:text-lg text-title dark:text-white leading-none sm:leading-none select-none inline-block transform translate-y-[3px]">Remember Me</span>
                         </label>
                     </div>
                     <div data-aos="fade-up" data-aos-delay="500">
                         <router-link to="#" class="btn btn-theme-solid mt-[15px]" data-text="Login"><span>Login</span></router-link>
                     </div>
+                  <div class="mt-5">
+                    <button @click="loginWithKakao" class="mt-3">
+                      <img src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg" width="222" alt="카카오 로그인 버튼" />
+                    </button>
+                  </div>
+                  <div id="naver_id_login"></div>
                     <p class="text-lg mt-[15px]" data-aos="fade-up" data-aos-delay="600">Don't have an account yet? <router-link to="/register" class="text-primary font-medium ml-1 inline-block">Register</router-link></p>
                 </div>
             </div>
@@ -48,10 +54,66 @@
     import loginImg from '@/assets/img/bg/login.jpg'
     import { onMounted } from 'vue';
     import Aos from 'aos';
-import FooterOne from '@/components/footer/footer-one.vue';
-import ScrollToTop from '@/components/scroll-to-top.vue';
+    import FooterOne from '@/components/footer/footer-one.vue';
+    import ScrollToTop from '@/components/scroll-to-top.vue';
+
+    const JAVASCRIPT_KEY = "2b83ced7583d0f987371aa7adc03bcb3"
+    const REDIRECT_URI = "http://localhost:8080/login"
 
     onMounted(()=>{
         Aos.init()
+        if (window.Kakao && !window.Kakao.isInitialized()) {
+          window.Kakao.init(JAVASCRIPT_KEY)
+        }
+
+        displayToken()
+
+      initNaverLogin()
     })
+
+    function loginWithKakao() {
+      window.Kakao.Auth.authorize({
+        redirectUri: REDIRECT_URI,
+      })
+    }
+
+    function displayToken() {
+      const token = getCookie('authorize-access-token')
+      if (token) {
+        window.Kakao.Auth.setAccessToken(token)
+        window.Kakao.Auth.getStatusInfo()
+            .then(res => {
+              if (res.status === 'connected') {
+                console.log('Login Success, Token:', window.Kakao.Auth.getAccessToken())
+              }
+            })
+            .catch(() => {
+              window.Kakao.Auth.setAccessToken(null)
+            })
+      }
+    }
+
+    function getCookie(name) {
+      const parts = document.cookie.split(name + '=')
+      if (parts.length === 2) return parts[1].split(';')[0]
+    }
+
+    const NAVER_CLIENT_ID = 'WKu77Q8R0g2sTXQC4NKh'
+    const NAVER_CALLBACK_URL = 'http://localhost:8080/login'
+
+    function initNaverLogin() {
+      const naverScriptCheck = !!window.naver_id_login
+      if (!naverScriptCheck) {
+        console.error('Naver Login SDK not loaded')
+        return
+      }
+
+      const naverLogin = new window.naver_id_login(NAVER_CLIENT_ID, NAVER_CALLBACK_URL)
+      const state = naverLogin.getUniqState()
+
+      naverLogin.setButton('white', 2, 40)
+      naverLogin.setDomain("http://localhost:8080")
+      naverLogin.setState(state)
+      naverLogin.init_naver_id_login()
+    }
 </script>
