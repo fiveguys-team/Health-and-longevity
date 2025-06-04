@@ -31,8 +31,8 @@
                     </div>
 
                     <div class="lg:max-w-[522px] w-full sm:text-center -order-1 lg:order-none">
-                        <img class="sm:mx-auto w-[150px] sm:w-auto" :src="logo" alt="logo">
-                        <p class="mt-4 text-white-light max-w-[522px] sm:mx-auto">Furnixar is a modern furniture template for an eCommerce website designed to help you create an impressive online store for your furniture or home decor business. </p>
+                        <img class="sm:mx-auto w-[150px] sm:w-auto" :src="logo" alt="무병장수 로고">
+                        <p class="mt-4 text-white-light max-w-[522px] sm:mx-auto">무병장수는 건강한 삶을 위한 프리미엄 건강기능식품을 제공합니다. 엄선된 원료와 철저한 품질관리를 통해 여러분의 건강한 삶을 지원합니다.</p>
                         <div class="flex items-center sm:justify-center gap-4 mt-6">
                             <router-link to="#" class="w-10 h-10 rounded-full border border-white border-opacity-50 flex items-center justify-center group hover:border-primary duration-300" aria-label="Facebook">
                                 <svg class="fill-current text-white group-hover:text-primary duration-300 " width="9" height="17" viewBox="0 0 9 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -78,7 +78,7 @@
                 </div>
 
                 <div class="max-w-[1722px] mx-auto border-t border-white border-opacity-10 py-5 md:py-7 text-center">
-                    <p class="text-white">© {{year}} Furnixar Develop with <i class="fa-solid fa-heart text-red-600"></i> by <a href="https://shreethemes.in/" target="_blank" className='ms-1'>Shreethemes</a></p>
+                    <p class="text-white">© {{year}} 무병장수 | 건강한 삶을 위한 현명한 선택</p>
                 </div>
             </div>
         </div>
