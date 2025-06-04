@@ -40,6 +40,25 @@ import AdminProductList from '@/modules/product/views/AdminProductList.vue'
 import AdminProductDetail from '@/modules/product/views/AdminProductDetail.vue'
 
 // modules/도메인/views/ 하위 test용 view
+import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
+import LiveChart from "@/modules/live/views/LiveChart.vue"
+import LiveRegister from "@/modules/live/views/LiveRegister.vue"
+import StoreLiveStreaming from "@/modules/live/views/StoreLiveStreaming.vue";
+import LiveReport from "@/modules/live/views/LiveReport.vue";
+
+import AuthTest from '@/modules/auth/views/AuthTest.vue'
+import ChatTest from '@/modules/chat/views/ChatTest.vue'
+import ProductTest from '@/modules/product/views/ProductTest.vue'
+import ReviewTest from '@/modules/review/views/ReviewTest.vue'
+import UserTest from '@/modules/user/views/UserTest.vue'
+import OrderView from '@/modules/order/views/OrderView.vue'
+import OrderConfirmationView from "@/modules/order/views/OrderConfirmationView.vue";
+import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue";
+import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue";
+import CartView from "@/modules/order/views/CartView.vue";
+import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue";
+import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue";
+import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue";
 import LiveTest from "@/modules/live/views/LiveTest.vue"
 import AuthTest from "@/modules/auth/views/AuthTest.vue"
 import ChatTest from "@/modules/chat/views/ChatTest.vue"
@@ -109,20 +128,27 @@ const routes = [
 
 
   // modules/도메인/views/ 하위 test용 view
-  { path: "/live-test", component: LiveTest },
-  { path: "/auth-test", component: AuthTest },
-  { path: "/chat-test", component: ChatTest },
-  { path: "/order", component: OrderView },
-  { path: "/order-confirmation", component: OrderConfirmationView },
-  { path: "/order-history", component: OrderHistoryView },
-  { path: "/partner/order-history", component: PartnerOrderHistoryView },
-  { path: "/partner/return-request", component: PartnerReturnRequestView },
-  { path: "/cart", component: CartView },
-  { path: "/payment-success", component: PaymentSuccessView },
-  { path: "/payment-failure", component: PaymentFailureView },
-  { path: "/product-test", component: ProductTest },
-  { path: "/review-test", component: ReviewTest },
-  { path: "/user-test", component: UserTest },
+  {path: '/live-streaming',component: LiveStreaming},
+  {path: '/live-chart', component: LiveChart},
+  {path: '/live-register', component: LiveRegister},
+  {path: '/live-report', component: LiveReport},
+  {path: '/store-live-streaming', component: StoreLiveStreaming},
+
+
+  {path: '/auth-test',component: AuthTest},
+  {path: '/chat-test',component: ChatTest},
+  {path: '/order',component: OrderView},
+  {path: '/order-confirmation',component: OrderConfirmationView},
+  {path: '/order-history',component: OrderHistoryView},
+  {path: '/partner/order-history',component: PartnerOrderHistoryView},
+  {path: '/partner/return-request',component: PartnerReturnRequestView},
+  {path: '/cart',component: CartView},
+  {path: '/payment-success',component: PaymentSuccessView},
+  {path: '/payment-failure',component: PaymentFailureView},
+  {path: '/product-test',component: ProductTest},
+  {path: '/product-test',component: ProductTest},
+  {path: '/review-test',component: ReviewTest},
+  {path: '/user-test',component: UserTest},
 
   // 관리자 대시보드 라우트입니다.
   {

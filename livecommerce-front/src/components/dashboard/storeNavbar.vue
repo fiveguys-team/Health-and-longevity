@@ -21,9 +21,9 @@
         <li class="relative" :class="['/','/index-v2','/index-v3'].includes(current) ? 'active' : ''">
           <router-link to="#">라이브<span></span></router-link>
           <ul class="sub-menu">
-            <li :class="current === '/' ? 'active' : ''"><router-link to="/@" class="menu-item">등록</router-link></li>
-            <li :class="current === '/index-v2' ? 'active' : ''"><router-link to="/@1" class="menu-item">방송 진행</router-link></li>
-            <li :class="current === '/index-v3' ? 'active' : ''"><router-link to="/@2" class="menu-item">레포트</router-link></li>
+            <li :class="current === '/' ? 'active' : ''"><router-link to="/live-register" class="menu-item">등록</router-link></li>
+            <li :class="current === '/index-v2' ? 'active' : ''"><router-link to="/store-live-streaming" class="menu-item">방송 진행</router-link></li>
+            <li :class="current === '/index-v3' ? 'active' : ''"><router-link to="/live-report" class="menu-item">레포트</router-link></li>
           </ul>
         </li>
         <!-- 상품/리뷰 메뉴판 -->
