@@ -18124,3 +18124,26 @@ body.quick-view-popup-overlay::before{
   align-items: center;
 }
 
+.star-icon {
+  font-size: 14px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.star-wrapper {
+  position: relative;
+  width: 14px;
+  height: 14px;
+}
+
+.star-fill {
+  color: #EE9818;
+  clip-path: inset(0 var(--percent, 100%) 0 0);
+}
+
+.star-empty {
+  color: #ccc;
+}
