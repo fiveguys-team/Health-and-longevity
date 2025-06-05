@@ -23,10 +23,10 @@
               class="bg-[#FAFAFA] dark:bg-dark-secondary p-[30px] md:p-[40px] lg:p-[50px] border border-[#17243026] border-opacity-15 rounded-xl"
               data-aos="fade-up">
 
-            <p class="mb-5 w-full bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300 whitespace-normal">
-              쿠폰 코드가 있으신가요?
-              <button @click="open = !open" class="ml-1 add-coupon-code underline text-[#209A60]">추가하려면 클릭하세요</button>
-            </p>
+<!--            <p class="mb-5 w-full bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300 whitespace-normal">-->
+<!--              쿠폰 코드가 있으신가요?-->
+<!--              <button @click="open = !open" class="ml-1 add-coupon-code underline text-[#209A60]">추가하려면 클릭하세요</button>-->
+<!--            </p>-->
 
             <div v-if="open" class="coupon-wrapper gap-3 md:flex mb-[30px]">
               <input
@@ -40,23 +40,23 @@
             </div>
 
             <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-[30px]">
-              청구 정보
+              배송지 정보
             </h4>
             <div class="grid gap-5 md:gap-6">
               <div>
-                <label
-                    class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">이름</label>
+                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">이름</label>
                 <input
+                    v-model="form.name"
                     class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                     type="text"
-                    placeholder="이름을 입력하세요"
-                />
+                    placeholder="이름을 입력하세요"/>
               </div>
 
               <div>
                 <label
                     class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">이메일</label>
                 <input
+                    v-model="form.email"
                     class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                     type="text"
                     placeholder="이메일 주소를 입력하세요"
@@ -67,6 +67,7 @@
                 <label
                     class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">전화번호</label>
                 <input
+                    v-model="form.phone"
                     class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                     type="number"
                     placeholder="전화번호를 입력하세요"
@@ -74,57 +75,71 @@
               </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-5 md:gap-6">
-              <div class="mt-5">
-                <label
-                    class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">도/시</label>
-                <select class="nice-select select-active p-4 !bg-white dark:!bg-dark-secondary">
-                  <option value="1">Sylht</option>
-                  <option value="2">Dhaka</option>
-                  <option value="2">Chittagong</option>
-                  <option value="2">Rajshahi</option>
-                  <option value="2">Bogura</option>
-                </select>
-              </div>
-
-              <div class="mt-5">
+<!--            -->
+            <!-- ── 우편번호 / 기본주소 / 상세주소 ── -->
+            <div class="grid gap-5 md:gap-6 mt-5">
+              <!-- 우편번호 검색 버튼 + 결과 표시 -->
+              <div>
                 <label
                     class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">우편번호</label>
+                <div class="flex">
+                  <input
+                      v-model="postalCode"
+                      readonly
+                      class="flex-1 h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
+                      placeholder="우편번호를 선택하세요"
+                  />
+                  <button @click="openPostcode" class="ml-2 bg-primary text-white px-4 md:px-6 rounded-md">
+                    우편번호 찾기
+                  </button>
+                </div>
+              </div>
+
+              <!-- 기본주소 표시 (readonly) -->
+              <div>
+                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">기본주소</label>
                 <input
+                    v-model="basicAddress"
+                    readonly
                     class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
-                    type="text"
-                    placeholder="우편번호를 입력하세요"
+                    placeholder="기본주소가 여기에 표시됩니다"
                 />
               </div>
 
+              <!-- 상세주소 직접 입력 -->
               <div>
-                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">주소
-                  1</label>
+                <label
+                    class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block"
+                >상세주소</label
+                >
                 <input
+                    id="detail-address-input"
+                    v-model="form.detailAddress"
                     class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                     type="text"
-                    placeholder="주소를 입력하세요"
-                />
-              </div>
-
-              <div>
-                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">주소
-                  2</label>
-                <input
-                    class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
-                    type="text"
-                    placeholder="주소를 입력하세요"
+                    placeholder="상세주소를 입력하세요 (예: 아파트, 동/호수 등)"
                 />
               </div>
             </div>
+
             <div class="mt-5">
-              <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">추가
-                메모</label>
+              <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">배송 요청사항</label>
               <textarea
                   class="w-full h-[120px] bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                   name="Message"
                   placeholder="메시지를 입력하세요"
               ></textarea>
+            </div>
+            <div class="mt-4 flex items-center">
+              <input
+                  id="default-address-checkbox"
+                  type="checkbox"
+                  v-model="isDefaultAddress"
+                  class="w-4 h-4 text-primary bg-white border border-[#E3E5E6] rounded focus:ring-primary focus:ring-2"
+              />
+              <label for="default-address-checkbox" class="ml-2 text-base text-title dark:text-white">
+                기본배송지로 설정하기
+              </label>
             </div>
           </div>
 
@@ -181,124 +196,46 @@
               <div
                   class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk text-right flex justify-end flex-col w-full ml-auto mr-0">
                 <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium">
-                  <span>소계:</span>
-                  <span>$870</span>
+                  <span>총 주문 금액:</span>
+                  <span>150,000원</span>
                 </div>
                 <div
                     class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <span>쿠폰 할인:</span>
-                  <span>-$20</span>
+                  <span>배송비:</span>
+                  <span>0</span>
                 </div>
                 <div
                     class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <span>부가세:</span>
-                  <span>$5</span>
-                </div>
-              </div>
-              <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
-                <div
-                    class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <div>
-                    <label class="flex items-center gap-[10px] categoryies-iteem">
-                      <input class="appearance-none hidden" type="radio" name="item-type">
-                      <span
-                          class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
-                            <svg class="duration-300 opacity-0" width="8" height="8" viewBox="0 0 10 10" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                              <rect width="10" height="10" rx="5" fill="#BB976D"/>
-                            </svg>
-                          </span>
-                      <span
-                          class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none">무료 배송:</span>
-                    </label>
-                  </div>
-                  <span>$0</span>
-                </div>
-                <div
-                    class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <div>
-                    <label class="flex items-center gap-[10px] categoryies-iteem">
-                      <input class="appearance-none hidden" type="radio" name="item-type">
-                      <span
-                          class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
-                            <svg class="duration-300 opacity-0" width="8" height="8" viewBox="0 0 10 10" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                              <rect width="10" height="10" rx="5" fill="#BB976D"/>
-                            </svg>
-                          </span>
-                      <span
-                          class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none">빠른 배송:</span>
-                    </label>
-                  </div>
-                  <span>$10</span>
-                </div>
-                <div
-                    class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <div>
-                    <label class="flex items-center gap-[10px] categoryies-iteem">
-                      <input class="appearance-none hidden" type="radio" name="item-type">
-                      <span
-                          class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
-                            <svg class="duration-300 opacity-0" width="8" height="8" viewBox="0 0 10 10" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                              <rect width="10" height="10" rx="5" fill="#BB976D"/>
-                            </svg>
-                          </span>
-                      <span
-                          class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none">매장 픽업:</span>
-                    </label>
-                  </div>
-                  <span>$15</span>
+                  <span>총 할인 금액:</span>
+                  <span>-20,000원</span>
                 </div>
               </div>
               <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
                 <div class="flex justify-between flex-wrap font-semibold leading-none text-2xl md:text-3xl">
-                  <span>합계:</span>
-                  <span>$850</span>
+                  <span>총 결제 금액:</span>
+                  <span>130,000원</span>
                 </div>
               </div>
             </div>
             <div class="mt-7 md:mt-12">
-              <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-10">결제 방법</h4>
+<!--              <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-10">결제 방법</h4>-->
               <div class="wrapper">
                 <div class="box_section">
                   <!-- 결제 UI -->
                   <div id="payment-method"></div>
-
                   <!-- 이용약관 UI -->
                   <div id="agreement"></div>
-
                 </div>
-
-                <!-- 결제하기 버튼 -->
-                <button
-                    :disabled="!ready"
-                    @click="requestPayment"
-                    class="button"
-                    style="margin-top: 30px"
-                >
-                  결제하기
-                </button>
-              </div>
-
-              <div class="mt-6 sm:mt-8 md:mt-10">
-                <label class="flex items-center gap-2 iam-agree">
-                  <input class="appearance-none hidden" type="checkbox" name="categories">
-                  <span
-                      class="w-6 h-6 rounded-[5px] border-2 border-title dark:border-white flex items-center justify-center duration-300">
-                        <svg class="duration-300 opacity-0 text-title dark:text-white fill-current" width="15"
-                             height="12" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path
-                              d="M18.3819 0.742676L6.10461 11.8998L2.25731 8.06381L0.763672 9.55745L6.20645 15.0002L20 2.32686L18.3819 0.742676Z"/>
-                        </svg>
-                      </span>
-                  <span
-                      class="text-base sm:text-lg text-title dark:text-white leading-none sm:leading-none select-none inline-block transform translate-y-[3px]">모든 약관에 동의합니다</span>
-                </label>
               </div>
               <div class="mt-4 md:mt-6 flex flex-wrap gap-3">
                 <router-link to="#" class="btn btn-outline" data-text="장바구니로 돌아가기"><span>장바구니로 돌아가기</span></router-link>
-                <router-link to="#" class="btn btn-theme-solid" data-text="주문하기"><span>주문하기</span></router-link>
+                <button
+                    :disabled="!ready"
+                    @click="requestPayment"
+                    class="btn btn-theme-solid"
+                    data-text="결제하기">
+                  <span>결제하기</span>
+                </button>
 
               </div>
             </div>
@@ -313,8 +250,8 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-
+import { ref, reactive, watch, onMounted } from "vue";
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import NavbarOne from '@/components/navbar/navbar-one.vue';
 import FooterThree from '@/components/footer/footer-three.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
@@ -326,16 +263,42 @@ import cart1 from "@/assets/img/gallery/cart/cart-01.jpg";
 import cart2 from "@/assets/img/gallery/cart/cart-02.jpg";
 import cart3 from "@/assets/img/gallery/cart/cart-03.jpg";
 
-
-onMounted(() => {
-  Aos.init();
-});
-
-import { ref, reactive } from "vue";
-import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
-
 function generateRandomString() {
   return window.btoa(Math.random().toString()).slice(0, 20);
+}
+
+
+// ─── 1. ‘배송지’ 폼 데이터 (reactive 객체) ───
+const form = reactive({
+  name: "",
+  email: "",
+  phone: "",
+  detailAddress: "",
+  note: "",
+});
+
+const postalCode = ref("");
+const basicAddress = ref("");
+
+// “기본배송지로 설정” 여부
+const isDefaultAddress = ref(false);
+
+function openPostcode() {
+  // window.daum.Postcode 객체가 로드되어 있어야 함
+  new window.daum.Postcode({
+    oncomplete(data) {
+      // data.zonecode: 5자리 우편번호
+      // data.address: 기본주소 (도로명 또는 지번)
+      postalCode.value = data.zonecode;
+      basicAddress.value = data.address;
+
+      // 상세주소 입력칸으로 포커스 이동
+      const detailInput = document.getElementById("detail-address-input");
+      if (detailInput) {
+        detailInput.focus();
+      }
+    }
+  }).open();
 }
 
 // TODO: 개발자센터에서 발급받은 결제 위젯 연동용 Client Key로 변경하세요.
@@ -403,8 +366,8 @@ async function requestPayment() {
     await widgets.value.requestPayment({
       orderId: generateRandomString(),                   // 고유 주문 번호 (서버와 일치해야 함)
       orderName: "토스 티셔츠 외 2건",                     // 결제창에 표시될 상품명
-      successUrl: `${window.location.origin}/widget/success`, // 결제 성공 후 리디렉트 URL
-      failUrl: `${window.location.origin}/fail`,              // 결제 실패 후 리디렉트 URL
+      successUrl: `${window.location.origin}/payment-success`, // 결제 성공 후 리디렉트 URL
+      failUrl: `${window.location.origin}/payment-failure`,              // 결제 실패 후 리디렉트 URL
       customerEmail: "customer123@gmail.com",
       customerName: "김토스",
       // 가상계좌나 퀵이체 휴대폰 자동완성을 위해 필요한 경우 활성화하세요.
@@ -415,11 +378,19 @@ async function requestPayment() {
   }
 }
 
+onMounted(() => {
+  Aos.init();
+});
+
 // 컴포넌트 마운트 시 결제 위젯 초기화 & 렌더링
 onMounted(async () => {
   await fetchPaymentWidgets();
   await renderPaymentWidgets();
 });
 
+watch(isDefaultAddress, (newVal) => {
+  console.log("기본배송지 설정 여부:", newVal);
+  // 실제로는 이 시점에 서버 API 호출 → 폼 데이터(form + newVal) 전송
+});
 
 </script>
