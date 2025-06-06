@@ -34,6 +34,7 @@ import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 import ProductRegister from '@/modules/product/views/ProductRegister.vue'
 import ProductStatus from '@/modules/product/views/ProductStatus.vue'
 import ProductReview from '@/modules/product/views/ProductReview.vue'
+import Vendor from '@/views/shop/vendor-category.vue'
 
 // modules/product/views - 관리자
 import AdminProductList from '@/modules/product/views/AdminProductList.vue'
@@ -105,7 +106,7 @@ const routes = [
   { path: '/partner/product/register', component: ProductRegister },
   { path: '/partner/product/status', component: ProductStatus },
   { path: '/partner/product/review', component: ProductReview },
-
+  { path: '/vendor/:vendorSlug', component: Vendor},
 
 
 

@@ -30,6 +30,19 @@
                       </li>
 
                       <li class="relative">
+                        <router-link to="#">업체별<span></span></router-link>
+                        <ul class="sub-menu lg:absolute z-50 lg:top-full lg:left-0 lg:min-w-[220px] lg:invisible lg:transition-all lg:bg-white lg:dark:bg-title lg:py-[15px] lg:pr-[30px]">
+                          <!-- 업체별 메뉴 수정 -->
+                          <li><router-link :to="`/vendor/jungkwanjang`" class="menu-item">정관장</router-link></li>
+                          <li><router-link :to="`/vendor/supplement-shop`" class="menu-item">서플먼트샵</router-link></li>
+                          <li><router-link :to="`/vendor/healthplus`" class="menu-item">헬스플러스</router-link></li>
+                          <li><router-link :to="`/vendor/jangsarang`" class="menu-item">장사랑몰</router-link></li>
+                          <li><router-link :to="`/vendor/goodhealthstore`" class="menu-item">굿헬스스토어</router-link></li>
+
+                        </ul>
+                      </li>
+
+                      <li class="relative">
                         <router-link to="#">대시보드<span></span></router-link>
                         <ul class="sub-menu lg:absolute z-50 lg:top-full lg:left-0 lg:min-w-[220px] lg:invisible lg:transition-all lg:bg-white lg:dark:bg-title lg:py-[15px] lg:pr-[30px]">
                           <li :class="current === '/shop-v1' ? 'active' : ''"><router-link to="/admin-dashboard">관리자</router-link></li>
