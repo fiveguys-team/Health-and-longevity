@@ -4,9 +4,9 @@ import ct3 from '@/assets/img/home-v1/pdct-cgry-03.jpg'
 
 import shop1 from '@/assets/img/gallery/shop-01/shop-01.jpg'
 import shop2 from '@/assets/img/gallery/shop-01/shop-02.jpg'
-import shop3 from '@/assets/img/gallery/shop-01/shop-03.jpg'
-import shop4 from '@/assets/img/gallery/shop-01/shop-04.jpg'
-import shop5 from '@/assets/img/gallery/shop-01/shop-05.jpg'
+// import shop3 from '@/assets/img/gallery/shop-01/shop-03.jpg'
+// import shop4 from '@/assets/img/gallery/shop-01/shop-04.jpg'
+// import shop5 from '@/assets/img/gallery/shop-01/shop-05.jpg'
 import shop6 from '@/assets/img/gallery/shop-01/shop-06.jpg'
 import shop7 from '@/assets/img/gallery/shop-01/shop-07.jpg'
 import shop8 from '@/assets/img/gallery/shop-01/shop-08.jpg'
@@ -94,6 +94,7 @@ import shop06 from '@/assets/img/gallery/shop-04/shop-06.jpg'
 import shop07 from '@/assets/img/gallery/shop-04/shop-07.jpg'
 import shop08 from '@/assets/img/gallery/shop-04/shop-08.jpg'
 import shop09 from '@/assets/img/gallery/shop-04/shop-09.jpg'
+import testImg from "@/assets/img/product/testimg.jpg";
 
 export const categoryOne = [
     {
@@ -131,40 +132,106 @@ export const categoryOne = [
 
 export const productList = [
     {
-        id:1,
-        image:shop1,
-        tag:'할인',
-        price:'25,000원',
-        name:'모던 화이트 체어'
+        id: 1,
+        name: '홍삼 농축액',
+        image: testImg,
+        price: '20000원',
+        category: 'blood-pressure',
+        vendor: '정관장',
+        vendorSlug: 'jungkwanjang',
+        info: {
+            품목명: '홍삼 농축액',
+            유통기한: '2026-12-31',
+            허가일자: '2020-08-01',
+            섭취방법: '하루 1회 1포 섭취',
+            주된기능성: '면역력 증진',
+            섭취시주의사항: '과다 섭취를 피하십시오',
+            보관방법: '직사광선을 피해 실온 보관',
+            기준규격: '홍삼 사포닌 Rg1+Rb1=10mg',
+            원재료: '6년근 홍삼농축액 100%'
+        }
     },
     {
-        id:2,
-        image:shop2,
-        tag:'신상',
-        price:'122,000원',
-        name:'프리미엄 럭셔리 소파'
+        id: 2,
+        name: '루테인',
+        image: testImg,
+        price: '9000원',
+        category: 'eye',
+        vendor: '서플먼트샵',
+        vendorSlug: 'supplement-shop',
+        info: {
+            품목명: '루테인',
+            유통기한: '2026-11-30',
+            허가일자: '2021-05-15',
+            섭취방법: '하루 1회 1정 섭취',
+            주된기능성: '눈 건강에 도움',
+            섭취시주의사항: '권장 섭취량을 초과하지 마세요',
+            보관방법: '습기 없는 서늘한 곳에 보관',
+            기준규격: '루테인 20mg',
+            원재료: '마리골드꽃추출물 100%'
+        }
     },
     {
-        id:3,
-        image:shop3,
-        tag:'10% 할인',
-        price:'140,000원',
-        name:'모던 테이블 세트'
+        id: 3,
+        name: '관절보호 영양제',
+        image: testImg,
+        price: '21000원',
+        category: 'joint',
+        vendor: '헬스플러스',
+        vendorSlug: 'healthplus',
+        info: {
+            품목명: '관절보호 영양제',
+            유통기한: '2027-01-01',
+            허가일자: '2022-02-10',
+            섭취방법: '하루 2회 1정씩 섭취',
+            주된기능성: '관절 및 연골 건강',
+            섭취시주의사항: '소화 장애가 있는 경우 섭취에 주의',
+            보관방법: '직사광선을 피해 보관',
+            기준규격: 'MSM 500mg',
+            원재료: '식이유황(MSM), 비타민D'
+        }
     },
     {
-        id:4,
-        image:shop4,
-        tag:'',
-        price:'122,000원',
-        name:'럭셔리 벽걸이 조명'
+        id: 4,
+        name: '장건강 영양제',
+        image: testImg,
+        price: '11000원',
+        category: 'gut-health',
+        vendor: '장사랑몰',
+        vendorSlug: 'jangsarang',
+        info: {
+            품목명: '장건강 영양제',
+            유통기한: '2026-08-10',
+            허가일자: '2021-10-01',
+            섭취방법: '하루 1회 2캡슐 섭취',
+            주된기능성: '장내 환경 개선',
+            섭취시주의사항: '과다 섭취 시 설사 유발 가능',
+            보관방법: '냉장 보관 권장',
+            기준규격: '프로바이오틱스 100억 CFU',
+            원재료: '유산균혼합분말, 프락토올리고당'
+        }
     },
     {
-        id:5,
-        image:shop5,
-        tag:'할인',
-        price:'140,000원',
-        name:'화이트 미니멀 체어'
+        id: 5,
+        name: '영양보충 영양제',
+        image: testImg,
+        price: '15000원',
+        category: 'supplement',
+        vendor: '굿헬스스토어',
+        vendorSlug: 'goodhealthstore',
+        info: {
+            품목명: '영양보충 영양제',
+            유통기한: '2027-03-20',
+            허가일자: '2023-01-05',
+            섭취방법: '하루 1정 식사 후 섭취',
+            주된기능성: '전반적인 영양 보충',
+            섭취시주의사항: '임산부는 전문가와 상담 후 섭취',
+            보관방법: '실온 보관, 건조한 곳',
+            기준규격: '비타민 및 미네랄 12종',
+            원재료: '비타민C, 아연, 마그네슘 등'
+        }
     },
+
     {
         id:6,
         image:shop6,
@@ -748,18 +815,35 @@ export const venderInfo = [
 
 export const detailReview = [
     {
-        name:'박서연',
-        desc:`무병장수의 제품들은 건강한 삶을 위한 최고의 선택이었습니다. 품질과 서비스 모두 만족스럽습니다.`
+        name: '박서연',
+        rating: 5,
+        desc: '무병장수의 제품들은 건강한 삶을 위한 최고의 선택이었습니다. 품질과 서비스 모두 만족스럽습니다.',
+        date: '2025-06-01',
+        product: '홍삼 농축액'
     },
     {
-        name:'최동훈',
-        desc:`건강기능식품을 고르는 데 항상 고민이 많았는데, 무병장수의 제품들은 믿고 구매할 수 있어서 좋습니다.`
+        name: '최동훈',
+        rating: 4.7,
+        desc: '건강기능식품을 고르는 데 항상 고민이 많았는데, 무병장수의 제품들은 믿고 구매할 수 있어서 좋습니다.',
+        date: '2025-06-03',
+        product: '루테인'
     },
     {
-        name:'정혜원',
-        desc:`무병장수에서 구매한 제품들 덕분에 건강관리가 한결 수월해졌습니다. 특히 상담원분들의 친절한 설명이 매우 도움이 되었습니다.`
+        name: '정혜원',
+        rating: 4.5,
+        desc: '무병장수에서 구매한 제품들 덕분에 건강관리가 한결 수월해졌습니다. 특히 상담원분들의 친절한 설명이 매우 도움이 되었습니다.',
+        date: '2025-06-04',
+        product: '장건강 영양제'
     },
-]
+    {
+        name: '임성빈',
+        rating: 4.5,
+        desc: '무병장수에서 구매한 제품들 덕분에 건강관리가 한결 수월해졌습니다. 특히 상담원분들의 친절한 설명이 매우 도움이 되었습니다.',
+        date: '2025-06-04',
+        product: '장건강 영양제'
+    }
+];
+
 
 export const shippingAbout = [
     {

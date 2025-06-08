@@ -34,6 +34,7 @@ import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 import ProductRegister from '@/modules/product/views/ProductRegister.vue'
 import ProductStatus from '@/modules/product/views/ProductStatus.vue'
 import ProductReview from '@/modules/product/views/ProductReview.vue'
+import Vendor from '@/views/shop/vendor-category.vue'
 
 // modules/product/views - 관리자
 import AdminProductList from '@/modules/product/views/AdminProductList.vue'
@@ -45,6 +46,7 @@ import LiveChart from "@/modules/live/views/LiveChart.vue"
 import LiveRegister from "@/modules/live/views/LiveRegister.vue"
 import StoreLiveStreaming from "@/modules/live/views/StoreLiveStreaming.vue";
 import LiveReport from "@/modules/live/views/LiveReport.vue";
+
 
 import AuthTest from "@/modules/auth/views/AuthTest.vue"
 import ChatTest from "@/modules/chat/views/ChatTest.vue"
@@ -97,16 +99,14 @@ const routes = [
    // 상품, 리뷰 view
   { path: '/products', component: ProductCategory },
   { path: '/product-details/:id', component: ProductDetails },
-  {
-    path: '/shop/:category',
-    name: 'ShopCategory',
-    component: ProductCategory
-  },
+  {path: '/shop/:category', component: ProductCategory},
+  { path: '/product/:category', component: ProductCategory },
+
    //입점업체
   { path: '/partner/product/register', component: ProductRegister },
   { path: '/partner/product/status', component: ProductStatus },
   { path: '/partner/product/review', component: ProductReview },
-
+  { path: '/vendor/:vendorSlug', component: Vendor},
 
 
 
