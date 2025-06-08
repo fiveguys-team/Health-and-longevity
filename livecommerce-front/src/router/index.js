@@ -31,14 +31,11 @@ import adminDashboard from '@/views/dashboard/adminDashboard.vue'
 
 
 // modules/product/views - 입점업체
-//import ProductRegister from '@/modules/product/views/ProductRegister.vue'
 import ProductStatus from '@/modules/product/views/ProductStatus.vue'
 import ProductReview from '@/modules/product/views/ProductReview.vue'
 import Vendor from '@/views/shop/vendor-category.vue'
 
-// modules/product/views - 관리자
-import AdminProductList from '@/modules/product/views/AdminProductList.vue'
-import AdminProductDetail from '@/modules/product/views/AdminProductDetail.vue'
+
 
 // modules/도메인/views/ 하위 test용 view
 import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
@@ -152,8 +149,16 @@ const routes = [
         name: 'ChatReportLog',
         component: () => import('@/modules/chat/components/ChatReportLog.vue')
       },
-      { path: 'products', component: AdminProductList }, //
-      { path: 'product/detail/:id', component: AdminProductDetail }
+      {
+        path: 'products',
+        name: 'AdminProductList',
+        component: () => import('@/modules/product/views/AdminProductList.vue')
+      },
+      {
+        path: 'product/detail/:id',
+        name: 'AdminProductDetail',
+        component: () => import('@/modules/product/views/AdminProductDetail.vue')
+      }
     ],
   },
 

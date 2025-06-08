@@ -1,16 +1,6 @@
 <template>
   <div class="flex min-h-screen">
-    <!-- 왼쪽: 입점업체 메뉴 -->
-    <aside class="w-64 bg-[#f9f9f9] border-r shadow px-6 py-8">
-      <h1 class="text-3xl font-bold text-green-900 mb-6">무병<br />장수</h1>
-      <p class="text-sm font-semibold text-gray-600 mb-4">입점업체</p>
-
-      <ul class="space-y-4 text-base font-medium text-gray-700">
-        <li><router-link to="/vendor/live">라이브</router-link></li>
-        <li><router-link to="/vendor/product">상품/리뷰</router-link></li>
-        <li><router-link to="/vendor/order">주문/결제</router-link></li>
-      </ul>
-    </aside>
+    <!-- ✅ 관리자 화면에서는 좌측 메뉴를 제거하거나 관리자용 메뉴를 사용 -->
 
     <!-- 오른쪽: 상품 등록 목록 -->
     <main class="flex-1 p-8 max-w-6xl">
@@ -46,6 +36,7 @@
 <script setup>
 import { ref } from 'vue'
 
+// ✅ products를 선언하지 않아서 생기는 오류였음
 const products = ref([
   { id: 1, name: '홍삼농축액', company: '한국인삼공사', status: '승인 대기' },
   { id: 2, name: '루테인 비타민', company: '헬스업', status: '승인 완료' }
