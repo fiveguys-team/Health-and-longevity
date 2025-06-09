@@ -32,9 +32,9 @@
           <div class="mega-menu">
             <div class="megamenu-item">
               <ul class="sub-menu">
-                <li><router-link to="/partner/product/register" class="menu-item">상품 등록</router-link></li>
-                <li><router-link to="/partner/product/status" class="menu-item">상품 등록 현황</router-link></li>
-                <li><router-link to="/partner/product/review" class="menu-item">리뷰</router-link></li>
+                <li><router-link to="/store-dashboard/product/register" class="menu-item">상품 등록</router-link></li>
+                <li><router-link to="/store-dashboard/product/status" class="menu-item">상품 등록 현황</router-link></li>
+                <li><router-link to="/store-dashboard/product/review" class="menu-item">리뷰</router-link></li>
               </ul>
             </div>
           </div>

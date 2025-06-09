@@ -71,10 +71,17 @@
             </div>
 
             <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up">
-              <IncDec />
+              <IncDec v-model="quantity" />
               <div class="flex gap-4 mt-4 sm:mt-6">
                 <router-link to="/cart" class="btn btn-outline">장바구니</router-link>
-                <router-link to="#" class="btn btn-outline">구매</router-link>
+                <router-link :to="{
+                path: '/order',
+                query: {
+                  productId: data?.id,
+                  quantity
+                }
+                }" class="btn btn-outline">
+                  구매</router-link>
               </div>
             </div>
           </div>
@@ -108,10 +115,20 @@ onMounted(() => {
   Aos.init();
 });
 
+// inc-dec 수량 변경 테스트
+const quantity = ref(1);
+
+watch(
+    quantity,
+    () => { /* no-op or console.log */ },
+    { flush: 'sync' }
+);
+
 const activeImage = ref(1);
 const now = ref(new Date().getTime());
 const targetTime = ref(new Date('Sep 13 2025').getTime());
 const difference = ref(0);
+
 
 const days = computed(() => Math.floor(difference.value / (1000 * 60 * 60 * 24)));
 const hours = computed(() => 23 - new Date(now.value).getHours());
