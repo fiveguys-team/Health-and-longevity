@@ -12,6 +12,7 @@
                 <div class="max-w-[1720px] mx-auto">
                     <div class="absolute top-5 right-[30%] z-10 hidden lg:block shape-01">
                         <svg class="w-[300px] xl:w-[500px] h-[250px] xl:h-[409px]" viewBox="0 0 501 410" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        
                             <path opacity="0.1" d="M93.5685 350.941C17.9186 286.326 -22.6142 169.412 13.177 95.6561C48.7857 21.5837 161.217 -9.19765 268.179 2.36595C374.958 13.6135 477.265 67.4732 497.265 147.363C516.948 227.436 454.823 333.672 367.72 380.59C280.8 427.824 169.535 415.374 93.5685 350.941Z" fill="#BB976D"/>
                         </svg>   
                         <div class="absolute top-1/4 left-[10%] xl:left-[20%] z-30">
