@@ -339,6 +339,8 @@
       <div class="video-container">
         <div class="main-video">
           <user-video :stream-manager="mainStreamManager"/>
+
+
         </div>
       </div>
     </div>

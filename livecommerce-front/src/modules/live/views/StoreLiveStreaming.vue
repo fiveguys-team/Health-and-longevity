@@ -21,6 +21,11 @@
       </div>
 
       <div class="form-group">
+        <label>공지 사항</label>
+        <input v-model="announcement" class="form-control" type="text" required/>
+      </div>
+
+      <div class="form-group">
         <label>썸네일</label>
         <input @change="handleThumbnailChange" class="form-control" type="file" accept="image/*"
                required/>
@@ -121,12 +126,15 @@ const vendorId = route.params.vendorId;
 
 // 방송 정보
 const streamTitle = ref(''); // 라이브 제목
+const announcement = ref(''); // 공지 사항
 const thumbnailFile = ref(null); // 썸네일 파일
 const thumbnailPreview = ref(''); // 썸네일 미리보기
 const availableProducts = ref([]); // 임접업체 상품 목록
 const selectedProducts = ref([]); // 선택된 상품들
 const discountRate = ref(0); // 할인율
 const viewerCount = ref(0); // 시청자 수 상태 관리
+const startTime = ref('');
+const endTime = ref('');
 
 // 방송 상태 관리
 // const isLive = ref(false);
@@ -183,6 +191,8 @@ const enterBroadcast = async () => {
     return;
   }
 
+  // 방송 시작 시간 설정
+  startTime.value = new Date().toISOString()
   try {
     // OpenVidu 객체 생성, 세션 생성 
     OV.value = new OpenVidu();
@@ -219,13 +229,28 @@ const enterBroadcast = async () => {
   }
 };
 
+// 방송 시작 시 라이브 정보 서버로 전송
+// const notifySeverStreamStarted = async (vendorId) => {
+//   try {
+//     await axios.post(
+//
+//     )
+//   }
+// }
+
 // [서버에 방송 종료 알림 전송]
 // 방송 종료 시 세션 종료 및 서버에 방송 종료 알림 전송 
 const notifyServerStreamEnded = async (sessionId) => {
+  endTime.value = new Date().toISOString();
+  // 종료 시간 알림
   try {
     await axios.delete(
         `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
-        {headers: {'Content-Type': 'application/json'}}
+        {
+          headers: {'Content-Type': 'application/json'},
+          // data: {endTime: endTime.value}
+        },
+
     );
     console.log('서버에 방송 종료 알림 완료');
   } catch (error) {
