@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,7 @@ public class LiveController {
 	public CorsFilter corsFilter() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("http://localhost:5174", "http://localhost:5173", "http://localhost:5175"));
+		config.setAllowedOrigins(Arrays.asList("http://localhost:5174", "http://localhost:5173", "http://localhost:5175", "http://localhost:3000"));
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(Arrays.asList("*"));
 		config.setAllowCredentials(true);
@@ -80,8 +81,8 @@ public class LiveController {
 	}
 
 	/**
-	 * @param params The Session properties
-	 * @return The Session ID
+	 * @param params 세션 속성 정보
+	 * @return sessionId
 	 */
 	@PostMapping("/api/sessions")
 	public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
@@ -97,7 +98,7 @@ public class LiveController {
 			if (params.containsKey("clientData")) {
 				Map<String, Object> clientData = (Map<String, Object>) params.get("clientData");
 				sessionInfo.setTitle((String) clientData.get("title"));
-				sessionInfo.setProductInfo((Map<String, Object>) clientData.get("productInfo"));
+//				sessionInfo.setProductInfo((Map<String, Object>) clientData.get("productInfo"));
 			}
 			activeSessions.put(sessionId, sessionInfo);
 		}
@@ -106,9 +107,9 @@ public class LiveController {
 	}
 
 	/**
-	 * @param sessionId The Session in which to create the Connection
-	 * @param params    The Connection properties
-	 * @return The Token associated to the Connection
+	 * @param sessionId connection을 생성할 sessionId
+	 * @param params    connection 속성
+	 * @return connection 인증된 Token 반환
 	 */
 	@PostMapping("/api/sessions/{sessionId}/connections")
 	public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
@@ -147,6 +148,37 @@ public class LiveController {
 			return new ResponseEntity<>("Error closing session: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	/**
+	 * 입점업체의 보유 상품 목록
+	 * @param vendorId
+	 * @return 상품 리스트
+	 */
+	@GetMapping("/api/sessions/{vendorId}/productList")
+	public ResponseEntity<List<ProductInfo>> productList(@PathVariable("vendorId") String vendorId) {
+		List<ProductInfo> list = new ArrayList<>();
+		ProductInfo productInfo1 = ProductInfo.builder()
+				.id("1")
+				.name("상품1")
+				.price(1000)
+				.build();
+
+		ProductInfo productInfo2 = ProductInfo.builder()
+				.id("2")
+				.name("상품2")
+				.price(2000)
+				.build();
+		ProductInfo productInfo3 = ProductInfo.builder()
+				.id("3")
+				.name("상품3")
+				.price(3000)
+				.build();
+		list.add(productInfo1);
+		list.add(productInfo2);
+		list.add(productInfo3);
+
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
 }
 
 // 세션 정보를 담는 클래스
@@ -155,5 +187,15 @@ public class LiveController {
 class SessionInfo {
 	private String id;
 	private String title;
-	private Map<String, Object> productInfo;
+	//private Map<String, Object> productInfo;
+}
+
+// 상품 정보를 담는 클래스
+@Setter
+@Getter
+@Builder
+class ProductInfo {
+	private String id;
+	private String name;
+	private Integer price;
 }
