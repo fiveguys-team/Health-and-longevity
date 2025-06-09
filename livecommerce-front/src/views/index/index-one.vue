@@ -163,25 +163,6 @@
             </div>
         </div>
 
-        <div class="s-py-50-100">
-            <div class="container-fluid">
-                <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
-                    <div>
-                        <img :src="bed" alt="" class="mx-auto w-14 sm:w-24"/>                                               
-                    </div>
-                    <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl">신상품</h3>
-                    <p class="mt-3">새롭게 입점된 제품들을 가장 먼저 만나보세요.</p>
-                </div>
-                <div data-aos="fade-up" data-aos-delay="100">
-                    <LayoutOne :productList="productList.slice(8,12)" :classList="'max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8'"/>
-                </div>
-                <div class="text-center mt-7 md:mt-12">
-                    <router-link to="/shop-v1" class="btn btn-outline" data-text="전체상품보기">
-                        <span>전체상품보기</span>
-                    </router-link>
-                </div>
-            </div>
-        </div>
 
         <div class="s-py-50">
             <div class="container-fluid">
@@ -228,7 +209,7 @@ import omega3 from '@/assets/img/home-v1/omega3.png'
 import multivitamin from '@/assets/img/home-v1/multivitamin.png'
 import sofa from '@/assets/img/svg/sofa.svg'
 import like from "@/assets/img/svg/like.svg"
-import bed from "@/assets/img/svg/bed.svg"
+
 import product1 from '@/assets/img/home-v1/ftur-pdct-01.jpg'
 import hand from "@/assets/img/svg/hand.png"
 

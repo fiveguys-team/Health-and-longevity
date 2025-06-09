@@ -26,8 +26,16 @@ import ContactPage from '@/views/inner-pages/contact-page.vue'
 import ProductCategory from '@/views/shop/product-category.vue'
 
 // 대시보드 views
-import adminDashboard from "@/views/dashboard/adminDashboard.vue"
-import storeDashboard from "@/views/dashboard/storeDashboard.vue"
+import adminDashboard from '@/views/dashboard/adminDashboard.vue'
+//import storeDashboard from '@/views/dashboard/storeDashboard.vue'
+
+
+// modules/product/views - 입점업체
+import ProductStatus from '@/modules/product/views/ProductStatus.vue'
+import ProductReview from '@/modules/product/views/ProductReview.vue'
+import Vendor from '@/views/shop/vendor-category.vue'
+
+
 
 // modules/도메인/views/ 하위 test용 view
 import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
@@ -36,19 +44,21 @@ import LiveRegister from "@/modules/live/views/LiveRegister.vue"
 import StoreLiveStreaming from "@/modules/live/views/StoreLiveStreaming.vue";
 import LiveReport from "@/modules/live/views/LiveReport.vue";
 
-import AuthTest from '@/modules/auth/views/AuthTest.vue'
-import ChatTest from '@/modules/chat/views/ChatTest.vue'
-import ProductTest from '@/modules/product/views/ProductTest.vue'
-import ReviewTest from '@/modules/review/views/ReviewTest.vue'
-import UserTest from '@/modules/user/views/UserTest.vue'
-import OrderView from '@/modules/order/views/OrderView.vue'
-import OrderConfirmationView from "@/modules/order/views/OrderConfirmationView.vue";
-import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue";
-import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue";
-import CartView from "@/modules/order/views/CartView.vue";
-import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue";
-import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue";
-import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue";
+
+import AuthTest from "@/modules/auth/views/AuthTest.vue"
+import ChatTest from "@/modules/chat/views/ChatTest.vue"
+import ProductTest from "@/modules/product/views/ProductTest.vue"
+import ReviewTest from "@/modules/review/views/ReviewTest.vue"
+import UserTest from "@/modules/user/views/UserTest.vue"
+import OrderView from "@/modules/order/views/OrderView.vue"
+import OrderConfirmationView from "@/modules/order/views/OrderConfirmationView.vue"
+import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue"
+import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue"
+import CartView from "@/modules/order/views/CartView.vue"
+import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
+import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
+import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
+import ShopCart from "@/views/shop/shop-cart.vue";
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -72,14 +82,33 @@ const routes = [
   {path: '/payment-method',component:PaymentMethod},
   {path: '/invoice',component:InvoicePage},
   {path: '/shop-v1',component:ShopV1},
-  {path: '/product-details',component:ProductDetails},
+
+
+  {path: '/cart',component:ShopCart},
   {path: '/product-details/:id',component:ProductDetails},
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
 
   { path: "/admin-dashboard", component: adminDashboard },
-  { path: "/store-dashboard", component: storeDashboard },
+  //{ path: "/store-dashboard", component: storeDashboard },
+
+   // 상품, 리뷰 view
+  { path: '/products', component: ProductCategory },
+  { path: '/product-details/:id', component: ProductDetails },
+  {path: '/shop/:category', component: ProductCategory},
+  { path: '/product/:category', component: ProductCategory },
+
+   //입점업체
+  //{ path: '/partner/product/register', component: ProductRegister },
+  { path: '/partner/product/status', component: ProductStatus },
+  { path: '/partner/product/review', component: ProductReview },
+  { path: '/vendor/:vendorSlug', component: Vendor},
+
+
+
+
+
 
   // modules/도메인/views/ 하위 test용 view
   {path: '/live-streaming',component: LiveStreaming},
@@ -115,9 +144,48 @@ const routes = [
         name: "ChatReportLog",
         component: () => import("@/modules/chat/components/ChatReportLog.vue"),
       },
+      {
+        path: 'chat/reports',
+        name: 'ChatReportLog',
+        component: () => import('@/modules/chat/components/ChatReportLog.vue')
+      },
+      {
+        path: 'products',
+        name: 'AdminProductList',
+        component: () => import('@/modules/product/views/AdminProductList.vue')
+      },
+      {
+        path: 'product/detail/:id',
+        name: 'AdminProductDetail',
+        component: () => import('@/modules/product/views/AdminProductDetail.vue')
+      }
     ],
   },
+
+  {
+    path: '/store-dashboard',
+    component: () => import('@/views/dashboard/storeDashboard.vue'), // 이건 그대로 레이아웃 역할
+    children: [
+      {
+        path: 'product/register',
+        component: () => import('@/modules/product/views/ProductRegister.vue')
+      },
+      {
+        path: 'product/status',
+        component: () => import('@/modules/product/views/ProductStatus.vue')
+      },
+      {
+        path: 'product/review',
+        component: () => import('@/modules/product/views/ProductReview.vue')
+      }
+    ]
+  }
+
 ];
+
+
+
+
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
