@@ -114,13 +114,31 @@ const routes = [
   {path: '/live-streaming',component: LiveStreaming},
   {path: '/live-chart', component: LiveChart},
   {path: '/live-register', component: LiveRegister},
-  {path: '/live-report', component: LiveReport},
-  {path: '/store-live-streaming', component: StoreLiveStreaming},
+  {path: '/live-report', component: LiveReport}, 
+  // 입점업체 방송 준비 및 송출 페이지
+  {path: '/store-live-streaming/:vendorId', component: StoreLiveStreaming},
+    
+  {path: '/host',
+    component: StoreLiveStreaming
+  },
+  {
+    path: '/view/:sessionId',
+    name: 'viewer',
+    component: LiveStreaming
+  },
 
 
   {path: '/auth-test',component: AuthTest},
   {path: '/chat-test',component: ChatTest},
-  {path: '/order',component: OrderView},
+  {
+    path: '/order',
+    name: 'Order',
+    component: OrderView,
+    props: route => ({
+      productId: route.query.productId,
+      quantity: Number(route.query.quantity) || 1
+    }),
+  },
   {path: '/order-confirmation',component: OrderConfirmationView},
   {path: '/order-history',component: OrderHistoryView},
   {path: '/partner/order-history',component: PartnerOrderHistoryView},
@@ -157,7 +175,8 @@ const routes = [
       {
         path: 'product/detail/:id',
         name: 'AdminProductDetail',
-        component: () => import('@/modules/product/views/AdminProductDetail.vue')
+        component: () => import('@/modules/product/views/AdminProductDetail.vue'),
+        props : true
       }
     ],
   },
