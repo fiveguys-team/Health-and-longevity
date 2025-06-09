@@ -58,7 +58,7 @@
     import ScrollToTop from '@/components/scroll-to-top.vue';
 
     const JAVASCRIPT_KEY = "2b83ced7583d0f987371aa7adc03bcb3"
-    const REDIRECT_URI = "http://localhost:8080/login"
+    const REDIRECT_URI = "http://localhost:3000/login"
 
     onMounted(()=>{
         Aos.init()
@@ -99,7 +99,7 @@
     }
 
     const NAVER_CLIENT_ID = 'WKu77Q8R0g2sTXQC4NKh'
-    const NAVER_CALLBACK_URL = 'http://localhost:8080/login'
+    const NAVER_CALLBACK_URL = 'http://localhost:3000/login'
 
     function initNaverLogin() {
       const naverScriptCheck = !!window.naver_id_login
@@ -112,7 +112,7 @@
       const state = naverLogin.getUniqState()
 
       naverLogin.setButton('white', 2, 40)
-      naverLogin.setDomain("http://localhost:8080")
+      naverLogin.setDomain("http://localhost:3000")
       naverLogin.setState(state)
       naverLogin.init_naver_id_login()
     }
