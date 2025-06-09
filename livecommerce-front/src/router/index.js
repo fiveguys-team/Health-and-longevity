@@ -120,7 +120,15 @@ const routes = [
 
   {path: '/auth-test',component: AuthTest},
   {path: '/chat-test',component: ChatTest},
-  {path: '/order',component: OrderView},
+  {
+    path: '/order',
+    name: 'Order',
+    component: OrderView,
+    props: route => ({
+      productId: route.query.productId,
+      quantity: Number(route.query.quantity) || 1
+    }),
+  },
   {path: '/order-confirmation',component: OrderConfirmationView},
   {path: '/order-history',component: OrderHistoryView},
   {path: '/partner/order-history',component: PartnerOrderHistoryView},
@@ -157,7 +165,8 @@ const routes = [
       {
         path: 'product/detail/:id',
         name: 'AdminProductDetail',
-        component: () => import('@/modules/product/views/AdminProductDetail.vue')
+        component: () => import('@/modules/product/views/AdminProductDetail.vue'),
+        props : true
       }
     ],
   },
