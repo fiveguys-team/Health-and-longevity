@@ -27,18 +27,15 @@ import ProductCategory from '@/views/shop/product-category.vue'
 
 // 대시보드 views
 import adminDashboard from '@/views/dashboard/adminDashboard.vue'
-import storeDashboard from '@/views/dashboard/storeDashboard.vue'
+//import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 
 
 // modules/product/views - 입점업체
-import ProductRegister from '@/modules/product/views/ProductRegister.vue'
 import ProductStatus from '@/modules/product/views/ProductStatus.vue'
 import ProductReview from '@/modules/product/views/ProductReview.vue'
 import Vendor from '@/views/shop/vendor-category.vue'
 
-// modules/product/views - 관리자
-import AdminProductList from '@/modules/product/views/AdminProductList.vue'
-import AdminProductDetail from '@/modules/product/views/AdminProductDetail.vue'
+
 
 // modules/도메인/views/ 하위 test용 view
 import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
@@ -94,7 +91,7 @@ const routes = [
   {path: '/product-category',component:ProductCategory},
 
   { path: "/admin-dashboard", component: adminDashboard },
-  { path: "/store-dashboard", component: storeDashboard },
+  //{ path: "/store-dashboard", component: storeDashboard },
 
    // 상품, 리뷰 view
   { path: '/products', component: ProductCategory },
@@ -103,7 +100,7 @@ const routes = [
   { path: '/product/:category', component: ProductCategory },
 
    //입점업체
-  { path: '/partner/product/register', component: ProductRegister },
+  //{ path: '/partner/product/register', component: ProductRegister },
   { path: '/partner/product/status', component: ProductStatus },
   { path: '/partner/product/review', component: ProductReview },
   { path: '/vendor/:vendorSlug', component: Vendor},
@@ -123,7 +120,15 @@ const routes = [
 
   {path: '/auth-test',component: AuthTest},
   {path: '/chat-test',component: ChatTest},
-  {path: '/order',component: OrderView},
+  {
+    path: '/order',
+    name: 'Order',
+    component: OrderView,
+    props: route => ({
+      productId: route.query.productId,
+      quantity: Number(route.query.quantity) || 1
+    }),
+  },
   {path: '/order-confirmation',component: OrderConfirmationView},
   {path: '/order-history',component: OrderHistoryView},
   {path: '/partner/order-history',component: PartnerOrderHistoryView},
@@ -152,10 +157,39 @@ const routes = [
         name: 'ChatReportLog',
         component: () => import('@/modules/chat/components/ChatReportLog.vue')
       },
-      { path: 'products', component: AdminProductList }, //
-      { path: 'product/detail/:id', component: AdminProductDetail }
+      {
+        path: 'products',
+        name: 'AdminProductList',
+        component: () => import('@/modules/product/views/AdminProductList.vue')
+      },
+      {
+        path: 'product/detail/:id',
+        name: 'AdminProductDetail',
+        component: () => import('@/modules/product/views/AdminProductDetail.vue'),
+        props : true
+      }
     ],
   },
+
+  {
+    path: '/store-dashboard',
+    component: () => import('@/views/dashboard/storeDashboard.vue'), // 이건 그대로 레이아웃 역할
+    children: [
+      {
+        path: 'product/register',
+        component: () => import('@/modules/product/views/ProductRegister.vue')
+      },
+      {
+        path: 'product/status',
+        component: () => import('@/modules/product/views/ProductStatus.vue')
+      },
+      {
+        path: 'product/review',
+        component: () => import('@/modules/product/views/ProductReview.vue')
+      }
+    ]
+  }
+
 ];
 
 
