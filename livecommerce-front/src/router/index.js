@@ -114,8 +114,18 @@ const routes = [
   {path: '/live-streaming',component: LiveStreaming},
   {path: '/live-chart', component: LiveChart},
   {path: '/live-register', component: LiveRegister},
-  {path: '/live-report', component: LiveReport},
-  {path: '/store-live-streaming', component: StoreLiveStreaming},
+  {path: '/live-report', component: LiveReport}, 
+  // 입점업체 방송 준비 및 송출 페이지
+  {path: '/store-live-streaming/:vendorId', component: StoreLiveStreaming},
+    
+  {path: '/host',
+    component: StoreLiveStreaming
+  },
+  {
+    path: '/view/:sessionId',
+    name: 'viewer',
+    component: LiveStreaming
+  },
 
 
   {path: '/auth-test',component: AuthTest},
