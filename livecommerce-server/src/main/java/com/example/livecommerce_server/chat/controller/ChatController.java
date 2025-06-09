@@ -1,2 +1,4 @@
-package com.example.livecommerce_server.chat.controller;public class ChatController {
+package com.example.livecommerce_server.chat.controller;
+
+public class ChatController {
 }
