@@ -31,7 +31,7 @@
           </li>
           <li>
             <router-link 
-              to="/admin/products" 
+              to="/admin/products"
               class="flex items-center px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-light"
               :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/admin/product/list' }"
             >
