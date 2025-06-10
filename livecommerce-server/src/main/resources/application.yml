@@ -11,3 +11,7 @@ spring:
     hibernate:
       ddl-auto: create
     show_sql: true
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.livecommerce_server.product.dto
