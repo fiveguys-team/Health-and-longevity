@@ -17,35 +17,29 @@
 
       <div class="form-group">
         <label>방송 제목</label>
-        <input v-model="streamTitle" class="form-control" type="text" required/>
+        <input v-model="streamTitle" class="form-control" type="text" required />
       </div>
 
       <div class="form-group">
         <label>공지 사항</label>
-        <input v-model="announcement" class="form-control" type="text" required/>
+        <input v-model="announcement" class="form-control" type="text" required />
       </div>
 
       <div class="form-group">
         <label>썸네일</label>
-        <input @change="handleThumbnailChange" class="form-control" type="file" accept="image/*"
-               required/>
-        <img v-if="thumbnailPreview" :src="thumbnailPreview" class="thumbnail-preview"
-             alt="썸네일 미리보기"/>
+        <input @change="handleThumbnailChange" class="form-control" type="file" accept="image/*" required />
+        <img v-if="thumbnailPreview" :src="thumbnailPreview" class="thumbnail-preview" alt="썸네일 미리보기" />
       </div>
 
       <div class="form-group">
         <label>판매 상품 선택 (최대 3개)</label>
         <select class="form-control" size="5" multiple>
-          <option
-              v-for="product in availableProducts"
-              :key="product.id"
-              :selected="selectedProducts.includes(product)"
-              @mousedown.prevent="toggleProduct(product)"
-          >
+          <option v-for="product in availableProducts" :key="product.id" :selected="selectedProducts.includes(product)"
+            @mousedown.prevent="toggleProduct(product)">
             {{ product.name }} – {{ product.price.toLocaleString() }}원
           </option>
         </select>
-        <p>선택된 상품: {{ selectedProducts.map(p => p.name).join(', ') || '없음' }}</p>
+        <p>선택된 상품: {{selectedProducts.map(p => p.name).join(', ') || '없음'}}</p>
       </div>
 
       <div class="form-group">
@@ -74,7 +68,7 @@
       </div>
 
       <button class="btn btn-primary" @click="enterBroadcast"
-              :disabled="selectedProducts.length === 0 || selectedProducts.length > 3">방송 시작
+        :disabled="selectedProducts.length === 0 || selectedProducts.length > 3">방송 시작
       </button>
     </div>
 
@@ -99,22 +93,26 @@
         <div v-if="!publisher" class="loading-message">
           카메라 연결 중...
         </div>
-        <user-video v-else :stream-manager="publisher"/>
+        <user-video v-else :stream-manager="publisher" />
+
+      </div>
+      <div>
+        <ChatContainer />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-
-import {ref, onBeforeUnmount, onMounted, computed} from 'vue';
-import {useRoute} from 'vue-router'
+import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
+import { ref, onBeforeUnmount, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router'
 import axios from 'axios';
-import {OpenVidu} from 'openvidu-browser';
+import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
 
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+  : 'http://localhost:8080/';
 
 // OpenVidu 관련 상태
 const OV = ref(undefined);
@@ -141,10 +139,10 @@ const endTime = ref('');
 
 // 할인율 적용
 const discountedProducts = computed(() =>
-    selectedProducts.value.map(p => ({
-      ...p,
-      discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
-    }))
+  selectedProducts.value.map(p => ({
+    ...p,
+    discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
+  }))
 )
 
 
@@ -152,8 +150,8 @@ const discountedProducts = computed(() =>
 const productList = async () => {
   try {
     const response = await axios.get(
-        `${APPLICATION_SERVER_URL}api/sessions/${vendorId}/productList`,
-        {headers: {'Content-Type': 'application/json'}}
+      `${APPLICATION_SERVER_URL}api/sessions/${vendorId}/productList`,
+      { headers: { 'Content-Type': 'application/json' } }
     );
     availableProducts.value = response.data;
     console.log('상품 리스트: ', availableProducts.value);
@@ -186,7 +184,7 @@ function toggleProduct(prod) {
 // 방송 준비 함수 (기존의 startStream 함수를 분리)
 const enterBroadcast = async () => {
   if (!streamTitle.value || selectedProducts.value.length === 0 || selectedProducts.value.length
-      > 3) {
+    > 3) {
     alert('방송 제목을 입력하고 1~3개의 상품을 선택해주세요.');
     return;
   }
@@ -245,11 +243,11 @@ const notifyServerStreamEnded = async (sessionId) => {
   // 종료 시간 알림
   try {
     await axios.delete(
-        `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
-        {
-          headers: {'Content-Type': 'application/json'},
-          // data: {endTime: endTime.value}
-        },
+      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        // data: {endTime: endTime.value}
+      },
 
     );
     console.log('서버에 방송 종료 알림 완료');
@@ -295,10 +293,10 @@ const getToken = async () => {
 // 백엔드에서 세션 객체를 생성하고 세션ID를 반환한다. 
 const createSession = async () => {
   const response = await axios.post(
-      APPLICATION_SERVER_URL + 'api/sessions',
-      // 임시로 제목을 sessionId로 보냄 -> 추후 변경 예정
-      {customSessionId: streamTitle.value},
-      {headers: {'Content-Type': 'application/json'}}
+    APPLICATION_SERVER_URL + 'api/sessions',
+    // 임시로 제목을 sessionId로 보냄 -> 추후 변경 예정
+    { customSessionId: streamTitle.value },
+    { headers: { 'Content-Type': 'application/json' } }
   );
   return response.data;
 };
@@ -308,9 +306,9 @@ const createSession = async () => {
 // 백엔드에서 토큰을 생성하고 반환한다. 
 const createToken = async (sessionId) => {
   const response = await axios.post(
-      APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-      {},
-      {headers: {'Content-Type': 'application/json'}}
+    APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+    {},
+    { headers: { 'Content-Type': 'application/json' } }
   );
   return response.data;
 };
@@ -332,6 +330,7 @@ onBeforeUnmount(() => {
 //   endStream();
 // });
 </script>
+
 
 <style scoped>
 .host-container {
@@ -390,7 +389,8 @@ onBeforeUnmount(() => {
 .video-container {
   width: 100%;
   height: 0;
-  padding-bottom: 56.25%; /* 16:9 비율 */
+  padding-bottom: 56.25%;
+  /* 16:9 비율 */
   position: relative;
   background-color: #000;
   margin: 20px auto;
@@ -488,4 +488,4 @@ select option:checked {
   color: #666;
   font-weight: bold;
 }
-</style> 
+</style>
