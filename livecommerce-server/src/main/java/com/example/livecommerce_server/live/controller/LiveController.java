@@ -43,10 +43,10 @@ import org.springframework.web.filter.CorsFilter;
 @Slf4j
 public class LiveController {
 
-	@Value("${OPENVIDU_URL}")
+	@Value("${openvidu.url}")
 	private String OPENVIDU_URL;
 
-	@Value("${OPENVIDU_SECRET}")
+	@Value("${openvidu.secret}")
 	private String OPENVIDU_SECRET;
 
 	private OpenVidu openvidu;
