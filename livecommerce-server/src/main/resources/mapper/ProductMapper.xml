@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.livecommerce_server.product.repository.ProductMapper">
+
+  <insert id="insertProduct">
+    INSERT INTO product (
+      product_id,
+      category_id,
+      vendor_id,
+      name,
+      price,
+      stock_count,
+      status,
+      product_image
+    ) VALUES (
+               #{productId},
+               #{categoryId},
+               #{vendorId},
+               #{name},
+               #{price},
+               #{stockCount},
+               #{status},
+               #{productImage}
+             )
+  </insert>
+
+  <select id="findProductsByVendorId">
+    SELECT product_id AS productId, name, price, stock_count AS stockCount, status
+    FROM product
+    WHERE vendor_id = #{vendorId}
+  </select>
+
+
+</mapper>
