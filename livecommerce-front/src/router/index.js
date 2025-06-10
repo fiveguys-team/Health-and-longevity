@@ -132,7 +132,7 @@ const routes = [
   {path: '/chat-test',component: ChatTest},
   {
     path: '/order',
-    name: 'Order',
+    name: 'order',
     component: OrderView,
     props: route => ({
       productId: route.query.productId,
