@@ -22,7 +22,7 @@
           <router-link to="#">라이브<span></span></router-link>
           <ul class="sub-menu">
             <li :class="current === '/' ? 'active' : ''"><router-link to="/live-register" class="menu-item">등록</router-link></li>
-            <li :class="current === '/index-v2' ? 'active' : ''"><router-link to="/store-live-streaming" class="menu-item">방송 진행</router-link></li>
+            <li :class="current === '/index-v2' ? 'active' : ''"><router-link :to="`/store-live-streaming/${vendorId}`" class="menu-item">방송 진행</router-link></li>
             <li :class="current === '/index-v3' ? 'active' : ''"><router-link to="/live-report" class="menu-item">레포트</router-link></li>
           </ul>
         </li>
@@ -59,6 +59,9 @@ import logoDark from '@/assets/img/svg/logo.png'
 import logoLight from '@/assets/img/svg/logo.png'
 
 import { useRoute } from 'vue-router';
+
+// 테스트용 임시값
+const vendorId = 123;
 
 const router = useRoute();
 const current = ref(router.path);

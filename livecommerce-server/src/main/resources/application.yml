@@ -9,9 +9,17 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: true
     hibernate:
-      ddl-auto: create
-    show_sql: true
+      ddl-auto: validate         # create | update | validate | none 중 선택
+    show-sql: true
+
 
 mybatis:
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.example.livecommerce_server.product.dto
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.example.livecommerce_server   # resultType, parameterType 등에서 패키지명을 생략하고 클래스 이름만 사용 가능하게 해주는 설정
+                                                          # 이 패키지 아래에 있는 DTO/VO 클래스들이 자동으로 별칭 등록됨
+  configuration:                         # DB 컬럼명이 user_id처럼 snake_case인 경우,
+    map-underscore-to-camel-case: true  # 자바 필드명이 userId처럼 camelCase여도 자동으로 매핑해주는 설정
+
+openvidu:
+  url: ${OPENVIDU_URL}
+  secret: ${OPENVIDU_SECRET}

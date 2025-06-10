@@ -45,3 +45,6 @@ Thumbs.db
 
 # 보안파일 (환경변수)
 .env
+
+# .gitignore
+src/main/resources/application.yml
