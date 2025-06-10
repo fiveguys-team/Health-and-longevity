@@ -45,3 +45,6 @@ Thumbs.db
 
 # 보안파일 (환경변수)
 .env
+
+# 테스트 전용 설정파일 무시
+/src/test/resources/application-test.yml
