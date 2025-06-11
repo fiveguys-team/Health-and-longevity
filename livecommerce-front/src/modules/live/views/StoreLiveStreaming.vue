@@ -104,6 +104,11 @@
 </template>
 
 <script setup>
+
+import {useAuthStore} from "@/modules/auth/stores/auth";
+const auth = useAuthStore()
+
+
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import { ref, onBeforeUnmount, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router'
@@ -247,8 +252,9 @@ const notifyServerStreamEnded = async (sessionId) => {
     await axios.delete(
       `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
       {
-        headers: { 'Content-Type': 'application/json' },
-        // data: {endTime: endTime.value}
+        headers: { 'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.token}`},
+        //params: {endTime: endTime.value}
       },
 
     );
@@ -271,9 +277,6 @@ const endStream = async () => {
       await session.value.unpublish(publisher.value);
       publisher.value = undefined;
     }
-
-    // 세션 종료 
-    await session.value.disconnect();
 
     // 서버에 세션 종료 알림
     await notifyServerStreamEnded(currentSessionId);

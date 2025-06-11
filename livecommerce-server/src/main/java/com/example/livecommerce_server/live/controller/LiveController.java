@@ -162,11 +162,6 @@ public class LiveController {
 	}
 
 	/**
-	 * @param sessionId connection을 생성할 sessionId
-	 * @param params    connection 속성
-	 * @return connection 인증된 Token 반환
-	 */
-	/**
 	 * Session 에 접속하기 위한 토큰을 발급하고 Connection 을 생성합니다.
 	 *
 	 * @param sessionId 접속할 sessionId
@@ -196,18 +191,18 @@ public class LiveController {
 	 */
 	@DeleteMapping("/api/sessions/{sessionId}")
 	public ResponseEntity<String> closeSession(@PathVariable("sessionId") String sessionId) {
+		log.info("session 종료 API 호출됨");
 		try {
 			// OpenVidu 서버에서 세션 찾기
 			Session session = openvidu.getActiveSession(sessionId);
-			if (session != null) {
-				// 세션의 모든 연결 종료
-				session.close();
-				// 활성 세션 목록에서 제거
-				activeSessions.remove(sessionId);
-				return new ResponseEntity<>("Session closed", HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>("Session not found", HttpStatus.NOT_FOUND);
-			}
+			log.info("sessionId: " + sessionId);
+			log.info("sessionId: " + session.getSessionId());
+
+			// 세션의 모든 연결 종료
+			session.close();
+			// 활성 세션 목록에서 제거
+			activeSessions.remove(sessionId);
+			return new ResponseEntity<>("Session closed", HttpStatus.OK);
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			e.printStackTrace();
 			return new ResponseEntity<>("Error closing session: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
