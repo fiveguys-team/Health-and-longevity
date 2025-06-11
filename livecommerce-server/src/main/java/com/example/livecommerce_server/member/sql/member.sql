@@ -16,6 +16,8 @@ CREATE TABLE `USER_M` (
 ALTER TABLE `USER_M` MODIFY `user_id` BIGINT AUTO_INCREMENT NOT NULL,
 ADD CONSTRAINT `PK_USER_M` PRIMARY KEY (`user_id`);
 
+
+
 insert into USER_M (email, password, role) values ('admin@example.com', '{noop}1234', 'ADMIN');
 insert into USER_M (email, password, role) values ('vendor@example.com', '{noop}1234', 'VENDOR');
 
