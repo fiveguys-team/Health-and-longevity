@@ -9,4 +9,8 @@
 		values(#{live_id}, #{vendor_id}, #{session_id}, #{title}, #{start_time}, #{status}, #{announcement})
 	</insert>
 
+	<update id="updateLiveInfo">
+		update live_m set end_cd = #{endTime}, status_cd = "OFF" where session_id = #{sessionId}
+	</update>
+
 </mapper>
