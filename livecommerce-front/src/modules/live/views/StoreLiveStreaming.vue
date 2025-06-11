@@ -336,7 +336,7 @@ const createToken = async (sessionId) => {
 
 onMounted(() => {
   productList();
-})
+});
 
 // 컴포넌트 언마운트 시 정리
 onBeforeUnmount(() => {
