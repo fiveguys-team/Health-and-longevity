@@ -86,7 +86,9 @@ public class LiveController {
 	}
 
 	/**
-	 * 현재 활성화된 모든 세션 목록을 반환
+	 * 현재 활성화된 모든 세션 목록을 반환합니다.
+	 *
+	 * @return List<LiveDTO> 활성화 된 방송 리스트
 	 */
 	@GetMapping("/api/sessions")
 	public ResponseEntity<List<LiveDTO>> getActiveSessions() {
@@ -94,23 +96,11 @@ public class LiveController {
 		return new ResponseEntity<>(sessions, HttpStatus.OK);
 	}
 
-//	/**
-//	 * @param params The Session properties
-//	 * @return The Session ID
-//	 */
-//	@PostMapping("/api/sessions")
-//	public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
-//			throws OpenViduJavaClientException, OpenViduHttpException {
-	//  세션 생성시 옵션(속성)을 담는 빌더 클래스 (mediaMode, customSessionId 등등)
-//		SessionProperties properties = SessionProperties.fromJson(params).build();
-	// 속성 정보를 바탕으로 session 객체 생성 / 내부에 sessionId 식별자 존재 / 클라이언트가 토큰 발급 시 사용
-//		Session session = openvidu.createSession(properties);
-//		return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
-//	}
-
 	/**
-	 * @param
-	 * @return sessionId
+	 * 입점업체가 라이브 방송을 요청할 때 세션 생성 및 정보를 저장합니다.
+	 *
+	 * @param liveDTO 라이브 세션 정보
+	 * @return liveChatDTO (Live_id, Session_id)
 	 */
 	@PostMapping("/api/sessions")
 	public ResponseEntity<?> initializeSession(@ModelAttribute LiveDTO liveDTO) {
@@ -134,7 +124,6 @@ public class LiveController {
 					new TypeReference<>() {
 					}
 			);
-
 //
 			// 썸네일 파일 처리
 //			if (liveDTO.getThumbnail() != null && !liveDTO.getThumbnail().isEmpty()) {
@@ -164,8 +153,6 @@ public class LiveController {
 			liveService.addLiveProduct(liveProducts);
 
 			log.info("sessionId" + session.getSessionId());
-			log.info("라이브1111111111" + liveChatDTO.getLiveId());
-			log.info("sessionId1111111111111111122222222" + liveChatDTO.getSessionId());
 			return ResponseEntity.ok(liveChatDTO);
 		} catch (Exception e) {
 			log.error("Failed to initialize session", e);
@@ -178,6 +165,15 @@ public class LiveController {
 	 * @param sessionId connection을 생성할 sessionId
 	 * @param params    connection 속성
 	 * @return connection 인증된 Token 반환
+	 */
+	/**
+	 * Session 에 접속하기 위한 토큰을 발급하고 Connection 을 생성합니다.
+	 *
+	 * @param sessionId 접속할 sessionId
+	 * @param params connection 에 설정할 정보
+	 * @return 토큰
+	 * @throws OpenViduJavaClientException openvidu 서버 에러
+	 * @throws OpenViduHttpException openvidy Http 에러
 	 */
 	@PostMapping("/api/sessions/{sessionId}/connections")
 	public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
@@ -193,7 +189,8 @@ public class LiveController {
 	}
 
 	/**
-	 * 세션 종료 처리
+	 * 세션 종료를 처리합니다.
+	 *
 	 * @param sessionId 종료할 세션의 ID
 	 * @return 처리 결과
 	 */
@@ -218,8 +215,9 @@ public class LiveController {
 	}
 
 	/**
-	 * 입점업체의 보유 상품 목록
-	 * @param vendorId
+	 * 입점업체의 보유 상품 목록을 반환합니다.
+	 *
+	 * @param vendorId 입점업체 ID
 	 * @return 상품 리스트
 	 */
 	@GetMapping("/api/sessions/{vendorId}/productList")
