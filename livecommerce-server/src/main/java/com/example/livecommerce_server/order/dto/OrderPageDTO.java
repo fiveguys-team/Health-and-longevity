@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 public class OrderPageDTO {
 
     private String productId;
-//    private String imgPath;
     private Integer price;
     private Integer stockCount;
-    private String Name;
+    private String productName;
+    private String productImage;
+    private String categoryName;
+
 }
