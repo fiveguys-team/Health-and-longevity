@@ -6,3 +6,5 @@
 <script setup>
 //import ChatbotWindow from '@/modules/chatbot/components/ChatbotWindow.vue'
 </script>
+
+
