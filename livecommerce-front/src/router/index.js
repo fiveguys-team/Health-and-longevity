@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from "@/modules/auth/stores/auth";
 import IndexOne from '@/views/index/index-one.vue'
 import AboutUs from '@/views/inner-pages/about-us.vue'
 import PricingPage from '@/views/inner-pages/pricing-page.vue'
@@ -90,7 +91,9 @@ const routes = [
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
 
-  { path: "/admin-dashboard", component: adminDashboard },
+  { path: "/admin-dashboard", component: adminDashboard,
+    meta: {requiresAuth: true, roles: ['ADMIN']}
+  },
   //{ path: "/store-dashboard", component: storeDashboard },
 
    // 상품, 리뷰 view
@@ -132,7 +135,7 @@ const routes = [
   {path: '/chat-test',component: ChatTest},
   {
     path: '/order',
-    name: 'Order',
+    name: 'order',
     component: OrderView,
     props: route => ({
       productId: route.query.productId,
@@ -155,7 +158,7 @@ const routes = [
   {
     path: "/admin",
     component: () => import("@/views/dashboard/adminDashboard.vue"),
-    meta: { requiresAuth: true, adminOnly: true },
+    meta: { requiresAuth: true, roles: ['ADMIN'] },
     children: [
       {
         path: "chat/reports",
@@ -184,6 +187,7 @@ const routes = [
   {
     path: '/store-dashboard',
     component: () => import('@/views/dashboard/storeDashboard.vue'), // 이건 그대로 레이아웃 역할
+    meta: {requiresAuth: true, roles: ['VENDOR']},
     children: [
       {
         path: 'product/register',
@@ -208,13 +212,25 @@ const routes = [
   },
 ];
 
-
-
-
-
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  if (to.meta.requiresAuth) {
+    if (!authStore.token) return next('/login')
+
+    if (to.meta.roles && !to.meta.roles.includes(authStore.role)) {
+      alert('권한이 없습니다.')
+      return next('/')
+    }
+  }
+
+  next()
+})
+
 
 export default router;
