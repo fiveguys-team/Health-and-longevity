@@ -46,32 +46,44 @@
               <div>
                 <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">이름</label>
                 <input
+                    ref="nameRef"
                     v-model="form.name"
                     class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                     type="text"
                     placeholder="이름을 입력하세요"/>
+                <p v-if="form.name && !isValidName" class="text-sm text-red-500 mt-1">
+                  이름은 한글 2~10자 또는 영문 2~20자만 입력 가능합니다.
+                </p>
               </div>
 
               <div>
                 <label
                     class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">이메일</label>
                 <input
+                    ref="emailRef"
                     v-model="form.email"
                     class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                     type="text"
                     placeholder="이메일 주소를 입력하세요"
                 />
+                <p v-if="form.email && !isValidEmail" class="text-sm text-red-500 mt-1">
+                  유효한 이메일 형식이 아닙니다. 예: example@domain.com
+                </p>
               </div>
 
               <div>
                 <label
                     class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">전화번호</label>
                 <input
+                    ref="phoneRef"
                     v-model="form.phone"
                     class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
-                    type="number"
+                    type="text"
                     placeholder="전화번호를 입력하세요"
                 />
+                <p v-if="form.phone && !isValidPhone" class="text-sm text-red-500 mt-1">
+                  010 / 070 / 02~064 지역번호만 허용됩니다.
+                </p>
               </div>
             </div>
 
@@ -89,7 +101,7 @@
                       class="flex-1 h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                       placeholder="우편번호를 선택하세요"
                   />
-                  <button @click="openPostcode" class="ml-2 bg-primary text-white px-4 md:px-6 rounded-md">
+                  <button  ref="postcodeButtonRef" @click="openPostcode" class="ml-2 bg-primary text-white px-4 md:px-6 rounded-md">
                     우편번호 찾기
                   </button>
                 </div>
@@ -144,7 +156,7 @@
           </div>
 
           <div data-aos="fade-up" data-aos-delay="200">
-            <div
+            <div v-if="orderItem"
                 class="bg-[#FAFAFA] dark:bg-dark-secondary pt-[30px] md:pt-[40px] lg:pt-[50px] px-[30px] md:px-[40px] lg:px-[50px] pb-[30px] border border-[#17243026] border-opacity-15 rounded-xl">
               <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-10">
                 상품 정보
@@ -153,69 +165,53 @@
                 <div class="flex items-center justify-between gap-5">
                   <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product flex-wrap">
                     <div class="w-16 sm:w-[70px] flex-none">
-                      <img :src="cart1" alt="product">
+                      <img :src="orderItem.productImage" alt="product" />
                     </div>
                     <div class="flex-1">
-                      <h6 class="leading-none font-medium">의자</h6>
                       <h5 class="font-semibold leading-none mt-2">
-                        <router-link to="#">모던 소파 세트</router-link>
+                        <router-link to="#">{{ orderItem.productName }}</router-link>
                       </h5>
+                      <br>
+                      <h6 class="leading-none font-medium">{{orderItem.categoryName}}</h6>
                     </div>
                   </div>
-                  <h6 class="leading-none">$74</h6>
-                </div>
-                <div class="flex items-center justify-between gap-5">
-                  <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product flex-wrap">
-                    <div class="w-16 sm:w-[70px] flex-none">
-                      <img :src="cart2" alt="product">
-                    </div>
-                    <div class="flex-1">
-                      <h6 class="leading-none font-medium">인테리어</h6>
-                      <h5 class="font-semibold leading-none mt-2">
-                        <router-link to="#">꽃병이 있는 의자</router-link>
-                      </h5>
-                    </div>
-                  </div>
-                  <h6 class="leading-none">$124</h6>
-                </div>
-                <div class="flex items-center justify-between gap-5">
-                  <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product flex-wrap">
-                    <div class="w-16 sm:w-[70px] flex-none">
-                      <img :src="cart3" alt="product">
-                    </div>
-                    <div class="flex-1">
-                      <h6 class="leading-none font-medium">조명 / 램프</h6>
-                      <h5 class="font-semibold leading-none mt-2">
-                        <router-link to="#">행잉 램프</router-link>
-                      </h5>
-                    </div>
-                  </div>
-                  <h6 class="leading-none">$241</h6>
+                  <h6 class="leading-none">{{ orderItem.price.toLocaleString() }} 원</h6>
+                  <h6 class="leading-none text-sm text-gray-500 mt-1">
+                  </h6>
                 </div>
               </div>
               <div
                   class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk text-right flex justify-end flex-col w-full ml-auto mr-0">
-                <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium">
-                  <span>총 주문 금액:</span>
-                  <span>150,000원</span>
+                <div
+                    class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
+                  <span>수량:</span>
+                  <span>{{ orderItem.quantity }} 개</span>
                 </div>
                 <div
                     class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
                   <span>배송비:</span>
-                  <span>0</span>
+                  <span> {{ deliveryFee.toLocaleString() }} 원</span>
                 </div>
                 <div
                     class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
                   <span>총 할인 금액:</span>
-                  <span>-20,000원</span>
+                  <span>0 원</span>
                 </div>
+                <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium">
+                  <span>총 주문 금액:</span>
+                  <span>{{ totalPrice.toLocaleString() }} 원</span>
+                </div>
+
               </div>
               <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
                 <div class="flex justify-between flex-wrap font-semibold leading-none text-2xl md:text-3xl">
                   <span>총 결제 금액:</span>
-                  <span>130,000원</span>
+                  <span>{{ totalAmount.toLocaleString() }} 원 </span>
                 </div>
               </div>
+            </div>
+            <div v-else class="text-center text-gray-500 mt-10">
+              <p>🛒 주문할 상품이 없습니다.</p>
             </div>
             <div class="mt-7 md:mt-12">
 <!--              <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-10">결제 방법</h4>-->
@@ -231,7 +227,7 @@
                 <router-link to="#" class="btn btn-outline" data-text="장바구니로 돌아가기"><span>장바구니로 돌아가기</span></router-link>
                 <button
                     :disabled="!ready"
-                    @click="requestPayment"
+                    @click="handleSubmit"
                     class="btn btn-theme-solid"
                     data-text="결제하기">
                   <span>결제하기</span>
@@ -250,7 +246,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted } from "vue";
+import { useOrderStore } from '@/modules/order/stores/order'
+import {computed, ref, reactive, watch, onMounted} from "vue";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import NavbarOne from '@/components/navbar/navbar-one.vue';
 import FooterThree from '@/components/footer/footer-three.vue';
@@ -259,14 +256,30 @@ import 'swiper/swiper-bundle.css';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import bg from "@/assets/img/shortcode/breadcumb.jpg";
-import cart1 from "@/assets/img/gallery/cart/cart-01.jpg";
-import cart2 from "@/assets/img/gallery/cart/cart-02.jpg";
-import cart3 from "@/assets/img/gallery/cart/cart-03.jpg";
 
 function generateRandomString() {
   return window.btoa(Math.random().toString()).slice(0, 20);
 }
 
+const orderStore = useOrderStore()
+
+const orderItem = computed(() => orderStore.orderItem)
+const totalPrice = computed(() => {
+  return orderItem.value.price * orderItem.value.quantity;
+})
+const totalAmount = computed(() => {
+  return totalPrice.value + deliveryFee.value;
+})
+
+const deliveryFee = computed(() => totalPrice.value >= 50000 ? 0 : 3000)
+
+const nameRegex = /^([가-힣]{2,10}|[a-zA-Z\s]{2,20})$/
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const phoneRegex = /^(010|070|0(2|3[1-3]|4[1-4]|5[1-5]|6[1-4]))\d{7,8}$/
+
+const isValidName = computed(() => nameRegex.test(form.name))
+const isValidEmail = computed(() => emailRegex.test(form.email))
+const isValidPhone = computed(() => phoneRegex.test(form.phone.replace(/-/g, '')))
 
 // ─── 1. ‘배송지’ 폼 데이터 (reactive 객체) ───
 const form = reactive({
@@ -277,11 +290,44 @@ const form = reactive({
   note: "",
 });
 
+const nameRef = ref(null)
+const emailRef = ref(null)
+const phoneRef = ref(null)
+const postcodeButtonRef = ref(null)
+
 const postalCode = ref("");
 const basicAddress = ref("");
 
 // “기본배송지로 설정” 여부
 const isDefaultAddress = ref(false);
+
+
+const handleSubmit = () => {
+  if (!nameRegex.test(form.name)) {
+    alert('유효한 이름을 입력해주세요')
+    return
+  }
+  if (!emailRegex.test(form.email)) {
+    alert('유효한 이메일을 입력해주세요')
+    return
+  }
+  if (!phoneRegex.test(String(form.phone).replace(/-/g, ''))) {
+    alert('유효한 전화번호를 입력해주세요')
+    return
+  }
+  if (!postalCode.value || !basicAddress.value) {
+    alert('주소를 입력해주세요. "우편번호 찾기" 버튼을 눌러 주소를 입력하세요.')
+    return
+  }
+  if(!form.detailAddress) {
+    alert('상세주소를 입력해주세요')
+    return
+  }
+
+  requestPayment();
+
+
+}
 
 function openPostcode() {
   // window.daum.Postcode 객체가 로드되어 있어야 함
@@ -361,6 +407,11 @@ async function renderPaymentWidgets() {
 async function requestPayment() {
   if (!widgets.value || !ready.value) return;
 
+  if(orderItem.value.stockCount <= 0){
+    alert('해당 제품의 재고 수량이 부족합니다!');
+    return;
+  }
+
   try {
     // 결제 요청 전, 서버에 orderId와 amount를 저장/검증하는 로직이 선행되어야 안전합니다.
     await widgets.value.requestPayment({
@@ -380,13 +431,22 @@ async function requestPayment() {
 
 onMounted(() => {
   Aos.init();
+  if (!orderStore.orderItem) {
+    const saved = sessionStorage.getItem('orderItem')
+    if (saved) {
+      orderStore.setOrderItem(JSON.parse(saved))
+    }
+  }
 });
+
+
 
 // 컴포넌트 마운트 시 결제 위젯 초기화 & 렌더링
 onMounted(async () => {
   await fetchPaymentWidgets();
   await renderPaymentWidgets();
 });
+
 
 watch(isDefaultAddress, (newVal) => {
   console.log("기본배송지 설정 여부:", newVal);

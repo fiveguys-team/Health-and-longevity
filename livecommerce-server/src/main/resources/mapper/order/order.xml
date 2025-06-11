@@ -5,8 +5,15 @@
 
 <mapper namespace="com.example.livecommerce_server.order.mapper.OrderMapper">
     <select id ="findOrderPageByProductId" resultType="OrderPageDTO">
-        SELECT product_id, price, name, stock_count
-        FROM PRODUCT
-        WHERE product_id = #{productId}
+        SELECT
+            p.product_id,
+            p.price,
+            p.name AS product_name,
+            p.stock_count,
+            p.product_image,
+            c.name AS category_name
+        FROM PRODUCT p
+                 JOIN CATEGORY c ON p.category_id = c.category_id
+        WHERE p.product_id = #{productId}
     </select>
 </mapper>

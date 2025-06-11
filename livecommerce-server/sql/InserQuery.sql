@@ -37,11 +37,12 @@ DROP TABLE IF EXISTS `BANWORD_M`;
 -- 2) CREATE TABLE statements
 -- ========================================================
 CREATE TABLE `CHAT_ROOM_M` (
-                               room_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                               `participants_cnt` INT      NULL,
-                               `created_at`       DATETIME NULL,
-                               `updated_at`       DATETIME NULL,
-                               `live_id`          CHAR(36) NOT NULL
+                               `room_id` BIGINT NOT NULL AUTO_INCREMENT,
+                               `participants_cnt` INT NULL,
+                               `created_at` DATETIME NULL,
+                               `updated_at` DATETIME NULL,
+                               `live_id` CHAR(36) NOT NULL,
+                               PRIMARY KEY (`room_id`)
 );
 
 CREATE TABLE `USER_M` (
@@ -67,13 +68,14 @@ CREATE TABLE `PAYMENT_D` (
 );
 
 CREATE TABLE `CHAT_REPORT_D` (
-                                 `report_id`    BIGINT       NOT NULL,
-                                 `reason_nm`    VARCHAR(100) NULL,
-                                 `status_cd`    ENUM('미처리','제재됨','해제됨') NULL,
-                                 `reported_at`  DATETIME     NULL,
-                                 `processed_at` DATETIME     NULL,
-                                 `message_id`   BIGINT       NOT NULL,
-                                 `user_id`      BIGINT       NOT NULL
+                                 `report_id` BIGINT NOT NULL AUTO_INCREMENT,
+                                 `reason_nm` VARCHAR(100) NULL,
+                                 `status_cd` ENUM('미처리','제재됨','해제됨') NULL,
+                                 `reported_at` DATETIME NULL,
+                                 `processed_at` DATETIME NULL,
+                                 `message_id` BIGINT NOT NULL,
+                                 `user_id` BIGINT NOT NULL,
+                                 PRIMARY KEY (`report_id`)
 );
 
 CREATE TABLE `SERVICE_M` (
@@ -89,12 +91,13 @@ CREATE TABLE `SERVICE_M` (
 );
 
 CREATE TABLE `REVIEW` (
-                          `review_id`      BIGINT    NOT NULL,
-                          `order_item_id`  CHAR(36)  NOT NULL,
-                          `rating`         INTEGER   NULL,
-                          `feedback_choice` TINYINT  NULL,
-                          `content`        VARCHAR(256) NULL,
-                          `created_at`     CHAR(16)  NULL
+                          `review_id` BIGINT NOT NULL AUTO_INCREMENT,
+                          `order_item_id` CHAR(36) NOT NULL,
+                          `rating` INTEGER NULL,
+                          `feedback_choice` TINYINT NULL,
+                          `content` VARCHAR(256) NULL,
+                          `created_at` CHAR(16) NULL,
+                          PRIMARY KEY (`review_id`)
 );
 
 CREATE TABLE `ORDERS_M` (
@@ -110,21 +113,23 @@ CREATE TABLE `ORDERS_M` (
 );
 
 CREATE TABLE `VENDOR_M` (
-                            `vendor_id`      BIGINT NOT NULL,
-                            `user_id`        BIGINT NOT NULL,
-                            `name`           VARCHAR(256) NULL,
-                            `address`        VARCHAR(256) NULL,
+                            `vendor_id` BIGINT NOT NULL AUTO_INCREMENT,
+                            `user_id` BIGINT NOT NULL,
+                            `name` VARCHAR(256) NULL,
+                            `address` VARCHAR(256) NULL,
                             `business_number` VARCHAR(256) NULL,
-                            `permit_number`  VARCHAR(256) NULL,
-                            `status`         ENUM('PENDING','APPROVED','REJECTED') NULL
+                            `permit_number` VARCHAR(256) NULL,
+                            `status` ENUM('PENDING','APPROVED','REJECTED') NULL,
+                            PRIMARY KEY (`vendor_id`)
 );
 
 CREATE TABLE `CHAT_PARTICIPANT_D` (
-                                      `participant_id` BIGINT   NOT NULL,
-                                      `banned_yn`      BOOLEAN  NULL,
-                                      `created_at`     DATETIME NULL,
-                                      `room_id`        BIGINT   NOT NULL,
-                                      `user_id`        BIGINT   NOT NULL
+                                      `participant_id` BIGINT NOT NULL AUTO_INCREMENT,
+                                      `banned_yn` BOOLEAN NULL,
+                                      `created_at` DATETIME NULL,
+                                      `room_id` BIGINT NOT NULL,
+                                      `user_id` BIGINT NOT NULL,
+                                      PRIMARY KEY (`participant_id`)
 );
 
 CREATE TABLE `LIVE_DASHBOARD_D` (
@@ -138,26 +143,30 @@ CREATE TABLE `LIVE_DASHBOARD_D` (
 );
 
 CREATE TABLE `CHAT_MESSAGE_D` (
-                                  `message_id` BIGINT   NOT NULL,
-                                  `content`    TEXT     NULL,
+                                  `message_id` BIGINT NOT NULL AUTO_INCREMENT,
+                                  `content` TEXT NULL,
                                   `created_at` DATETIME NULL,
-                                  `user_id`    BIGINT   NOT NULL,
-                                  `room_id`    BIGINT   NOT NULL
+                                  `user_id` BIGINT NOT NULL,
+                                  `room_id` BIGINT NOT NULL,
+                                  PRIMARY KEY (`message_id`)
 );
 
 CREATE TABLE `BANWORD_M` (
-                             `word_id`    BIGINT       NOT NULL,
-                             `word`       VARCHAR(100) NULL,
-                             `category`   VARCHAR(50)  NULL,
-                             `created_at` DATETIME     NULL
+                             `word_id` BIGINT NOT NULL AUTO_INCREMENT,
+                             `word` VARCHAR(100) NULL,
+                             `category` VARCHAR(50) NULL,
+                             `created_at` DATETIME NULL,
+                             PRIMARY KEY (`word_id`)
 );
 
+
 CREATE TABLE `CHATBOT_LOG_D` (
-                                 `log_id`    BIGINT   NOT NULL,
-                                 `question`  TEXT     NULL,
-                                 `answer`    TEXT     NULL,
+                                 `log_id` BIGINT NOT NULL AUTO_INCREMENT,
+                                 `question` TEXT NULL,
+                                 `answer` TEXT NULL,
                                  `created_at` DATETIME NULL,
-                                 `user_id`   BIGINT   NOT NULL
+                                 `user_id` BIGINT NOT NULL,
+                                 PRIMARY KEY (`log_id`)
 );
 
 CREATE TABLE `CART_M` (
@@ -167,13 +176,14 @@ CREATE TABLE `CART_M` (
 );
 
 CREATE TABLE `ADDRESS_M` (
-                             `address_id` BIGINT    NOT NULL,
-                             `order_id`   CHAR(36)  NOT NULL,
-                             `name`       VARCHAR(256) NULL,
-                             `zip_code`   VARCHAR(256) NULL,
-                             `detailed`   VARCHAR(256) NULL,
-                             `is_default` BOOLEAN   NULL,
-                             `is_saved`   BOOLEAN   NULL
+                             `address_id` BIGINT NOT NULL AUTO_INCREMENT,
+                             `order_id` CHAR(36) NOT NULL,
+                             `name` VARCHAR(256) NULL,
+                             `zip_code` VARCHAR(256) NULL,
+                             `detailed` VARCHAR(256) NULL,
+                             `is_default` BOOLEAN NULL,
+                             `is_saved` BOOLEAN NULL,
+                             PRIMARY KEY (`address_id`)
 );
 
 CREATE TABLE `LIVE_M` (
@@ -200,16 +210,18 @@ CREATE TABLE `PRODUCT` (
 );
 
 CREATE TABLE `STOCK_LOG` (
-                             `stock_log_id` BIGINT NOT NULL,
-                             `product_id`   CHAR(36) NOT NULL,
-                             `change_type`  ENUM('SALE','RESTOCK','CANCEL','ADJUST') NULL,
-                             `count_change` INT    NULL,
-                             `changed_at`   CHAR(16) NULL
+                             `stock_log_id` BIGINT NOT NULL AUTO_INCREMENT,
+                             `product_id` CHAR(36) NOT NULL,
+                             `change_type` ENUM('SALE','RESTOCK','CANCEL','ADJUST') NULL,
+                             `count_change` INT NULL,
+                             `changed_at` CHAR(16) NULL,
+                             PRIMARY KEY (`stock_log_id`)
 );
 
 CREATE TABLE `CATEGORY` (
-                            `category_id` BIGINT         NOT NULL,
-                            `name`        VARCHAR(256)   NULL
+                            `category_id` BIGINT NOT NULL AUTO_INCREMENT,
+                            `name` VARCHAR(256) NULL,
+                            PRIMARY KEY (`category_id`)
 );
 
 
@@ -230,54 +242,59 @@ CREATE TABLE `CART_ITEM_D` (
 );
 
 CREATE TABLE `LIVE_PRODUCT_J` (
-                                  `live_product_id` BIGINT NOT NULL,
-                                  `live_id`         CHAR(36) NOT NULL,
-                                  `product_id`      CHAR(36) NOT NULL,
-                                  `discount_cd`     ENUM('10','15','20') NULL
+                                  `live_product_id` BIGINT NOT NULL AUTO_INCREMENT,
+                                  `live_id` CHAR(36) NOT NULL,
+                                  `product_id` CHAR(36) NOT NULL,
+                                  `discountRate` BIGINT NULL,
+                                  PRIMARY KEY (`live_product_id`)
 );
+
 
 CREATE TABLE `PRODUCT_DETAIL` (
-                                  `cert_no`      BIGINT    NOT NULL,
-                                  `product_id`   CHAR(36)  NOT NULL,
-                                  `expiry_date`  VARCHAR(256) NULL,
+                                  `cert_no` BIGINT NOT NULL,
+                                  `product_id` CHAR(36) NOT NULL,
+                                  `expiry_date` VARCHAR(256) NULL,
                                   `approval_date` VARCHAR(256) NULL,
-                                  `how_to_take`  VARCHAR(256) NULL,
+                                  `how_to_take` VARCHAR(256) NULL,
                                   `main_function` VARCHAR(256) NULL,
-                                  `precautions`  VARCHAR(256) NULL,
+                                  `precautions` VARCHAR(256) NULL,
                                   `storage_method` VARCHAR(256) NULL,
-                                  `standard`     VARCHAR(256) NULL,
-                                  `ingredients`  VARCHAR(256) NULL,
-                                  `product_name` VARCHAR(256) NULL
+                                  `standard` VARCHAR(256) NULL,
+                                  `ingredients` VARCHAR(256) NULL,
+                                  `product_name` VARCHAR(256) NULL,
+                                  PRIMARY KEY (`cert_no`)
 );
 
 
--- ========================================================
--- 3) PRIMARY KEY constraints
--- ========================================================
-ALTER TABLE `CHAT_ROOM_M` ADD CONSTRAINT `PK_CHAT_ROOM_M` PRIMARY KEY (`room_id`);
-ALTER TABLE `USER_M`      ADD CONSTRAINT `PK_USER_M`      PRIMARY KEY (`user_id`);
-ALTER TABLE `PAYMENT_D`   ADD CONSTRAINT `PK_PAYMENT_D`   PRIMARY KEY (`payments_id`);
-ALTER TABLE `CHAT_REPORT_D` ADD CONSTRAINT `PK_CHAT_REPORT_D` PRIMARY KEY (`report_id`);
-ALTER TABLE `SERVICE_M`   ADD CONSTRAINT `PK_SERVICE_M`   PRIMARY KEY (`service_id`);
-ALTER TABLE `REVIEW`      ADD CONSTRAINT `PK_REVIEW`      PRIMARY KEY (`review_id`);
-ALTER TABLE `ORDERS_M`    ADD CONSTRAINT `PK_ORDERS_M`    PRIMARY KEY (`order_id`);
-ALTER TABLE `VENDOR_M`    ADD CONSTRAINT `PK_VENDOR_M`    PRIMARY KEY (`vendor_id`);
-ALTER TABLE `CHAT_PARTICIPANT_D` ADD CONSTRAINT `PK_CHAT_PARTICIPANT_D` PRIMARY KEY (`participant_id`);
-ALTER TABLE `LIVE_DASHBOARD_D`   ADD CONSTRAINT `PK_LIVE_DASHBOARD_D`   PRIMARY KEY (`liveDashboard_id`);
-ALTER TABLE `CHAT_MESSAGE_D`     ADD CONSTRAINT `PK_CHAT_MESSAGE_D`     PRIMARY KEY (`message_id`);
-ALTER TABLE `BANWORD_M`          ADD CONSTRAINT `PK_BANWORD_M`          PRIMARY KEY (`word_id`);
-ALTER TABLE `CHATBOT_LOG_D`      ADD CONSTRAINT `PK_CHATBOT_LOG_D`      PRIMARY KEY (`log_id`);
-ALTER TABLE `CART_M`             ADD CONSTRAINT `PK_CART_M`             PRIMARY KEY (`cart_id`);
-ALTER TABLE `ADDRESS_M`          ADD CONSTRAINT `PK_ADDRESS_M`          PRIMARY KEY (`address_id`);
-ALTER TABLE `LIVE_M`             ADD CONSTRAINT `PK_LIVE_M`             PRIMARY KEY (`live_id`);
-ALTER TABLE `PRODUCT`            ADD CONSTRAINT `PK_PRODUCT`            PRIMARY KEY (`product_id`);
-ALTER TABLE `STOCK_LOG`          ADD CONSTRAINT `PK_STOCK_LOG`          PRIMARY KEY (`stock_log_id`);
-ALTER TABLE `CATEGORY`           ADD CONSTRAINT `PK_CATEGORY`           PRIMARY KEY (`category_id`);
-ALTER TABLE `ORDER_ITEM_D`       ADD CONSTRAINT `PK_ORDER_ITEM_D`       PRIMARY KEY (`order_item_id`);
-ALTER TABLE `CART_ITEM_D`        ADD CONSTRAINT `PK_CART_ITEM_D`        PRIMARY KEY (`cart_item_id`);
-ALTER TABLE `LIVE_PRODUCT_J`     ADD CONSTRAINT `PK_LIVE_PRODUCT_J`     PRIMARY KEY (`live_product_id`);
-ALTER TABLE `PRODUCT_DETAIL`     ADD CONSTRAINT `PK_PRODUCT_DETAIL`     PRIMARY KEY (`cert_no`);
+ALTER TABLE `USER_M`
+    ADD CONSTRAINT `PK_USER_M` PRIMARY KEY (`user_id`);
 
+ALTER TABLE `PAYMENT_D`
+    ADD CONSTRAINT `PK_PAYMENT_D` PRIMARY KEY (`payments_id`);
+
+ALTER TABLE `SERVICE_M`
+    ADD CONSTRAINT `PK_SERVICE_M` PRIMARY KEY (`service_id`);
+
+ALTER TABLE `ORDERS_M`
+    ADD CONSTRAINT `PK_ORDERS_M` PRIMARY KEY (`order_id`);
+
+ALTER TABLE `LIVE_DASHBOARD_D`
+    ADD CONSTRAINT `PK_LIVE_DASHBOARD_D` PRIMARY KEY (`liveDashboard_id`);
+
+ALTER TABLE `CART_M`
+    ADD CONSTRAINT `PK_CART_M` PRIMARY KEY (`cart_id`);
+
+ALTER TABLE `LIVE_M`
+    ADD CONSTRAINT `PK_LIVE_M` PRIMARY KEY (`live_id`);
+
+ALTER TABLE `PRODUCT`
+    ADD CONSTRAINT `PK_PRODUCT` PRIMARY KEY (`product_id`);
+
+ALTER TABLE `ORDER_ITEM_D`
+    ADD CONSTRAINT `PK_ORDER_ITEM_D` PRIMARY KEY (`order_item_id`);
+
+ALTER TABLE `CART_ITEM_D`
+    ADD CONSTRAINT `PK_CART_ITEM_D` PRIMARY KEY (`cart_item_id`);
 
 -- ========================================================
 -- 4) FOREIGN KEY constraints
