@@ -71,10 +71,18 @@
             </div>
 
             <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up">
-              <IncDec />
+              <IncDec v-model="quantity" />
               <div class="flex gap-4 mt-4 sm:mt-6">
                 <router-link to="/cart" class="btn btn-outline">장바구니</router-link>
-                <router-link to="#" class="btn btn-outline">구매</router-link>
+                <button class="btn btn-outline" @click="buyNow">구매</button>
+                <!--                <router-link :to="{-->
+                <!--                path: '/order',-->
+                <!--                query: {-->
+                <!--                  productId: data?.id,-->
+                <!--                  quantity-->
+                <!--                }-->
+                <!--                }" class="btn btn-outline">-->
+                <!--                  구매</router-link>-->
               </div>
             </div>
           </div>
@@ -93,7 +101,9 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import {useRoute, useRouter} from 'vue-router'
+import axios from "axios";
+import {useOrderStore} from '@/modules/order/stores/order'
 import NavbarOne from '@/components/navbar/navbar-one.vue';
 import IncDec from '@/components/inc-dec.vue';
 import DetailTab from '@/components/product/detail-tab.vue';
@@ -108,10 +118,20 @@ onMounted(() => {
   Aos.init();
 });
 
+// inc-dec 수량 변경 테스트
+const quantity = ref(1);
+
+watch(
+    quantity,
+    () => { /* no-op or console.log */ },
+    { flush: 'sync' }
+);
+
 const activeImage = ref(1);
 const now = ref(new Date().getTime());
 const targetTime = ref(new Date('Sep 13 2025').getTime());
 const difference = ref(0);
+
 
 const days = computed(() => Math.floor(difference.value / (1000 * 60 * 60 * 24)));
 const hours = computed(() => 23 - new Date(now.value).getHours());
@@ -147,4 +167,24 @@ const averageRating = computed(() => {
   const total = filteredReviews.value.reduce((sum, r) => sum + r.rating, 0);
   return (total / filteredReviews.value.length).toFixed(1);
 });
+
+const store = useOrderStore()
+const productId = computed(() => parseInt(route.params.id, 10))
+const router = useRouter()
+
+async function buyNow() {
+  try{
+    const response = await axios.get('http://localhost:8080/order', {
+      params : {
+        productId: productId.value.toString(),
+        quantity: quantity.value
+      }
+    })
+    store.setOrderItem({...response.data, quantity: quantity.value})
+    console.log('Order stored:', store.orderItem)
+    router.push({name:'order'})
+  } catch (err) {
+    console.log('Order API 호출 실패', err)
+  }
+}
 </script>

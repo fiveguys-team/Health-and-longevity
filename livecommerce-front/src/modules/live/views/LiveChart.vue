@@ -1,91 +1,148 @@
-<script setup>
-import { onMounted } from 'vue';
-
-// import FooterOne from '@/components/footer/footer-one.vue';
-import FooterThree from '@/components/footer/footer-three.vue';
-import ScrollToTop from '@/components/scroll-to-top.vue';
-
-
-import 'swiper/swiper-bundle.css';
-
-
-import Aos from 'aos';
-import 'aos/dist/aos.css';
-import StoreNavbar from "@/components/dashboard/storeNavbar.vue";
-
-onMounted(() => {
-  Aos.init()
-});
-
-
-</script>
-
+<!--
+  비디오 세션 참가 및 관리
+  실시간 스트리밍 비디오 처리
+-->
 <template>
-  <div>
-    <store-navbar/>
-    <div class="s-py-100">
-      <div class="container-fluid">
-        <div class="flex items-start justify-between gap-8 max-w-[1720px] mx-auto flex-col lg:flex-row border-b border-bdr-clr dark:border-bdr-clr-drk pb-8 md:pb-[50px]" >
-          <div>
-            <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Choose Category</h4>
-            <div class="flex flex-wrap gap-[10px] md:gap-[15px]">
-              <router-link class="btn btn-theme-outline btn-sm shop1-button" to="/product-category" data-text="Sofa & Chair"><span>Sofa & Chair</span></router-link>
-              <router-link class="btn btn-theme-outline btn-sm shop1-button" to="/product-category" data-text="Full Interior"><span>Full Interior</span></router-link>
-              <router-link class="btn btn-theme-outline btn-sm shop1-button" to="/product-category" data-text="Lamp & Vase"><span>Lamp & Vase</span></router-link>
-              <router-link class="btn btn-theme-outline btn-sm shop1-button" to="/product-category" data-text="Table"><span>Table</span></router-link>
-              <router-link class="btn btn-theme-outline btn-sm shop1-button" to="/product-category" data-text="Wood Design"><span>Wood Design</span></router-link>
-            </div>
-          </div>
-          <div class="max-w-[562px] w-full grid sm:grid-cols-2 gap-8 md:gap-12">
-            <div>
-              <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Price Range</h4>
-              <div class="grid grid-cols-2 gap-[15px]">
-                <div class="py-[10px] px-5 border border-title dark:border-white-light flex items-center justify-center gap-[5px]">
-                  <span class="text-title dark:text-white font-medium leading-none">Min:</span>
-                  <div class="relative">
-                    <span class="text-title dark:text-white font-medium leading-none absolute left-0 top-1/2 block transform -translate-y-1/2">$</span>
-                    <input class="pl-[10px] w-full appearance-none bg-transparent text-title dark:text-white font-medium leading-none placeholder:text-title dark:placeholder:text-white placeholder  placeholder:font-medium placeholder:leading-none outline-none " type="number" placeholder="0" value="0">
-                  </div>
-                </div>
-                <div class="py-[10] px-5 border border-title dark:border-white-light flex items-center justify-center gap-[5px]">
-                  <span class="text-title dark:text-white font-medium leading-none">Max:</span>
-                  <div class="relative">
-                    <span class="text-title dark:text-white  font-medium leading-none absolute left-0 top-1/2 block transform -translate-y-1/2">$</span>
-                    <input class="pl-[10px] w-full appearance-none bg-transparent text-title dark:text-white font-medium leading-none placeholder:text-title dark:placeholder:text-white  placeholder:font-medium placeholder:leading-none outline-none " type="number" placeholder="100" value="100">
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Choose Brand</h4>
-              <div class="nice-select bg-white dark:bg-dark outline-select small-select" :class="isOpen ? 'open' : ''" @click="toggleDropdown">
-                <span class="current">{{ selectedOption }}</span>
-                <ul class="list">
-                  <li v-for="(item, index) in options" :key="index" data-value="1" class="option" @click="handleSelect(item, $event)">
-                    {{ item }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="home-container">
+    <header class="header">
+      <h1>라이브 커머스</h1>
+    </header>
 
-        <div data-aos="fade-up" data-aos-delay="200">
-          <LayoutOne :classList="'max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8 pt-8 md:pt-[50px]'" :productList="productList"/>
-        </div>
-
-        <div class="text-center mt-7 md:mt-12">
-          <router-link to="/shop-v1" class="btn btn-outline" data-text="Load More">
-            <span>Load More</span>
-          </router-link>
+    <div class="streams-container">
+      <h2>진행 중인 방송</h2>
+      <div class="stream-grid">
+        <div v-for="session in sessions" :key="session.id" class="stream-card">
+          <div class="stream-thumbnail">
+            <!-- 실제로는 방송 썸네일 이미지가 들어갈 자리 -->
+            <div class="placeholder-thumbnail"></div>
+            <span class="live-badge">LIVE</span>
+          </div>
+          <div class="stream-info">
+            <h3>{{ session.title }}</h3>
+            <router-link :to="{ name: 'viewer', params: { sessionId: session.id }}" class="btn btn-secondary">
+              시청하기
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
-
-    <FooterThree/>
-
-    <ScrollToTop/>
-
   </div>
 </template>
 
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
+const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/';
+const sessions = ref([]);
+/**
+ * 현재 라이브 방송 중인 session 배열 가져오는 함수
+ * @returns {Promise<void>}
+ * @constructor
+ */
+const ActiveSessions = async () => {
+  try {
+    const response = await axios.get(APPLICATION_SERVER_URL + 'api/sessions');
+    sessions.value = response.data;
+    console.log(sessions.value);
+  } catch (error) {
+    console.error('방송 목록 조회 중 오류 발생:', error);
+  }
+};
+
+onMounted(() => {
+  ActiveSessions();
+});
+</script>
+
+<style scoped>
+.home-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.streams-container {
+  margin-top: 20px;
+}
+
+.stream-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.stream-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.stream-card:hover {
+  transform: translateY(-5px);
+}
+
+.stream-thumbnail {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 비율 */
+  background-color: #000;
+}
+
+.placeholder-thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #343a40;
+}
+
+.live-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #dc3545;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.stream-info {
+  padding: 15px;
+}
+
+.stream-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1em;
+}
+</style>
