@@ -184,6 +184,7 @@ async function buyNow() {
     console.log('Order stored:', store.orderItem)
     router.push({name:'order'})
   } catch (err) {
+    alert('API 호출 실패\n' + err);
     console.log('Order API 호출 실패', err)
   }
 }

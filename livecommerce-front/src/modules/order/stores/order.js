@@ -6,10 +6,13 @@ export const useOrderStore = defineStore('order', {
     }),
     actions: {
         setOrderItem(item) {
+            this.orderItem = null
             this.orderItem = item
+            sessionStorage.setItem('orderItem', JSON.stringify(item))
         },
         clearOrderItem() {
             this.orderItem = null
+            sessionStorage.removeItem('orderItem')
         }
     }
 })
