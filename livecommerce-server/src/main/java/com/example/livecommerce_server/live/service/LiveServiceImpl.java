@@ -2,11 +2,13 @@ package com.example.livecommerce_server.live.service;
 
 import com.example.livecommerce_server.live.dto.LiveChatDTO;
 import com.example.livecommerce_server.live.dto.LiveDTO;
+import com.example.livecommerce_server.live.dto.LiveEndRequestDto;
 import com.example.livecommerce_server.live.dto.LiveProductDTO;
 import com.example.livecommerce_server.live.mapper.LiveMapper;
 import com.example.livecommerce_server.live.mapper.LiveProductMapper;
 import com.example.livecommerce_server.live.vo.LiveInfoVO;
 import com.example.livecommerce_server.live.vo.LiveProductVO;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +62,19 @@ public class LiveServiceImpl implements LiveService {
 				.build()).toList();
 
 		liveProductMapper.insertLiveProduct(list);
+	}
+
+	/**
+	 * 라이브 종료 후 종료 시간, 라이브 상태를 변경하는 메서드
+	 * @param sessionId
+	 */
+	@Override
+	public void saveLiveInfo(String sessionId) {
+		LiveEndRequestDto liveEndRequestDto = LiveEndRequestDto.builder()
+				.sessionId(sessionId)
+				.endTime(Instant.now().toString())
+				.build();
+
+		liveMapper.updateLiveInfo(liveEndRequestDto);
 	}
 }
