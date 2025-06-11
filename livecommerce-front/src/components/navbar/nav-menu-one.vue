@@ -1,7 +1,8 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
     <div class="flex items-center gap-4 sm:gap-6">
-        <router-link to="/login" class="text-lg leading-none text-title dark:text-white transition-all duration-300 hover:text-primary hidden lg:block">로그인</router-link>
+        <router-link v-if="!isLogin" to="/login" class="text-lg leading-none text-title dark:text-white transition-all duration-300 hover:text-primary hidden lg:block">로그인</router-link>
+        <button v-if="isLogin" @click="doLogout" class="text-lg leading-none text-title dark:text-white transition-all duration-300 hover:text-primary hidden lg:block">로그아웃</button>
         <button class="relative hdr_wishList_btn" @click="wishList = !wishList">
             <!-- <span class="absolute w-[22px] h-[22px] bg-secondary top-[0px] -right-[11px] rounded-full flex items-center justify-center text-xs leading-none text-white">7</span> -->
             <i class="mdi mdi-cards-heart-outline text-title dark:text-white text-[24px] sm:text-[28px]"></i>
@@ -53,12 +54,34 @@
 </template>
 
 <script setup>
-    import { ref, defineProps,defineEmits  } from 'vue'
-    
+    import { ref,defineProps, defineEmits, onMounted } from 'vue'
     import SwitcherS from '../switcher-s.vue'
+    import Cookies from 'js-cookie'
 
     const wishList = ref(false)
-    const cartList = ref(false);
+    const cartList = ref(false)
+    const isLogin = ref(false)
+
+    onMounted(() => {
+      // 토큰이 URL 파라미터가 아닌 쿠키에 있을 경우 처리
+      const token = Cookies.get("token")
+      console.log(token)
+
+      if (token) {
+        localStorage.setItem('token', token)
+        Cookies.remove("token")
+        window.location.href = "/"
+      }
+
+      if (localStorage.getItem("token")) {
+        isLogin.value = true
+      }
+    })
+
+    const doLogout = () => {
+      localStorage.clear()
+      window.location.reload()
+    }
 
     const props = defineProps({
     toggle: Boolean,
