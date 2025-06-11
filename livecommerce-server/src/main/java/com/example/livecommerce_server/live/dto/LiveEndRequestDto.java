@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionEndRequestDto {
+public class LiveEndRequestDto {
 	private String sessionId;
 	private String endTime;
 }
