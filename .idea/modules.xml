@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Health-and-longevity.iml" filepath="$PROJECT_DIR$/.idea/Health-and-longevity.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/livecommerce-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/livecommerce-server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.example.Health-and-longevity.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.example.Health-and-longevity.main.iml" />
     </modules>
   </component>
 </project>
