@@ -132,33 +132,42 @@
     </div>
 
     <!-- 방송 준비/송출 화면 -->
-    <div class="stream-session" v-if="session">
-      <div class="stream-header">
-        <h2>{{ streamTitle }}</h2>
-        <div class="stream-info">
-          <span class="viewer-count">👥 시청자 {{ viewerCount }}명</span>
-        </div>
-        <div class="product-info">
-          <div v-for="item in discountedProducts" :key="item.id" class="product-item">
-            <h3>{{ item.name }}</h3>
-            <strong>{{ item.discountedPrice.toLocaleString() }}원</strong>
-            <small class="text-muted">(정가 {{ item.price.toLocaleString() }}원)</small>
-            <p>{{ item.description }}</p>
-          </div>
-        </div>
-        <button class="btn btn-danger" @click="endStream">방송 종료</button>
-      </div>
-      <div class="video-container">
-        <div v-if="!publisher" class="loading-message">
-          카메라 연결 중...
-        </div>
-        <user-video v-else :stream-manager="publisher" />
 
-      </div>
-      <div>
-        <ChatContainer />
+    <!-- 라이브 스트리밍 전체 화면 -->
+    <div class="stream-session" v-if="session">
+      <div class="stream-content">
+        <div class="main-content">
+          <div class="stream-header">
+            <h2>{{ streamTitle }}</h2>
+            <div class="stream-info">
+              <span class="viewer-count">👥 시청자 {{ viewerCount }}명</span>
+            </div>
+          </div>
+          <div class="video-container">
+            <div v-if="!publisher" class="loading-message">
+              카메라 연결 중...
+            </div>
+            <user-video v-else :stream-manager="publisher" />
+          </div>
+          <div class="product-info">
+            <div class="product-list">
+              <div v-for="item in discountedProducts" :key="item.id" class="product-item">
+                <h3>{{ item.name }}</h3>
+                <p class="price">{{ item.discountedPrice.toLocaleString() }}원</p>
+                <p class="original-price">(정가 {{ item.price.toLocaleString() }}원)</p>
+                <p class="description">{{ item.description }}</p>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
+        </div>
+        <div class="chat-container">
+          <ChatContainer />
+        </div>
       </div>
     </div>
+
+    
   </div>
 </template>
 
@@ -439,7 +448,7 @@ const removeThumbnail = () => {
 <style scoped>
 .host-container {
   padding: 20px;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   background-color: #f8f9fa;
   min-height: 100vh;
@@ -711,6 +720,31 @@ const removeThumbnail = () => {
 
 .stream-session {
   width: 100%;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.stream-content {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 20px;
+  height: 100%;
+  padding: 20px;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.chat-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: 100%;
 }
 
 .stream-header {
