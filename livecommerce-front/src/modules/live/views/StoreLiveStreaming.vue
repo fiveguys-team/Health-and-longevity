@@ -13,63 +13,116 @@
   <div class="host-container">
     <!-- 방송 설정 화면 -->
     <div class="stream-setup" v-if="!session">
-      <h2>라이브 방송 시작하기</h2>
+      <div class="setup-container">
+        <h2 class="setup-title">라이브 방송 준비</h2>
 
-      <div class="form-group">
-        <label>방송 제목</label>
-        <input v-model="streamTitle" class="form-control" type="text" required />
+        <div class="setup-grid">
+          <!-- 왼쪽 컬럼: 기본 정보 -->
+          <div class="setup-column">
+            <div class="form-group">
+              <label class="form-label">방송 제목</label>
+              <input 
+                v-model="streamTitle" 
+                class="form-control" 
+                type="text" 
+                placeholder="방송 제목을 입력해주세요"
+                required 
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">공지 사항</label>
+              <textarea 
+                v-model="announcement" 
+                class="form-control" 
+                placeholder="시청자들에게 전달할 공지사항을 입력해주세요"
+                rows="3"
+                required 
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">썸네일 이미지</label>
+              <div class="thumbnail-upload">
+                <input 
+                  @change="handleThumbnailChange" 
+                  class="form-control" 
+                  type="file" 
+                  accept="image/*" 
+                  required 
+                />
+                <div class="thumbnail-preview-container" v-if="thumbnailPreview">
+                  <img :src="thumbnailPreview" class="thumbnail-preview" alt="썸네일 미리보기" />
+                  <button class="remove-thumbnail" @click="removeThumbnail">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 오른쪽 컬럼: 상품 및 할인 설정 -->
+          <div class="setup-column">
+            <div class="form-group">
+              <label class="form-label">판매 상품 선택 <span class="sub-label">(최대 3개)</span></label>
+              <div class="product-selection">
+                <div class="product-list">
+                  <div 
+                    v-for="product in availableProducts" 
+                    :key="product.id"
+                    class="product-item-select"
+                    :class="{ 'selected': selectedProducts.includes(product) }"
+                    @click="toggleProduct(product)"
+                  >
+                    <div class="product-info">
+                      <div class="product-name">{{ product.name }}</div>
+                      <div class="product-price">{{ product.price.toLocaleString() }}원</div>
+                    </div>
+                    <div class="selection-indicator">
+                      <span v-if="selectedProducts.includes(product)">✓</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">할인율 설정</label>
+              <select v-model.number="discountRate" class="form-control discount-select">
+                <option disabled :value="0">할인율을 선택해주세요</option>
+                <option :value="0">할인 미적용</option>
+                <option :value="10">10% 할인</option>
+                <option :value="15">15% 할인</option>
+                <option :value="20">20% 할인</option>
+                <option :value="25">25% 할인</option>
+                <option :value="30">30% 할인</option>
+              </select>
+            </div>
+
+            <div v-if="discountedProducts.length" class="discount-preview">
+              <h5>할인 적용 예시</h5>
+              <div class="discount-items">
+                <div v-for="item in discountedProducts" :key="item.id" class="discount-item">
+                  <div class="product-name">{{ item.name }}</div>
+                  <div class="price-info">
+                    <span class="original-price">{{ item.price.toLocaleString() }}원</span>
+                    <span class="arrow">→</span>
+                    <span class="discounted-price">{{ item.discountedPrice.toLocaleString() }}원</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-footer">
+          <button 
+            class="btn btn-primary start-button" 
+            @click="enterBroadcast"
+            :disabled="!isFormValid"
+          >
+            방송 시작하기
+          </button>
+        </div>
       </div>
-
-      <div class="form-group">
-        <label>공지 사항</label>
-        <input v-model="announcement" class="form-control" type="text" required />
-      </div>
-
-      <div class="form-group">
-        <label>썸네일</label>
-        <input @change="handleThumbnailChange" class="form-control" type="file" accept="image/*" required />
-        <img v-if="thumbnailPreview" :src="thumbnailPreview" class="thumbnail-preview" alt="썸네일 미리보기" />
-      </div>
-
-      <div class="form-group">
-        <label>판매 상품 선택 (최대 3개)</label>
-        <select class="form-control" size="5" multiple>
-          <option v-for="product in availableProducts" :key="product.id" :selected="selectedProducts.includes(product)"
-            @mousedown.prevent="toggleProduct(product)">
-            {{ product.name }} – {{ product.price.toLocaleString() }}원
-          </option>
-        </select>
-        <p>선택된 상품: {{selectedProducts.map(p => p.name).join(', ') || '없음'}}</p>
-      </div>
-
-      <div class="form-group">
-        <label>할인율 선택 </label>
-        <select v-model.number="discountRate" class="form-control">
-          <option disabled :value="0">할인율을 선택해주세요</option>
-          <option :value="0">할인을 적용하지 않습니다.</option>
-          <option :value="10">10%</option>
-          <option :value="15">15%</option>
-          <option :value="20">20%</option>
-          <option :value="25">25%</option>
-          <option :value="30">30%</option>
-        </select>
-        {{ discountRate }}
-      </div>
-
-      <div v-if="discountedProducts.length" class="mt-3">
-        <h5>할인 적용된 가격</h5>
-        <ul>
-          <li v-for="item in discountedProducts" :key="item.id">
-            {{ item.name }} –
-            <strong>{{ item.discountedPrice.toLocaleString() }}원</strong>
-            <small class="text-muted">(원가 {{ item.price.toLocaleString() }}원)</small>
-          </li>
-        </ul>
-      </div>
-
-      <button class="btn btn-primary" @click="enterBroadcast"
-        :disabled="selectedProducts.length === 0 || selectedProducts.length > 3">방송 시작
-      </button>
     </div>
 
     <!-- 방송 준비/송출 화면 -->
@@ -353,6 +406,21 @@ onBeforeUnmount(() => {
 // window.addEventListener('beforeunload', () => {
 //   endStream();
 // });
+
+// 폼 유효성 검사
+const isFormValid = computed(() => {
+  return streamTitle.value && 
+         announcement.value && 
+         thumbnailFile.value && 
+         selectedProducts.value.length > 0 && 
+         selectedProducts.value.length <= 3;
+});
+
+// 썸네일 제거 함수
+const removeThumbnail = () => {
+  thumbnailFile.value = null;
+  thumbnailPreview.value = '';
+};
 </script>
 
 
@@ -361,45 +429,252 @@ onBeforeUnmount(() => {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
 .stream-setup {
-  max-width: 600px;
+  max-width: 1000px;
   margin: 0 auto;
+  padding: 20px;
+}
+
+.setup-container {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.setup-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.setup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.setup-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .form-group {
   margin-bottom: 20px;
 }
 
-.form-group label {
+.form-label {
   display: block;
-  margin-bottom: 5px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.sub-label {
+  font-size: 0.9em;
+  color: #666;
+  font-weight: normal;
 }
 
 .form-control {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
+  padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s;
 }
 
-.btn {
-  padding: 10px 20px;
+.form-control:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.thumbnail-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.thumbnail-preview-container {
+  position: relative;
+  width: fit-content;
+}
+
+.thumbnail-preview {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.remove-thumbnail {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #dc3545;
+  color: white;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
 }
 
-.btn-primary {
-  background-color: black;
+.product-selection {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.product-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-item-select {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.product-item-select:last-child {
+  border-bottom: none;
+}
+
+.product-item-select:hover {
+  background-color: #f8f9fa;
+}
+
+.product-item-select.selected {
+  background-color: #e8f4ff;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-name {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.product-price {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.selection-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #007bff;
+}
+
+.selected .selection-indicator {
+  background-color: #007bff;
+  border-color: #007bff;
   color: white;
 }
 
-.btn-danger {
-  background-color: #dc3545;
+.discount-select {
+  background-color: white;
+}
+
+.discount-preview {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.discount-preview h5 {
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.discount-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.discount-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: white;
+  border-radius: 6px;
+}
+
+.price-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.original-price {
+  color: #666;
+  text-decoration: line-through;
+}
+
+.arrow {
+  color: #666;
+}
+
+.discounted-price {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.setup-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.start-button {
+  padding: 12px 40px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  background-color: #007bff;
+  border: none;
   color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.start-button:hover {
+  background-color: #0056b3;
+}
+
+.start-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .stream-session {
@@ -446,11 +721,6 @@ onBeforeUnmount(() => {
   text-align: center;
 }
 
-.form-control[multiple] {
-  height: auto;
-  min-height: 150px;
-}
-
 .text-muted {
   color: #6c757d;
   font-size: 0.875em;
@@ -493,14 +763,6 @@ select option {
 select option:checked {
   background-color: #007bff;
   color: white;
-}
-
-.thumbnail-preview {
-  max-width: 200px;
-  max-height: 200px;
-  margin-top: 10px;
-  border-radius: 4px;
-  object-fit: cover;
 }
 
 .stream-info {
