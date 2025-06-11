@@ -104,6 +104,11 @@
 </template>
 
 <script setup>
+
+import {useAuthStore} from "@/modules/auth/stores/auth";
+const auth = useAuthStore()
+
+
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import { ref, onBeforeUnmount, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router'
@@ -199,9 +204,11 @@ const enterBroadcast = async () => {
     // 세션 토큰 발급
     const token = await getToken();
     await session.value.connect(token, {
+      // 소비자에게 보여줄 데이터 지정
       clientData: {
         type: 'host',
         title: streamTitle.value,
+        thumbnail: thumbnailFile.value,
         products: discountedProducts.value
       }
     });
@@ -245,8 +252,9 @@ const notifyServerStreamEnded = async (sessionId) => {
     await axios.delete(
       `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
       {
-        headers: { 'Content-Type': 'application/json' },
-        // data: {endTime: endTime.value}
+        headers: { 'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.token}`},
+        //params: {endTime: endTime.value}
       },
 
     );
@@ -260,20 +268,18 @@ const notifyServerStreamEnded = async (sessionId) => {
 // 방송 종료 시 세션 종료 및 서버에 방송 종료 알림 전송 
 const endStream = async () => {
   try {
-    const currentSessionId = streamTitle.value; // 현재 세션 ID 저장
+    if (!session.value) return;
+
+    const currentSessionId = session.value.sessionId;
 
     // 방송 종료 시 스트림 종료 
     if (publisher.value) {
-      await session.value?.unpublish(publisher.value);
+      await session.value.unpublish(publisher.value);
       publisher.value = undefined;
     }
 
-    // 세션 종료 
-    if (session.value) {
-      //await session.value.disconnect();
-      // 서버에 세션 종료 알림
-      await notifyServerStreamEnded(currentSessionId);
-    }
+    // 서버에 세션 종료 알림
+    await notifyServerStreamEnded(currentSessionId);
   } catch (error) {
     console.error('방송 종료 중 오류 발생:', error);
   } finally {
@@ -292,13 +298,31 @@ const getToken = async () => {
 // customSessionId를 통해 세션 생성 API를 호출하면 
 // 백엔드에서 세션 객체를 생성하고 세션ID를 반환한다. 
 const createSession = async () => {
+  // FormData 객체 생성
+  const formData = new FormData();
+
+  // 기본 세션 정보
+  formData.append('title', streamTitle.value);
+  formData.append('announcement', announcement.value);
+  if (thumbnailFile.value) {
+    formData.append('thumbnail', thumbnailFile.value);
+  }
+  formData.append('products', JSON.stringify(selectedProducts.value));
+  formData.append('discountRate', discountRate.value);
+  formData.append('startTime', startTime.value);
+  formData.append('vendorId', vendorId);
+
   const response = await axios.post(
-    APPLICATION_SERVER_URL + 'api/sessions',
-    // 임시로 제목을 sessionId로 보냄 -> 추후 변경 예정
-    { customSessionId: streamTitle.value },
-    { headers: { 'Content-Type': 'application/json' } }
+      APPLICATION_SERVER_URL + 'api/sessions',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      }
   );
-  return response.data;
+  console.log("여기"+ response.data.sessionId);
+  return response.data.sessionId;
 };
 
 // [세션ID를 통해 토큰 생성]
@@ -315,7 +339,7 @@ const createToken = async (sessionId) => {
 
 onMounted(() => {
   productList();
-})
+});
 
 // 컴포넌트 언마운트 시 정리
 onBeforeUnmount(() => {

@@ -378,11 +378,9 @@ const loadingMessage = ref('방송에 연결 중입니다...'); // 상태 메시
 const handleStreamCreated = async ({ stream }) => {
   try {
     // 스트림 구독 설정
-    const subscriber = await session.value.subscribeAsync(stream, {
+    mainStreamManager.value = await session.value.subscribeAsync(stream, {
       insertMode: 'APPEND',
     });
-
-    mainStreamManager.value = subscriber;
 
     // 호스트 정보 파싱 및 저장
     const connectionData = JSON.parse(stream.connection.data || '{}');
@@ -582,11 +580,6 @@ const cleanupSession = () => {
   }
 };
 
-// 컴포넌트 언마운트 시 정리
-onBeforeUnmount(() => {
-  cleanupSession();
-});
-
 // 페이지 새로고침/종료 시 정리
 window.addEventListener('beforeunload', () => {
   cleanupSession();
@@ -596,6 +589,8 @@ window.addEventListener('beforeunload', () => {
 onMounted(async () => {
   try {
     const sessionId = route.params.sessionId;
+    //const sessionId = session.value.sessionId;
+    console.log("sessionId: " + sessionId);
     await joinSession(sessionId);
   } catch (error) {
     console.error('방송 참여 중 오류 발생:', error);
@@ -604,6 +599,11 @@ onMounted(async () => {
       router.push('/');
     }, 2000);
   }
+});
+
+// 컴포넌트 언마운트 시 정리
+onBeforeUnmount(() => {
+  cleanupSession();
 });
 </script>
 

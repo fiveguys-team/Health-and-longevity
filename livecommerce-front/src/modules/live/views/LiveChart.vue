@@ -11,7 +11,7 @@
     <div class="streams-container">
       <h2>진행 중인 방송</h2>
       <div class="stream-grid">
-        <div v-for="session in sessions" :key="session.id" class="stream-card">
+        <div v-for="session in sessions" :key="session.sessionId" class="stream-card">
           <div class="stream-thumbnail">
             <!-- 실제로는 방송 썸네일 이미지가 들어갈 자리 -->
             <div class="placeholder-thumbnail"></div>
@@ -19,7 +19,7 @@
           </div>
           <div class="stream-info">
             <h3>{{ session.title }}</h3>
-            <router-link :to="{ name: 'viewer', params: { sessionId: session.id }}" class="btn btn-secondary">
+            <router-link :to="{ name: 'viewer', params: { sessionId: session.sessionId }}" class="btn btn-secondary">
               시청하기
             </router-link>
           </div>
