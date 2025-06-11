@@ -69,6 +69,7 @@
 import { ref, onMounted, nextTick, watch, onBeforeUnmount } from 'vue';
 import { websocketService } from '../services/websocket.service';
 
+
 // 상태 관리
 const messages = ref([]);
 const newMessage = ref('');
@@ -79,16 +80,17 @@ const currentNotice = ref('');
 // 테스트용 roomId
 const roomId = 1; // 실제로는 props로 받아야 함
 
-// WebSocket 메시지 수신 처리
+// Vue 컴포넌트에서 수정
 const handleMessage = (receivedMessage) => {
+    console.log('서버에서 받은 메시지 전체:', receivedMessage); // 디버깅용
+
     messages.value.push({
         id: Date.now(),
-        username: receivedMessage.sender,
-        content: receivedMessage.message,
+        username: receivedMessage.userName || `사용자${receivedMessage.userId}`, // userName 우선, 없으면 userId 사용
+        content: receivedMessage.content, // content 필드 사용
         time: receivedMessage.createdAt || new Date().toISOString()
     });
 };
-
 // 메시지 전송
 const sendMessage = () => {
     if (!newMessage.value.trim()) return;

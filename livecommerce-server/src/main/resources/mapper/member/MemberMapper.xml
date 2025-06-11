@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.livecommerce_server.member.repository.MemberRepository">
+    <insert id="create" parameterType="com.example.livecommerce_server.member.domain.Member">
+        insert into USER_M (email, password, name, interest, social_id, social_type, role, email_verified)
+        values (#{email}, #{password}, #{name}, #{interest}, #{socialId}, #{socialType}, #{role}, #{emailVerified})
+    </insert>
+
+    <select id="findBySocialId" resultType="com.example.livecommerce_server.member.domain.Member">
+        select * from USER_M where social_id = #{socialId}
+    </select>
+
+    <select id="findByEmail" resultType="com.example.livecommerce_server.member.domain.Member">
+        select * from USER_M where email = #{email}
+    </select>
+
+    <update id="update" parameterType="com.example.livecommerce_server.member.domain.Member">
+        update USER_M set social_id = #{socialId}, social_type = #{socialType} where email = #{email}
+    </update>
+</mapper>
