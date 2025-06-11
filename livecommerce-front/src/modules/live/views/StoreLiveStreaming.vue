@@ -69,7 +69,10 @@
                     v-for="product in availableProducts" 
                     :key="product.id"
                     class="product-item-select"
-                    :class="{ 'selected': selectedProducts.includes(product) }"
+                    :class="{ 
+                      'selected': selectedProducts.includes(product),
+                      'disabled': selectedProducts.length >= 3 && !selectedProducts.includes(product)
+                    }"
                     @click="toggleProduct(product)"
                   >
                     <div class="product-info">
@@ -82,6 +85,9 @@
                   </div>
                 </div>
               </div>
+              <p v-if="showMaxProductsError" class="error-message">
+                최대 3개의 상품만 선택할 수 있습니다.
+              </p>
             </div>
 
             <div class="form-group">
@@ -203,6 +209,8 @@ const discountedProducts = computed(() =>
   }))
 )
 
+// 최대 상품 선택 초과 에러 상태
+const showMaxProductsError = ref(false);
 
 //입점업체 상품 가져오기
 const productList = async () => {
@@ -230,11 +238,15 @@ const handleThumbnailChange = (event) => {
 
 // 상품 선택
 function toggleProduct(prod) {
-  const idx = selectedProducts.value.indexOf(prod)
+  const idx = selectedProducts.value.indexOf(prod);
   if (idx > -1) {
-    selectedProducts.value.splice(idx, 1)
+    selectedProducts.value.splice(idx, 1);
+    showMaxProductsError.value = false;
   } else if (selectedProducts.value.length < 3) {
-    selectedProducts.value.push(prod)
+    selectedProducts.value.push(prod);
+    showMaxProductsError.value = false;
+  } else {
+    showMaxProductsError.value = true;
   }
 }
 
@@ -437,6 +449,7 @@ const removeThumbnail = () => {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
+  min-height: 700px; /* 높이 조정 */
 }
 
 .setup-container {
@@ -444,6 +457,7 @@ const removeThumbnail = () => {
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  min-height: 650px; /* 높이 조정 */
 }
 
 .setup-title {
@@ -459,23 +473,26 @@ const removeThumbnail = () => {
   grid-template-columns: 1fr 1fr;
   gap: 30px;
   margin-bottom: 30px;
+  min-height: 500px; /* 높이 조정 */
 }
 
 .setup-column {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 40px;
+  min-height: 500px;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .form-label {
   display: block;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   color: #333;
+  font-size: 1.1em;
 }
 
 .sub-label {
@@ -508,21 +525,23 @@ const removeThumbnail = () => {
 .thumbnail-preview-container {
   position: relative;
   width: fit-content;
+  margin-top: 15px;
 }
 
 .thumbnail-preview {
-  max-width: 200px;
-  max-height: 200px;
-  border-radius: 8px;
-  object-fit: cover;
+  max-width: 300px;
+  max-height: 500px;
+  border-radius: 12px;
+  object-fit: contain;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .remove-thumbnail {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 24px;
-  height: 24px;
+  top: -12px;
+  right: -12px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: #dc3545;
   color: white;
@@ -531,14 +550,22 @@ const removeThumbnail = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.remove-thumbnail:hover {
+  background: #c82333;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
 }
 
 .product-selection {
   border: 1px solid #ddd;
   border-radius: 8px;
-  max-height: 300px;
+  max-height: 450px; /* 높이 조정 */
   overflow-y: auto;
+  flex-grow: 1;
 }
 
 .product-list {
@@ -566,6 +593,11 @@ const removeThumbnail = () => {
 
 .product-item-select.selected {
   background-color: #e8f4ff;
+}
+
+.product-item-select.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .product-info {
@@ -773,5 +805,12 @@ select option:checked {
 .viewer-count {
   color: #666;
   font-weight: bold;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.9em;
+  margin-top: 8px;
+  margin-bottom: 0;
 }
 </style>
