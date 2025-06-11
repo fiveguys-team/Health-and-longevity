@@ -165,13 +165,14 @@
                 <div class="flex items-center justify-between gap-5">
                   <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product flex-wrap">
                     <div class="w-16 sm:w-[70px] flex-none">
-                      <img :src="'https://img.gcone.co.kr/DT/goods/20250519up/2608631.jpg'" alt="product">
+                      <img :src="orderItem.productImage" alt="product" />
                     </div>
                     <div class="flex-1">
-                      <h6 class="leading-none font-medium">추후 카테고리 넣을 자리</h6>
                       <h5 class="font-semibold leading-none mt-2">
-                        <router-link to="#">{{ orderItem.name }}</router-link>
+                        <router-link to="#">{{ orderItem.productName }}</router-link>
                       </h5>
+                      <br>
+                      <h6 class="leading-none font-medium">{{orderItem.categoryName}}</h6>
                     </div>
                   </div>
                   <h6 class="leading-none">{{ orderItem.price.toLocaleString() }} 원</h6>
@@ -437,6 +438,8 @@ onMounted(() => {
     }
   }
 });
+
+
 
 // 컴포넌트 마운트 시 결제 위젯 초기화 & 렌더링
 onMounted(async () => {
