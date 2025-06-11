@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  */
 @Service
 @RequiredArgsConstructor
-public class ChatServiceImp implements ChatService {
+public class ChatServiceImpl implements ChatService {
 
     private final ChatRoomMapper chatRoomMapper;
 
@@ -32,8 +32,8 @@ public class ChatServiceImp implements ChatService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
-        System.out.println(chatRoom);
 
+        chatRoomMapper.insertChatRoom(chatRoom);
         return chatRoom.getRoomId();
     }
 }
