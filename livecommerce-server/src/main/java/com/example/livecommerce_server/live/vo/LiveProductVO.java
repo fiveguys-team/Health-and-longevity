@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LiveProductVO {
-	private Integer live_product_id;
 	private String live_id;
 	private String product_id;
 	private Integer discountRate;
