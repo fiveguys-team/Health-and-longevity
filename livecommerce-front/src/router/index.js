@@ -132,7 +132,7 @@ const routes = [
   {path: '/chat-test',component: ChatTest},
   {
     path: '/order',
-    name: 'Order',
+    name: 'order',
     component: OrderView,
     props: route => ({
       productId: route.query.productId,
@@ -198,8 +198,14 @@ const routes = [
         component: () => import('@/modules/product/views/ProductReview.vue')
       }
     ]
-  }
+  },
 
+  // 채팅 라우트
+  {
+    path: '/chat',
+    name: 'chat',
+    component: () => import('@/modules/chat/components/ChatContainer.vue'),
+  },
 ];
 
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.livecommerce_server.product.repository.ProductDetailMapper">
+
+  <insert id="insertProductDetail">
+    INSERT INTO product_detail (
+      product_id,
+      cert_no,
+      product_name,
+      expiry_date,
+      approval_date,
+      how_to_take,
+      main_function,
+      precautions,
+      storage_method,
+      standard,
+      ingredients
+    ) VALUES (
+               #{productId},
+               #{certNo},
+               #{productName},
+               #{expiryDate},
+               #{approvalDate},
+               #{howToTake},
+               #{mainFunction},
+               #{precautions},
+               #{storageMethod},
+               #{standard},
+               #{ingredients}
+             )
+  </insert>
+
+
+  <select id="findDetailByProductId">
+    SELECT
+      product_id AS productId,
+      cert_no AS certNo,
+      product_name AS productName,
+      expiry_date AS expiryDate,
+      approval_date AS approvalDate,
+      how_to_take AS howToTake,
+      main_function AS mainFunction,
+      precautions,
+      storage_method AS storageMethod,
+      standard,
+      ingredients
+    FROM product_detail
+    WHERE product_id = #{productId}
+  </select>
+
+
+</mapper>

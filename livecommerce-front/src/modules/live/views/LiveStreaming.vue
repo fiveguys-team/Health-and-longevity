@@ -338,25 +338,25 @@
       <!-- 비디오 스트림 표시 영역 -->
       <div class="video-container">
         <div class="main-video">
-          <user-video :stream-manager="mainStreamManager"/>
-
-
+          <user-video :stream-manager="mainStreamManager" />
+          <ChatContainer />
         </div>
       </div>
     </div>
     <!-- 로딩/에러 메시지 표시 영역 -->
-<!--    <div class="loading" v-else>-->
-<!--      <p>{{ loadingMessage }}</p>-->
-<!--    </div>-->
+    <!--    <div class="loading" v-else>-->
+    <!--      <p>{{ loadingMessage }}</p>-->
+    <!--    </div>-->
   </div>
 </template>
 
 <script setup>
-import {onBeforeUnmount, onMounted, ref} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import {OpenVidu} from 'openvidu-browser';
+import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
+import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 
 // 라우터 설정
 const route = useRoute();
@@ -375,7 +375,7 @@ const loadingMessage = ref('방송에 연결 중입니다...'); // 상태 메시
  * 1. 스트림을 구독하고 비디오 표시 설정
  * 2. 호스트 정보 저장
  */
-const handleStreamCreated = async ({stream}) => {
+const handleStreamCreated = async ({ stream }) => {
   try {
     // 스트림 구독 설정
     mainStreamManager.value = await session.value.subscribeAsync(stream, {
@@ -453,12 +453,12 @@ const handleParticipantEvicted = (event) => {
 const getToken = async (sessionId) => {
   try {
     const response = await axios.post(
-        `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
-        {},
-        {
-          headers: {'Content-Type': 'application/json'},
-          timeout: 5000 // 5초 타임아웃 설정
-        }
+      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
+      {},
+      {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 5000 // 5초 타임아웃 설정
+      }
     );
     return response.data;
   } catch (error) {
@@ -512,7 +512,7 @@ const joinSession = async (sessionId) => {
       throw new Error('토큰을 받아올 수 없습니다.');
     }
 
-    await session.value.connect(token, {clientData: {type: 'viewer'}});
+    await session.value.connect(token, { clientData: { type: 'viewer' } });
 
   } catch (error) {
     console.error('세션 참가 중 오류 발생:', error);
@@ -673,7 +673,8 @@ onBeforeUnmount(() => {
   .video-container {
     width: 100%;
     height: 0;
-    padding-bottom: 56.25%; /* 16:9 비율 */
+    padding-bottom: 56.25%;
+    /* 16:9 비율 */
     position: relative;
     background-color: #000;
     margin: 20px auto;
