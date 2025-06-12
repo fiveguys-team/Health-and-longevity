@@ -69,6 +69,9 @@ const filteredItems = computed(() => {
 .statistics {
   padding: 20px;
   font-family: sans-serif;
+  margin-top: 70px;
+  margin-left: 200px;
+  margin-right: 200px;
 }
 
 .statistics-header {
@@ -91,18 +94,20 @@ const filteredItems = computed(() => {
 
 .cards-container {
   border: 1px solid #ccc;
-  padding: 16px;
+  padding: 32px;
   border-radius: 4px;
   display: grid;
-  /* 고정 3열 레이아웃: 항상 한 줄에 3개 표시 */
+  /* 반응형: 최소 너비 240px, 여유 있으면 자동으로 열 추가 */
+  //grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 32px;
   margin-bottom: 24px;
-  /* 높이 늘리기: 최소 400px 유지 */
-  min-height: 400px;
+  min-height: 240px;
 }
 
 .card {
+  margin-left: 30px;
+  margin-right: 30px;
   background: #fff;
   padding: 16px;
   border: 1px solid #ddd;
@@ -139,7 +144,6 @@ const filteredItems = computed(() => {
   border-radius: 4px;
   box-shadow: 2px 2px 6px rgba(0,0,0,0.05);
   margin-top: 16px;
-  min-height: 300px;
 }
 
 .details h2 {
