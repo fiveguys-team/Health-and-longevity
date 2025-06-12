@@ -38,6 +38,7 @@ public class LiveServiceImpl implements LiveService {
 				.start_time(liveDTO.getStartTime())
 				.status("ON") // 추후 변경
 				.announcement(liveDTO.getAnnouncement())
+				.category(liveDTO.getCategory())
 				.build();
 		liveMapper.insertLiveInfo(liveInfoVO);
 
