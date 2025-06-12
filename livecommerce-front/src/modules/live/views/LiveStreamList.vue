@@ -23,7 +23,7 @@
     </div>
 
     <div class="live-stream-grid">
-      <div v-for="stream in filteredStreams" :key="stream.id" class="live-stream-card"
+      <div v-for="stream in filteredStreams" :key="stream.sessionId" class="live-stream-card"
            @click="goToStream(stream)">
         <div class="live-badge">Live</div>
         <div class="live-stream-content">
@@ -33,10 +33,10 @@
 
           <div class="live-stream-footer">
             <div class="live-stream-info">
-              <p class="live-vendor-name">{{ stream.vendorName }}</p>
-              <p class="live-broadcast-title">{{ stream.broadcastTitle }}</p>
+              <h2 class="live-vendor-name">{{ stream.vendorName }}</h2>
+              <p class="live-broadcast-title">{{ stream.title }}</p>
             </div>
-            <div>{{ stream.category }}</div>
+            <div class="live-vendor-category">{{ stream.category }}</div>
           </div>
         </div>
       </div>
@@ -57,20 +57,12 @@ const selectedCategory = ref('');
 const categories = [
   '혈압',
   '눈',
-  '뼈,관절,연골',
+  '뼈/관절/연골',
   '장건강',
   '영양보충'
 ];
 
-const streams = ref([
-  // 테스트용 더미 데이터에 카테고리 추가
-  {id: 1, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
-  {id: 2, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
-  {id: 3, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체3', broadcastTitle: '방송 제목3', category: '뼈,관절,연골'},
-  {id: 4, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
-  {id: 5, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
-  {id: 6, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'},
-]);
+const streams = ref([]);
 
 // 검색어와 카테고리로 필터링하는 computed 속성
 const filteredStreams = computed(() => {
@@ -126,7 +118,7 @@ const fetchLiveStreams = async () => {
 };
 
 const goToStream = (stream) => {
-  router.push(`/view/${stream.id}`);
+  router.push(`/view/${stream.sessionId}`);
 };
 
 onMounted(() => {
@@ -229,8 +221,8 @@ onMounted(() => {
 }
 
 .live-vendor-name {
-  font-size: 0.9em;
-  color: #666;
+  font-size: 1.5em;
+  color: black;
   margin: 5px 0;
 }
 
@@ -239,6 +231,17 @@ onMounted(() => {
   color: #333;
   margin: 5px 0;
 }
+
+.live-vendor-category {
+  //margin: 10px;
+  //text-align: center;
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center;
+}
+
+
+
 
 .live-stream-footer {
   display: flex;
