@@ -2,6 +2,7 @@ package com.example.livecommerce_server.live.controller;
 
 import com.example.livecommerce_server.live.dto.LiveChatDTO;
 import com.example.livecommerce_server.live.dto.LiveDTO;
+import com.example.livecommerce_server.live.dto.LiveEndRequestDto;
 import com.example.livecommerce_server.live.dto.LiveProductDTO;
 import com.example.livecommerce_server.live.dto.ProductInfo;
 import com.example.livecommerce_server.live.service.LiveService;
@@ -15,6 +16,7 @@ import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
 import jakarta.annotation.PostConstruct;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -202,6 +204,9 @@ public class LiveController {
 			session.close();
 			// 활성 세션 목록에서 제거
 			activeSessions.remove(sessionId);
+			// 라이브 종료 후 종료 시간, 상태 변경 메서드
+			liveService.saveLiveInfo(sessionId);
+
 			return new ResponseEntity<>("Session closed", HttpStatus.OK);
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			e.printStackTrace();
