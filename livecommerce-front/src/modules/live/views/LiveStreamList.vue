@@ -3,27 +3,37 @@
   실시간 스트리밍 비디오 처리
 -->
 <template>
-  <navbar-one />
+  <navbar-one/>
   <div class="live-stream-list">
     <div class="live-header">
       <h2>진행중인 방송</h2>
       <div class="live-header-buttons">
-        <button class="live-btn">검색</button>
-        <button class="live-btn">카테고리</button>
+        <div class="live-search">
+          <input type="text" v-model="searchQuery" placeholder="입점업체명 검색" class="live-search-input"/>
+        </div>
+        <div class="live-category-dropdown">
+          <select v-model="selectedCategory" class="live-category-select">
+            <option value="">전체 카테고리</option>
+            <option v-for="category in categories" :key="category" :value="category">
+              {{ category }}
+            </option>
+          </select>
+        </div>
       </div>
     </div>
 
     <div class="live-stream-grid">
-      <div v-for="stream in streams" :key="stream.id" class="live-stream-card" @click="goToStream(stream)">
+      <div v-for="stream in filteredStreams" :key="stream.id" class="live-stream-card"
+           @click="goToStream(stream)">
         <div class="live-badge">Live</div>
         <div class="live-stream-content">
-          <h3 class="live-stream-title">{{ stream.title }}</h3>
+          <h3 class="live-stream-thumbnail">{{ stream.thumbnail }}</h3>
           <div class="live-stream-info">
             <p class="live-vendor-name">{{ stream.vendorName }}</p>
             <p class="live-broadcast-title">{{ stream.broadcastTitle }}</p>
           </div>
           <div class="live-stream-footer">
-            <button class="live-category-btn">카테고리</button>
+            <button class="live-category-btn">{{ stream.category }}</button>
           </div>
         </div>
       </div>
@@ -32,54 +42,88 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import {ref, onMounted, computed} from 'vue';
+import {useRouter} from 'vue-router';
 import axios from 'axios';
 import NavbarOne from "@/components/navbar/navbar-one.vue";
 
 const router = useRouter();
+const searchQuery = ref('');
+const selectedCategory = ref('');
+
+const categories = [
+  '혈압',
+  '눈',
+  '뼈,관절,연골',
+  '장건강',
+  '영양보충'
+];
+
 const streams = ref([
-  // 테스트용 더미 데이터
-  { id: 1, title: '썸네일1', vendorName: '입점업체1', broadcastTitle: '방송 제목1' },
-  { id: 2, title: '썸네일2', vendorName: '입점업체2', broadcastTitle: '방송 제목2' },
-  { id: 3, title: '썸네일3', vendorName: '입점업체3', broadcastTitle: '방송 제목3' },
-  { id: 4, title: '썸네일4', vendorName: '입점업체4', broadcastTitle: '방송 제목4' },
-  { id: 5, title: '썸네일5', vendorName: '입점업체5', broadcastTitle: '방송 제목5' },
-  { id: 6, title: '썸네일6', vendorName: '입점업체6', broadcastTitle: '방송 제목6' },
+  // 테스트용 더미 데이터에 카테고리 추가
+  {id: 1, thumbnail: '썸네일1', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
+  {id: 2, thumbnail: '썸네일2', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
+  {id: 3, thumbnail: '썸네일3', vendorName: '입점업체3', broadcastTitle: '방송 제목3', category: '뼈,관절,연골'},
+  {id: 4, thumbnail: '썸네일4', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
+  {id: 5, thumbnail: '썸네일5', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
+  {id: 6, thumbnail: '썸네일6', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'},
 ]);
+
+// 검색어와 카테고리로 필터링하는 computed 속성
+const filteredStreams = computed(() => {
+  return streams.value.filter(stream => {
+    const matchesSearch = !searchQuery.value ||
+        stream.vendorName.toLowerCase().includes(searchQuery.value.toLowerCase());
+    const matchesCategory = !selectedCategory.value ||
+        stream.category === selectedCategory.value;
+    return matchesSearch && matchesCategory;
+  });
+});
 
 const fetchLiveStreams = async () => {
   try {
-    const response = await axios.get('/api/live-streams', {
+    const response = await axios.get('/api/sessions', {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Accept': 'application/json; charset=utf-8'
       }
     });
-    
+
     if (response.data && Array.isArray(response.data)) {
       streams.value = response.data;
     } else {
       // 테스트용 더미 데이터로 초기화
       streams.value = [
-        { id: 1, title: '썸네일1', vendorName: '입점업체1', broadcastTitle: '방송 제목1' },
-        { id: 2, title: '썸네일2', vendorName: '입점업체2', broadcastTitle: '방송 제목2' },
-        { id: 3, title: '썸네일3', vendorName: '입점업체3', broadcastTitle: '방송 제목3' },
-        { id: 4, title: '썸네일4', vendorName: '입점업체4', broadcastTitle: '방송 제목4' },
-        { id: 5, title: '썸네일5', vendorName: '입점업체5', broadcastTitle: '방송 제목5' },
-        { id: 6, title: '썸네일6', vendorName: '입점업체6', broadcastTitle: '방송 제목6' }
+        {id: 1, thumbnail: '썸네일1', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
+        {id: 2, thumbnail: '썸네일2', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
+        {
+          id: 3,
+          thumbnail: '썸네일3',
+          vendorName: '입점업체3',
+          broadcastTitle: '방송 제목3',
+          category: '뼈,관절,연골'
+        },
+        {id: 4, thumbnail: '썸네일4', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
+        {id: 5, thumbnail: '썸네일5', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
+        {id: 6, thumbnail: '썸네일6', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'}
       ];
     }
   } catch (error) {
     console.error('라이브 스트림 목록 조회 실패:', error);
     // 에러 시 테스트용 더미 데이터로 초기화
     streams.value = [
-      { id: 1, title: '썸네일1', vendorName: '입점업체1', broadcastTitle: '방송 제목1' },
-      { id: 2, title: '썸네일2', vendorName: '입점업체2', broadcastTitle: '방송 제목2' },
-      { id: 3, title: '썸네일3', vendorName: '입점업체3', broadcastTitle: '방송 제목3' },
-      { id: 4, title: '썸네일4', vendorName: '입점업체4', broadcastTitle: '방송 제목4' },
-      { id: 5, title: '썸네일5', vendorName: '입점업체5', broadcastTitle: '방송 제목5' },
-      { id: 6, title: '썸네일6', vendorName: '입점업체6', broadcastTitle: '방송 제목6' }
+      {id: 1, thumbnail: '썸네일1', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
+      {id: 2, thumbnail: '썸네일2', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
+      {
+        id: 3,
+        thumbnail: '썸네일3',
+        vendorName: '입점업체3',
+        broadcastTitle: '방송 제목3',
+        category: '뼈,관절,연골'
+      },
+      {id: 4, thumbnail: '썸네일4', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
+      {id: 5, thumbnail: '썸네일5', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
+      {id: 6, thumbnail: '썸네일6', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'}
     ];
   }
 };
@@ -89,7 +133,7 @@ const goToStream = (stream) => {
 };
 
 onMounted(() => {
-   fetchLiveStreams(); // API 연동 시 주석 해제
+  fetchLiveStreams(); // API 연동 시 주석 해제
 });
 </script>
 
@@ -162,7 +206,7 @@ onMounted(() => {
   height: 100%;
 }
 
-.live-stream-title {
+.live-stream-thumbnail {
   font-size: 1.2em;
   margin-bottom: 10px;
   font-weight: bold;
@@ -196,10 +240,47 @@ onMounted(() => {
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 0.9em;
 }
 
 .live-category-btn:hover {
   background: #333;
+}
+
+.live-search {
+  display: flex;
+  align-items: center;
+}
+
+.live-search-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 200px;
+  outline: none;
+}
+
+.live-search-input:focus {
+  border-color: #666;
+}
+
+.live-category-dropdown {
+  margin-left: 10px;
+}
+
+.live-category-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  outline: none;
+}
+
+.live-category-select:focus {
+  border-color: #666;
 }
 
 @media (max-width: 1024px) {
