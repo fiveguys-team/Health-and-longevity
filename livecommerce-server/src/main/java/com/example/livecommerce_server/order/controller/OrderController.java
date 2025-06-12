@@ -22,7 +22,7 @@ public class OrderController {
     public OrderPageDTO getOrderPage(
             @RequestParam String productId,
             @RequestParam(defaultValue = "1") int quantity) {
-        return orderService.getOrderPage(productId);
+        return orderService.getOrderPage(productId, quantity);
     }
 
     // 결제 전 임시 주문 저장
