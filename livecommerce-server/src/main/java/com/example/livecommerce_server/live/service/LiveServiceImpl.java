@@ -78,4 +78,14 @@ public class LiveServiceImpl implements LiveService {
 
 		liveMapper.updateLiveInfo(liveEndRequestDto);
 	}
+
+	/**
+	 * vendorId를 통해 vendorName 을 가져오는 메서드
+	 * @param vendorId
+	 * @return
+	 */
+	@Override
+	public String findVendorName(String vendorId) {
+		return liveMapper.selectVendorName(vendorId);
+	}
 }

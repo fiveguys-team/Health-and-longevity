@@ -14,4 +14,6 @@ public interface LiveService {
 	void addLiveProduct(List<LiveProductDTO> liveProductList);
 
 	void saveLiveInfo(String sessionId);
+
+	String findVendorName(String vendorId);
 }
