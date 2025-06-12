@@ -27,10 +27,20 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentService paymentService;
 
     @Override
-    public OrderPageDTO getOrderPage(String productId) {
-        return Optional.ofNullable(orderMapper.findOrderPageByProductId(productId))
+    public OrderPageDTO getOrderPage(String productId, int quantity) {
+        OrderPageDTO dto = Optional.ofNullable(orderMapper.findOrderPageByProductId(productId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다"));
 
+        int totalAmount = dto.getPrice() * quantity;
+        int shippingFee = totalAmount >= 50000 ? 0 : 3000;
+        int finalAmount = totalAmount + shippingFee;
+
+        dto.setQuantity(quantity);
+        dto.setTotalAmount(totalAmount);
+        dto.setShippingFee(shippingFee);
+        dto.setFinalAmount(finalAmount);
+
+        return dto;
     }
 
     @Override

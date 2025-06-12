@@ -256,6 +256,8 @@ import 'swiper/swiper-bundle.css';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import bg from "@/assets/img/shortcode/breadcumb.jpg";
+import  {prepareOrder} from "@/modules/order/services/orderApi";
+
 
 function generateRandomString() {
   return window.btoa(Math.random().toString()).slice(0, 20);
@@ -357,10 +359,10 @@ const ready = ref(false);
 const widgets = ref(null);
 
 // 금액, 통화 정보
-const amount = reactive({
+const amount = computed(() => ({
   currency: "KRW",
-  value: 50000,
-});
+  value: orderItem.value?.totalAmount || 0,
+}));
 
 async function fetchPaymentWidgets() {
   try {
@@ -407,23 +409,56 @@ async function renderPaymentWidgets() {
 async function requestPayment() {
   if (!widgets.value || !ready.value) return;
 
+  if (!orderItem.value || !orderItem.value.totalAmount || orderItem.value.totalAmount <= 0) {
+    alert("결제 금액이 유효하지 않습니다.");
+    return;
+  }
+
+
   if(orderItem.value.stockCount <= 0){
     alert('해당 제품의 재고 수량이 부족합니다!');
     return;
   }
 
   try {
-    // 결제 요청 전, 서버에 orderId와 amount를 저장/검증하는 로직이 선행되어야 안전합니다.
+    const payload = {
+      userId: 1, //추후 본인 아이디로 변경필요.
+      orderItems: [
+        {
+          productId: orderItem.value.productId,
+          quantity: orderItem.value.quantity,
+        }
+      ],
+      shippingRequest: form.note,
+      postalCode: postalCode.value,
+      basicAddress: basicAddress.value,
+      detailedAddress: form.detailAddress
+    };
+
+
+    const res = await prepareOrder(payload);
+    const { orderId, orderName, customerName } = res.data;
+
     await widgets.value.requestPayment({
-      orderId: generateRandomString(),                   // 고유 주문 번호 (서버와 일치해야 함)
-      orderName: "토스 티셔츠 외 2건",                     // 결제창에 표시될 상품명
-      successUrl: `${window.location.origin}/payment-success`, // 결제 성공 후 리디렉트 URL
-      failUrl: `${window.location.origin}/payment-failure`,              // 결제 실패 후 리디렉트 URL
-      customerEmail: "customer123@gmail.com",
-      customerName: "김토스",
-      // 가상계좌나 퀵이체 휴대폰 자동완성을 위해 필요한 경우 활성화하세요.
-      // customerMobilePhone: "01012341234",
+      orderId,
+      orderName,
+      customerName,
+      successUrl: `${window.location.origin}/payment-success`,
+      failUrl: `${window.location.origin}/payment-failure`
     });
+
+
+    // // 결제 요청 전, 서버에 orderId와 amount를 저장/검증하는 로직이 선행되어야 안전합니다.
+    // await widgets.value.requestPayment({
+    //   orderId: generateRandomString(),                   // 고유 주문 번호 (서버와 일치해야 함)
+    //   orderName: "토스 티셔츠 외 2건",                     // 결제창에 표시될 상품명
+    //   successUrl: `${window.location.origin}/payment-success`, // 결제 성공 후 리디렉트 URL
+    //   failUrl: `${window.location.origin}/payment-failure`,              // 결제 실패 후 리디렉트 URL
+    //   customerEmail: "customer123@gmail.com",
+    //   customerName: "김토스",
+    //   // 가상계좌나 퀵이체 휴대폰 자동완성을 위해 필요한 경우 활성화하세요.
+    //   // customerMobilePhone: "01012341234",
+    // });
   } catch (error) {
     console.error("Error requesting payment:", error);
   }
