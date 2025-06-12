@@ -43,13 +43,18 @@ public class SecurityConfig {
                 // session 방식 비활성화
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 특정 url 패턴에 대해서는 인증처리(Authentication 객체 생성) 제외
-                .authorizeHttpRequests(a -> {
-                    a
-                            .requestMatchers("/member/create", "/member/doLogin", "/oauth2/**", "/connect/**").permitAll()
-                            .requestMatchers("/admin/**").hasRole("ADMIN")
-                            .requestMatchers("/vendor/**").hasRole("VENDOR")
-                            .anyRequest().authenticated();
-                })
+                .authorizeHttpRequests(a ->
+                        a
+                                // 모든 경로를 인증 없이 열기
+                                .anyRequest().permitAll()
+                )
+//                .authorizeHttpRequests(a -> {
+//                    a
+//                            .requestMatchers("/member/create", "/member/doLogin", "/oauth2/**", "/**/*").permitAll()
+//                            .requestMatchers("/admin/**").hasRole("ADMIN")
+//                            .requestMatchers("/vendor/**").hasRole("VENDOR")
+//                            .anyRequest().authenticated();
+//                })
                 // UsernamePasswordAuthenticationFilter 이 클래스에서 폼 로그인 처리
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 // oauth 로그인이 성공했을 경우 실행할 클래스 정의

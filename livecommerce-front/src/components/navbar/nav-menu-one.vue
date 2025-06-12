@@ -3,21 +3,9 @@
     <div class="flex items-center gap-4 sm:gap-6">
         <router-link v-if="!isLogin" to="/login" class="text-lg leading-none text-title dark:text-white transition-all duration-300 hover:text-primary hidden lg:block">로그인</router-link>
         <button v-if="isLogin" @click="doLogout" class="text-lg leading-none text-title dark:text-white transition-all duration-300 hover:text-primary hidden lg:block">로그아웃</button>
-        <button class="relative hdr_wishList_btn" @click="wishList = !wishList">
-            <!-- <span class="absolute w-[22px] h-[22px] bg-secondary top-[0px] -right-[11px] rounded-full flex items-center justify-center text-xs leading-none text-white">7</span> -->
-            <i class="mdi mdi-cards-heart-outline text-title dark:text-white text-[24px] sm:text-[28px]"></i>
-        </button>
-        <div v-if="wishList" class="wishlist_popup w-80 md:w-96 absolute z-50 top-full right-0 sm:right-20 xl:right-11 bg-white dark:bg-title py-5 md:py-[30px] pl-5 md:pl-[30px] pr-[10px] md:pr-[15px] border border-primary">
-            <h4 class="font-medium leading-none dark:text-white mb-4 text-xl md:text-2xl">Wishlist</h4>
-            <div>
-                <div class="mt-6 md:mt-10">
-                    <router-link to="/wishlist" class="btn btn-outline btn-sm w-full" data-text="View All Wishlist">
-                        <span>View All Wishlist</span>
-                    </router-link>
-                </div>
-            </div>
-            
-        </div>
+        <router-link :to="profileRoute" class="relative hdr_profile_btn">
+            <i class="mdi mdi-account-outline text-title dark:text-white text-[24px] sm:text-[28px]"></i>
+        </router-link>
 
         <button class="relative hdr_cart_btn" @click="cartList = !cartList">
             <!-- <span class="absolute w-[22px] h-[22px] bg-secondary top-[0px] -right-[11px] rounded-full flex items-center justify-center text-xs leading-none text-white">7</span> -->
@@ -54,11 +42,10 @@
 </template>
 
 <script setup>
-    import { ref,defineProps, defineEmits, onMounted } from 'vue'
+    import {ref, defineProps, defineEmits, onMounted, computed} from 'vue'
     import SwitcherS from '../switcher-s.vue'
     import Cookies from 'js-cookie'
 
-    const wishList = ref(false)
     const cartList = ref(false)
     const isLogin = ref(false)
 
@@ -75,6 +62,18 @@
 
       if (localStorage.getItem("token")) {
         isLogin.value = true
+      }
+    })
+
+    const role = Cookies.get("role");
+    const profileRoute = computed(() => {
+      switch (role) {
+        case 'ADMIN':
+          return '/admin-dashboard'
+        case 'VENDOR':
+          return '/store-dashboard'
+        default:
+          return '/my-profile'
       }
     })
 
