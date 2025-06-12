@@ -59,6 +59,11 @@ public class KakaoOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
         Cookie jwtCookie = new Cookie("token", jwtToken);
         jwtCookie.setPath("/"); // 모든 경로에서 쿠키 사용가능
         response.addCookie(jwtCookie);
+
+        Cookie roleCookie = new Cookie("role", member.getRole().toString());
+        roleCookie.setPath("/");
+        response.addCookie(roleCookie);
+
         response.sendRedirect("http://localhost:3000");
     }
 }

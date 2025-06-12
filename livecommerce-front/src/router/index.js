@@ -70,7 +70,7 @@ const routes = [
   {path: '/faq',component: FaqPage},
   {path: '/terms-and-conditions',component: TermsAndConditions},
   {path: '/error',component: ErrorPage},
-  {path: '/my-profile',component: MyProfile},
+  {path: '/my-profile',component: MyProfile, meta: {requiresAuth: true}},
   {path: '/my-account',component: MyAccount},
   {path: '/edit-account',component: EditAccount},
   {path: '/wishlist',component: WishlistPage},
