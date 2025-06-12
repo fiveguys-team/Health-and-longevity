@@ -13,4 +13,8 @@
 		update live_m set end_cd = #{endTime}, status_cd = "OFF" where session_id = #{sessionId}
 	</update>
 
+	<select id="selectVendorName" resultType="String">
+		SELECT name FROM vendor_m WHERE vendor_id = #{vendorId}
+	</select>
+
 </mapper>
