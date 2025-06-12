@@ -33,8 +33,8 @@
 
           <div class="live-stream-footer">
             <div class="live-stream-info">
-              <p class="live-vendor-name">{{ stream.vendorName }}</p>
-              <p class="live-broadcast-title">{{ stream.broadcastTitle }}</p>
+              <p class="live-vendor-name">{{ stream.vendorId }}</p>
+              <p class="live-broadcast-title">{{ stream.title }}</p>
             </div>
             <div>{{ stream.category }}</div>
           </div>
