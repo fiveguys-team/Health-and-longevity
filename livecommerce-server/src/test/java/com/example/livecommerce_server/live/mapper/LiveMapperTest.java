@@ -1,6 +1,8 @@
 package com.example.livecommerce_server.live.mapper;
 
+import com.example.livecommerce_server.live.dto.LiveEndRequestDto;
 import com.example.livecommerce_server.live.vo.LiveInfoVO;
+import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,17 @@ class LiveMapperTest {
 				.announcement("라이브 공지사항")
 				.build();
 		liveMapper.insertLiveInfo(liveInfoVO);
+	}
+
+	@Test
+	@DisplayName("라이브 종료 정보를 저장하는 메서드")
+	void updateLiveInfo() {
+		String isoNow = Instant.now().toString();
+		LiveEndRequestDto liveEndRequestDto = LiveEndRequestDto.builder()
+				.sessionId("8879f4ba-1cf1-401a-a8b7-7ef9942b50af")
+				.endTime(isoNow)
+				.build();
+		liveMapper.updateLiveInfo(liveEndRequestDto);
 	}
 
 }
