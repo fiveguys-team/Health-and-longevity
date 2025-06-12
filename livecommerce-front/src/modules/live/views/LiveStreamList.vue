@@ -23,7 +23,7 @@
     </div>
 
     <div class="live-stream-grid">
-      <div v-for="stream in filteredStreams" :key="stream.id" class="live-stream-card"
+      <div v-for="stream in filteredStreams" :key="stream.sessionId" class="live-stream-card"
            @click="goToStream(stream)">
         <div class="live-badge">Live</div>
         <div class="live-stream-content">
@@ -62,15 +62,7 @@ const categories = [
   '영양보충'
 ];
 
-const streams = ref([
-  // 테스트용 더미 데이터에 카테고리 추가
-  {id: 1, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
-  {id: 2, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
-  {id: 3, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체3', broadcastTitle: '방송 제목3', category: '뼈,관절,연골'},
-  {id: 4, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
-  {id: 5, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
-  {id: 6, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'},
-]);
+const streams = ref([]);
 
 // 검색어와 카테고리로 필터링하는 computed 속성
 const filteredStreams = computed(() => {
@@ -126,7 +118,7 @@ const fetchLiveStreams = async () => {
 };
 
 const goToStream = (stream) => {
-  router.push(`/view/${stream.id}`);
+  router.push(`/view/${stream.sessionId}`);
 };
 
 onMounted(() => {
