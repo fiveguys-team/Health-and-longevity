@@ -32,5 +32,23 @@
     WHERE vendor_id = #{vendorId}
   </select>
 
+    <select id="findProductsByProductId" parameterType="list" resultType="ProductDTO">
+        SELECT
+        product_id,
+        category_id,
+        vendor_id,
+        name,
+        price,
+        stock_count,
+        status,
+        product_image
+        FROM PRODUCT
+        WHERE product_id IN
+        <foreach collection="productIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
 
 </mapper>
