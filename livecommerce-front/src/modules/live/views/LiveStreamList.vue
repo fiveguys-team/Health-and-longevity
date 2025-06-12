@@ -33,10 +33,10 @@
 
           <div class="live-stream-footer">
             <div class="live-stream-info">
-              <p class="live-vendor-name">{{ stream.vendorId }}</p>
+              <h2 class="live-vendor-name">{{ stream.vendorName }}</h2>
               <p class="live-broadcast-title">{{ stream.title }}</p>
             </div>
-            <div>{{ stream.category }}</div>
+            <div class="live-vendor-category">{{ stream.category }}</div>
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@ const selectedCategory = ref('');
 const categories = [
   '혈압',
   '눈',
-  '뼈,관절,연골',
+  '뼈/관절/연골',
   '장건강',
   '영양보충'
 ];
@@ -221,8 +221,8 @@ onMounted(() => {
 }
 
 .live-vendor-name {
-  font-size: 0.9em;
-  color: #666;
+  font-size: 1.5em;
+  color: black;
   margin: 5px 0;
 }
 
@@ -231,6 +231,17 @@ onMounted(() => {
   color: #333;
   margin: 5px 0;
 }
+
+.live-vendor-category {
+  //margin: 10px;
+  //text-align: center;
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center;
+}
+
+
+
 
 .live-stream-footer {
   display: flex;

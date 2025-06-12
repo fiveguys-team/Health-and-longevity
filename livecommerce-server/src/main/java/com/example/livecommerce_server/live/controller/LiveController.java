@@ -120,6 +120,7 @@ public class LiveController {
 			Session session = openvidu.createSession(properties);
 
 			liveDTO.setSessionId(sessionId);
+			liveDTO.setVendorName(liveService.findVendorName(liveDTO.getVendorId()));
 
 			List<ProductInfo> prodList = mapper.readValue(
 					liveDTO.getProducts(),
