@@ -45,7 +45,7 @@ public class SecurityConfig {
                 // 특정 url 패턴에 대해서는 인증처리(Authentication 객체 생성) 제외
                 .authorizeHttpRequests(a -> {
                     a
-                            .requestMatchers("/member/create", "/member/doLogin", "/oauth2/**").permitAll()
+                            .requestMatchers("/member/create", "/member/doLogin", "/oauth2/**", "/connect/**").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/vendor/**").hasRole("VENDOR")
                             .anyRequest().authenticated();
