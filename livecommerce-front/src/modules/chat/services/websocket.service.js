@@ -7,7 +7,7 @@ class WebSocketService {
     this.connected = false;
   }
 
-  connect(roomId, messageCallback) {
+  connect(roomId, messageCallback, warningCallback) {
     // 서버 설정의 엔드포인트에 맞춤
     const socket = new SockJS("http://localhost:8080/connect");
     this.stompClient = Stomp.over(socket);
@@ -23,6 +23,15 @@ class WebSocketService {
           const receivedMessage = JSON.parse(message.body);
           console.log("받은 메시지:", receivedMessage);
           messageCallback(receivedMessage);
+        });
+
+        // 경고 메시지 구독 수정! userId 포함
+        this.stompClient.subscribe(`/user/123/queue/warning`, (message) => {
+          const warningMessage = JSON.parse(message.body);
+          console.log("받은 경고:", warningMessage);
+          if (warningCallback) {
+            warningCallback(warningMessage);
+          }
         });
       },
       (error) => {
