@@ -27,13 +27,16 @@
            @click="goToStream(stream)">
         <div class="live-badge">Live</div>
         <div class="live-stream-content">
-          <h3 class="live-stream-thumbnail">{{ stream.thumbnail }}</h3>
-          <div class="live-stream-info">
-            <p class="live-vendor-name">{{ stream.vendorName }}</p>
-            <p class="live-broadcast-title">{{ stream.broadcastTitle }}</p>
+          <div class="live-stream-thumbnail">
+            <img :src="stream.thumbnail" :alt="stream.thumbnail" />
           </div>
+
           <div class="live-stream-footer">
-            <button class="live-category-btn">{{ stream.category }}</button>
+            <div class="live-stream-info">
+              <p class="live-vendor-name">{{ stream.vendorName }}</p>
+              <p class="live-broadcast-title">{{ stream.broadcastTitle }}</p>
+            </div>
+            <div>{{ stream.category }}</div>
           </div>
         </div>
       </div>
@@ -61,12 +64,12 @@ const categories = [
 
 const streams = ref([
   // 테스트용 더미 데이터에 카테고리 추가
-  {id: 1, thumbnail: '썸네일1', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
-  {id: 2, thumbnail: '썸네일2', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
-  {id: 3, thumbnail: '썸네일3', vendorName: '입점업체3', broadcastTitle: '방송 제목3', category: '뼈,관절,연골'},
-  {id: 4, thumbnail: '썸네일4', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
-  {id: 5, thumbnail: '썸네일5', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
-  {id: 6, thumbnail: '썸네일6', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'},
+  {id: 1, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
+  {id: 2, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
+  {id: 3, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체3', broadcastTitle: '방송 제목3', category: '뼈,관절,연골'},
+  {id: 4, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
+  {id: 5, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
+  {id: 6, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'},
 ]);
 
 // 검색어와 카테고리로 필터링하는 computed 속성
@@ -94,36 +97,30 @@ const fetchLiveStreams = async () => {
     } else {
       // 테스트용 더미 데이터로 초기화
       streams.value = [
-        {id: 1, thumbnail: '썸네일1', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
-        {id: 2, thumbnail: '썸네일2', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
-        {
-          id: 3,
-          thumbnail: '썸네일3',
-          vendorName: '입점업체3',
-          broadcastTitle: '방송 제목3',
-          category: '뼈,관절,연골'
-        },
-        {id: 4, thumbnail: '썸네일4', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
-        {id: 5, thumbnail: '썸네일5', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
-        {id: 6, thumbnail: '썸네일6', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'}
+        {id: 1, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
+        {id: 2, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
+        {id: 3, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체3', broadcastTitle: '방송 제목3', category: '뼈,관절,연골'},
+        {id: 4, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
+        {id: 5, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
+        {id: 6, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'}
       ];
     }
   } catch (error) {
     console.error('라이브 스트림 목록 조회 실패:', error);
     // 에러 시 테스트용 더미 데이터로 초기화
     streams.value = [
-      {id: 1, thumbnail: '썸네일1', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
-      {id: 2, thumbnail: '썸네일2', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
+      {id: 1, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
+      {id: 2, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
       {
         id: 3,
-        thumbnail: '썸네일3',
+        thumbnail: 'https://via.placeholder.com/400x300',
         vendorName: '입점업체3',
         broadcastTitle: '방송 제목3',
         category: '뼈,관절,연골'
       },
-      {id: 4, thumbnail: '썸네일4', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
-      {id: 5, thumbnail: '썸네일5', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
-      {id: 6, thumbnail: '썸네일6', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'}
+      {id: 4, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
+      {id: 5, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
+      {id: 6, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'}
     ];
   }
 };
@@ -148,7 +145,9 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 120px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
 }
 
 .live-header h2 {
@@ -176,7 +175,7 @@ onMounted(() => {
 .live-stream-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 30px;
 }
 
 .live-stream-card {
@@ -184,7 +183,7 @@ onMounted(() => {
   border-radius: 12px;
   position: relative;
   background: white;
-  height: 180px;
+  height: 200px;
   cursor: pointer;
 }
 
@@ -207,9 +206,22 @@ onMounted(() => {
 }
 
 .live-stream-thumbnail {
-  font-size: 1.2em;
-  margin-bottom: 10px;
-  font-weight: bold;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.live-stream-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.live-stream-card:hover .live-stream-thumbnail img {
+  transform: scale(1.05);
 }
 
 .live-stream-info {
@@ -231,20 +243,6 @@ onMounted(() => {
 .live-stream-footer {
   display: flex;
   justify-content: flex-end;
-}
-
-.live-category-btn {
-  padding: 8px 16px;
-  background: #1a1a1a;
-  border: none;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-}
-
-.live-category-btn:hover {
-  background: #333;
 }
 
 .live-search {
