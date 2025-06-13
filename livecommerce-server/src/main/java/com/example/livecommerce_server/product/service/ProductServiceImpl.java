@@ -1,9 +1,11 @@
 package com.example.livecommerce_server.product.service;
 
 
+import com.example.livecommerce_server.product.dto.AdminProductDetailDTO;
 import com.example.livecommerce_server.product.dto.ProductDetailDTO;
 import com.example.livecommerce_server.product.dto.ProductDTO;
-import com.example.livecommerce_server.product.dto.ProductRegisterRequest;
+import com.example.livecommerce_server.product.dto.ProductListDTO;
+import com.example.livecommerce_server.product.dto.ProductRegisterRequestDTO;
 import com.example.livecommerce_server.product.repository.ProductDetailMapper;
 import com.example.livecommerce_server.product.repository.ProductMapper;
 import java.util.List;
@@ -38,14 +40,27 @@ public class ProductServiceImpl implements ProductService {
             HttpURLConnection conn = (HttpURLConnection) new URL(apiUrl).openConnection();
             conn.setRequestMethod("GET");
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
             StringBuilder result = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
                 result.append(line);
             }
 
-            JSONObject json = new JSONObject(result.toString());
+            String response = result.toString().trim();
+
+            // JSON이 아니면 에러 처리
+            if (!response.startsWith("{")) {
+                throw new RuntimeException("API 응답이 JSON이 아님: " + response);
+            }
+
+            JSONObject json = new JSONObject(response);
+
+            // JSON 내부 구조 확인
+            if (!json.has("C003") || !json.getJSONObject("C003").has("row")) {
+                return null;
+            }
+
             JSONArray rows = json.getJSONObject("C003").optJSONArray("row");
             if (rows == null || rows.isEmpty()) return null;
 
@@ -70,10 +85,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     // 저장 로직
-    public void saveProductRequestadd(ProductRegisterRequest request, MultipartFile imageFile) {
+    public void saveProductRequestadd(ProductRegisterRequestDTO request, MultipartFile imageFile) {
         ProductDTO productDto = request.getProduct();
         ProductDetailDTO detailDto = request.getProductDetail();
 
+        // 기존 상품 확인 (중복 등록 방지 + 재등록 처리)
+        AdminProductDetailDTO existing = productMapper.findAdminProductDetailByCertNo(detailDto.getCertNo());
+        if (existing != null) {
+            if ("REJECTED".equals(existing.getStatus())) {
+                productMapper.updateStatus(existing.getProductId(), "RESUBMITTED");
+                productMapper.updateProduct(productDto);
+                productDetailMapper.updateProductDetail(detailDto);
+                return;
+            } else {
+                throw new IllegalStateException("이미 등록된 상품입니다.");
+            }
+        }
 
         String ProductId = UUID.randomUUID().toString();
 
@@ -117,12 +144,40 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getProductsByVendor(Long vendorId) {
-        return productMapper.findProductsByVendorId(vendorId);
+    public List<ProductDTO> getProductsByVendor(Long vendorId, String status) {
+        if (status == null || status.isEmpty()) {
+            return productMapper.findProductsByVendorId(vendorId);
+        } else {
+            return productMapper.findProductsByVendorIdAndStatus(vendorId, status);
+        }
     }
 
     @Override
     public ProductDetailDTO getProductDetailById(String productId) {
         return productDetailMapper.findDetailByProductId(productId);
     }
+
+    @Override
+    public List<ProductListDTO> getRequestedProducts() {
+        return productMapper.selectRequestedProducts();
+    }
+
+    @Override
+    public void approveProduct(String id) {
+        productMapper.updateStatus(id, "APPROVED");
+    }
+
+    @Override
+    public void rejectProduct(String id) {
+        productMapper.updateStatus(id, "REJECTED");
+    }
+
+    public AdminProductDetailDTO getAdminProductDetail(String productId) {
+        return productMapper.findAdminProductDetail(productId);
+    }
+
+    public List<ProductListDTO> getProductsByStatus(String status) {
+        return productMapper.selectProductsByStatus(status);
+    }
+
 }

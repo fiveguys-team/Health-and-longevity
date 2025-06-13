@@ -196,17 +196,17 @@ const routes = [
         component: () => import("@/modules/live/components/LiveReport.vue"),
       },
 
-      // {
-      //   path: 'products',
-      //   name: 'AdminProductList',
-      //   component: () => import('@/modules/product/views/AdminProductList.vue')
-      // },
-      // {
-      //   path: 'product/detail/:id',
-      //   name: 'AdminProductDetail',
-      //   component: () => import('@/modules/product/views/AdminProductDetail.vue'),
-      //   props : true
-      // }
+      {
+        path: "product/register",
+        name: "VendorProductRegister",
+        component: () => import("@/modules/product/views/ProductRegister.vue"),
+      },
+      {
+        path: "product/status",
+        name: "VendorProductStatus",
+        component: () => import("@/modules/product/views/ProductStatus.vue"),
+      }
+
     ],
   },
 

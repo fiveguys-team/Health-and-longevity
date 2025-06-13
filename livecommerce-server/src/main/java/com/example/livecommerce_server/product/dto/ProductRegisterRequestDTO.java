@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class ProductRegisterRequest {
+public class ProductRegisterRequestDTO {
     private ProductDTO product;
     private ProductDetailDTO productDetail;
     private MultipartFile productImage;

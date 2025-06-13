@@ -1,95 +1,125 @@
 <template>
   <div class="p-8 max-w-6xl mx-auto">
-    <h2 class="text-2xl font-bold mb-6">상품 등록 현황</h2>
+    <h2 class="text-3xl font-bold mb-6 text-gray-800">상품 등록 현황</h2>
 
-    <!-- 상품 목록 -->
-    <div v-if="products.length > 0" class="space-y-4 mb-10">
-      <div
-          v-for="(product, index) in products"
-          :key="index"
-          class="border rounded shadow"
+    <!-- 상태 필터 버튼 -->
+    <div class="flex gap-3 mb-8 flex-wrap">
+      <button
+          v-for="s in statusList"
+          :key="s.value"
+          @click="currentStatus = s.value; fetchProducts()"
+          :class="[
+          'px-5 py-2 rounded-full border font-medium transition-all duration-200',
+          currentStatus === s.value
+            ? 'bg-blue-600 text-white shadow'
+            : 'bg-gray-100 text-gray-800 hover:bg-blue-100'
+        ]"
       >
-        <!-- 요약 정보 -->
-        <div
-            class="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-100"
-            @click="selectProduct(product.productId)"
-        >
-          <div>
-            <p><strong>상품명:</strong> {{ product.name }}</p>
-            <p><strong>수량:</strong> {{ product.stockCount }}</p>
-            <p><strong>가격:</strong> {{ product.price }}원</p>
-            <p><strong>승인상태:</strong> {{ statusKorean(product.status) }}</p>
-          </div>
+        {{ s.label }}
+      </button>
+    </div>
+
+    <!-- 상품 목록 카드 -->
+    <div v-if="products.length > 0" class="space-y-6">
+      <div
+          v-for="product in products"
+          :key="product.productId"
+          class="flex justify-between items-center bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"
+      >
+        <div>
+          <p class="text-lg font-semibold text-gray-800 mb-1">
+            상품명: {{ product.name }}
+          </p>
+          <p v-if="product.company" class="text-sm text-gray-600 mb-1">
+            업체명: {{ product.company }}
+          </p>
+          <p class="text-sm text-gray-600 mb-1">
+            수량: {{ product.stockCount }} 개
+          </p>
+          <p class="text-sm">
+            <span class="font-semibold text-gray-700">승인상태:</span>
+            <span :class="getStatusClass(product.status)">
+              {{ getStatusText(product.status) }}
+            </span>
+          </p>
         </div>
 
-        <!-- 상세 정보 (조건부 렌더링) -->
-        <div
-            v-if="selectedProductId === product.productId && selectedDetail"
-            class="p-6 bg-gray-50 border-t"
+        <router-link
+            :to="`/vendor/product/detail/${product.productId}`"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg transition-all duration-200"
         >
-          <h3 class="text-xl font-bold mb-4">상품 상세 정보</h3>
-          <p><strong>인증번호:</strong> {{ selectedDetail.certNo }}</p>
-          <p><strong>상품명:</strong> {{ selectedDetail.productName }}</p>
-          <p><strong>유통기한:</strong> {{ selectedDetail.expiryDate }}</p>
-          <p><strong>허가일자:</strong> {{ selectedDetail.approvalDate }}</p>
-          <p><strong>섭취방법:</strong> {{ selectedDetail.howToTake }}</p>
-          <p><strong>기능성:</strong> {{ selectedDetail.mainFunction }}</p>
-          <p><strong>주의사항:</strong> {{ selectedDetail.precautions }}</p>
-          <p><strong>보관방법:</strong> {{ selectedDetail.storageMethod }}</p>
-          <p><strong>기준규격:</strong> {{ selectedDetail.standard }}</p>
-          <p><strong>원재료:</strong> {{ selectedDetail.ingredients }}</p>
-        </div>
+          상세보기
+        </router-link>
       </div>
     </div>
 
-    <div v-else class="text-center text-gray-500 mt-20">
-      등록된 상품이 없습니다.
+    <!-- 상품 없음 안내 -->
+    <div v-else class="text-gray-500 mt-16 text-center text-lg">
+      해당 상태의 상품이 없습니다 😥
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '@/utils/axios'
 
 const products = ref([])
-const selectedDetail = ref(null)
-const selectedProductId = ref(null)
+const currentStatus = ref('') // '' = 전체 보기
 
-const statusKorean = (status) => {
+const statusList = [
+  { label: '전체', value: '' },
+  { label: '대기', value: 'PENDING' },
+  { label: '승인 완료', value: 'APPROVED' },
+  { label: '반려', value: 'REJECTED' },
+  { label: '재등록', value: 'RESUBMITTED' }
+]
+
+const getStatusText = (status) => {
   switch (status) {
-    case 'PENDING': return '대기'
-    case 'APPROVED': return '완료'
-    case 'REJECTED': return '반려'
-    case 'RESUBMITTED': return '재등록'
+    case 'PENDING': return '승인 대기'
+    case 'APPROVED': return '승인 완료'
+    case 'REJECTED': return '반려됨'
+    case 'RESUBMITTED': return '재등록 요청'
     default: return status
   }
 }
 
-const selectProduct = async (productId) => {
-  // 같은 상품을 다시 누르면 상세 닫기
-  if (selectedProductId.value === productId) {
-    selectedProductId.value = null
-    selectedDetail.value = null
-    return
-  }
-
-  selectedProductId.value = productId
-  try {
-    const res = await axios.get(`http://localhost:8080/api/product/product/detail/${productId}`)
-    selectedDetail.value = res.data
-  } catch (error) {
-    console.error('상세 정보 조회 실패:', error)
-    selectedDetail.value = null
+const getStatusClass = (status) => {
+  const base = 'px-3 py-1 text-sm font-medium rounded-full'
+  switch (status) {
+    case 'PENDING': return `${base} bg-yellow-100 text-yellow-800`
+    case 'APPROVED': return `${base} bg-blue-100 text-blue-800`
+    case 'REJECTED': return `${base} bg-red-100 text-red-700`
+    case 'RESUBMITTED': return `${base} bg-purple-100 text-purple-800`
+    default: return `${base} bg-gray-200 text-gray-700`
   }
 }
 
-onMounted(async () => {
+const fetchProducts = async () => {
   try {
-    const res = await axios.get(`http://localhost:8080/api/product/vendor/1/products`)
-    products.value = res.data
-  } catch (error) {
-    console.error('상품 목록 조회 실패:', error)
+    const vendorId = 1 // TODO: 로그인한 사용자 ID로 대체
+    const baseUrl = `/product/vendor/${vendorId}/products`
+    const query = currentStatus.value ? `?status=${currentStatus.value}` : ''
+    const url = baseUrl + query
+
+    console.log('[상품 조회] URL:', url)
+    const res = await axios.get(url)
+
+    // 응답 구조에 따라 처리
+    if (Array.isArray(res.data)) {
+      products.value = res.data
+    } else if (Array.isArray(res.data.data)) {
+      products.value = res.data.data
+    } else {
+      console.warn('예상하지 못한 응답 형식:', res.data)
+      products.value = []
+    }
+  } catch (err) {
+    console.error('상품 목록 조회 실패', err)
+    alert('상품 목록을 불러오는 데 실패했습니다.')
   }
-})
+}
+
+onMounted(fetchProducts)
 </script>
