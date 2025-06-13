@@ -32,7 +32,6 @@
              )
   </insert>
 
-
   <select id="findDetailByProductId">
     SELECT
       product_id AS productId,
@@ -50,5 +49,38 @@
     WHERE product_id = #{productId}
   </select>
 
+  <select id="findByCertNo" parameterType="string" resultType="com.example.livecommerce_server.product.dto.ProductDetailDTO">
+    SELECT
+      d.product_id AS productId,
+      d.cert_no AS certNo,
+      d.product_name AS productName,
+      d.expiry_date AS expiryDate,
+      d.approval_date AS approvalDate,
+      d.how_to_take AS howToTake,
+      d.main_function AS mainFunction,
+      d.precautions,
+      d.storage_method AS storageMethod,
+      d.standard,
+      d.ingredients,
+      p.status AS status
+    FROM product_detail d
+           JOIN product p ON d.product_id = p.product_id
+    WHERE d.cert_no = #{certNo}
+  </select>
+
+  <update id="updateProductDetail">
+    UPDATE product_detail
+    SET
+      product_name = #{productName},
+      expiry_date = #{expiryDate},
+      approval_date = #{approvalDate},
+      how_to_take = #{howToTake},
+      main_function = #{mainFunction},
+      precautions = #{precautions},
+      storage_method = #{storageMethod},
+      standard = #{standard},
+      ingredients = #{ingredients}
+    WHERE product_id = #{productId}
+  </update>
 
 </mapper>

@@ -2,7 +2,7 @@ package com.example.livecommerce_server.product.controller;
 
 import com.example.livecommerce_server.product.dto.ProductDTO;
 import com.example.livecommerce_server.product.dto.ProductDetailDTO;
-import com.example.livecommerce_server.product.dto.ProductRegisterRequest;
+import com.example.livecommerce_server.product.dto.ProductRegisterRequestDTO;
 import com.example.livecommerce_server.product.service.ProductService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class ProductController {
     // 상품 등록 요청 (입점업체 -> 관리자 승인 대기 상태)
     @PostMapping(value = "/request", consumes = "multipart/form-data")
     public ResponseEntity<String> requestProductAdd(
-            @RequestPart("product") ProductRegisterRequest request,
+            @RequestPart("product") ProductRegisterRequestDTO request,
             @RequestPart("image") MultipartFile imageFile
     ) {
 
