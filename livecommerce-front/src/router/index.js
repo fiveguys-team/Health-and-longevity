@@ -40,7 +40,7 @@ import Vendor from '@/views/shop/vendor-category.vue'
 
 // modules/도메인/views/ 하위 test용 view
 import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
-import LiveChart from "@/modules/live/views/LiveChart.vue"
+import LiveChart from "@/modules/live/views/LiveStreamList.vue"
 import LiveRegister from "@/modules/live/views/LiveRegister.vue"
 import StoreLiveStreaming from "@/modules/live/views/StoreLiveStreaming.vue";
 import LiveReport from "@/modules/live/views/LiveReport.vue";

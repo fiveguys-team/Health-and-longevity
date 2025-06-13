@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.livecommerce_server.order.mapper.OrderMapper">
+    <select id="findOrderPageByProductId" resultType="OrderPageDTO">
+        SELECT p.product_id,
+               p.price,
+               p.name AS product_name,
+               p.stock_count,
+               p.product_image,
+               c.name AS category_name
+        FROM PRODUCT p
+                 JOIN CATEGORY c ON p.category_id = c.category_id
+        WHERE p.product_id = #{productId}
+    </select>
+
+    <insert id="insertOrder" parameterType="OrderInsertDTO">
+        INSERT INTO ORDERS_M (order_id,
+                              payments_id,
+                              user_id,
+                              order_status_code,
+                              discount_amount,
+                              order_date,
+                              total_amount,
+                              shipping_req,
+                              created_at,
+                              postal_code,
+                              basic_address,
+                              detail_address)
+        VALUES (
+        #{orderId},
+        #{paymentId},
+        #{userId},
+        #{orderStatusCode},
+        #{discountAmount},
+        #{orderDate},
+        #{totalAmount},
+        #{shippingReq},
+        #{createdAt},
+        #{postalCode},
+        #{basicAddress},
+        #{detailAddress}
+        )
+    </insert>
+
+    <insert id="insertOrderItems" parameterType="java.util.List">
+        INSERT INTO ORDER_ITEM_D (
+        order_item_id,
+        order_id,
+        product_id,
+        quantity,
+        created_at
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.orderItemId},
+            #{item.orderId},
+            #{item.productId},
+            #{item.quantity},
+            #{item.createdAt}
+            )
+        </foreach>
+    </insert>
+</mapper>

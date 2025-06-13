@@ -120,6 +120,7 @@ public class LiveController {
 			Session session = openvidu.createSession(properties);
 
 			liveDTO.setSessionId(sessionId);
+			liveDTO.setVendorName(liveService.findVendorName(liveDTO.getVendorId()));
 
 			List<ProductInfo> prodList = mapper.readValue(
 					liveDTO.getProducts(),
@@ -239,9 +240,21 @@ public class LiveController {
 				.name("상품3")
 				.price(3000)
 				.build();
+		ProductInfo productInfo4 = ProductInfo.builder()
+				.id("4")
+				.name("상품3")
+				.price(4000)
+				.build();
+		ProductInfo productInfo5 = ProductInfo.builder()
+				.id("5")
+				.name("상품3")
+				.price(5000)
+				.build();
 		list.add(productInfo1);
 		list.add(productInfo2);
 		list.add(productInfo3);
+		list.add(productInfo4);
+		list.add(productInfo5);
 
 		return new ResponseEntity<>(list, HttpStatus.OK);
 	}

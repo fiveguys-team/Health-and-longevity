@@ -4,6 +4,7 @@ import com.example.livecommerce_server.live.dto.LiveEndRequestDto;
 import com.example.livecommerce_server.live.vo.LiveInfoVO;
 import java.time.Instant;
 import java.util.UUID;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,15 @@ class LiveMapperTest {
 				.endTime(isoNow)
 				.build();
 		liveMapper.updateLiveInfo(liveEndRequestDto);
+	}
+
+	@Test
+	@DisplayName("vendorId -> vendorName 반환하는 메서드")
+	void selectVendorName() {
+		String vendorName = liveMapper.selectVendorName("1");
+
+		Assertions.assertThat(vendorName).isEqualTo("정관장");
+
 	}
 
 }

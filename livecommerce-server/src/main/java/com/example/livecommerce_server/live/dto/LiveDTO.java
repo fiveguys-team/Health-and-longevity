@@ -21,4 +21,6 @@ public class LiveDTO {
     private Integer discountRate;
     private String startTime;
     private String vendorId;
+    private String category;
+    private String vendorName;
 } 

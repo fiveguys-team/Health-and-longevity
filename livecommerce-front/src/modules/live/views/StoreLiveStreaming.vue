@@ -21,52 +21,70 @@
           <div class="setup-column">
             <div class="form-group">
               <label class="form-label">방송 제목</label>
-              <input 
-                v-model="streamTitle" 
-                class="form-control" 
-                type="text" 
-                placeholder="방송 제목을 입력해주세요"
-                required 
+              <input
+                  v-model="streamTitle"
+                  class="form-control"
+                  type="text"
+                  placeholder="방송 제목을 입력해주세요"
+                  required
               />
             </div>
 
             <div class="form-group">
               <label class="form-label">공지 사항</label>
-              <textarea 
-                v-model="announcement" 
-                class="form-control" 
-                placeholder="시청자들에게 전달할 공지사항을 입력해주세요"
-                rows="3"
-                required 
+              <textarea
+                  v-model="announcement"
+                  class="form-control"
+                  placeholder="시청자들에게 전달할 공지사항을 입력해주세요"
+                  rows="3"
+                  required
               ></textarea>
             </div>
 
             <div class="form-group">
               <label class="form-label">썸네일 이미지</label>
               <div class="thumbnail-upload">
-                <input 
-                  @change="handleThumbnailChange" 
-                  class="form-control" 
-                  type="file" 
-                  accept="image/*" 
-                  required 
+                <input
+                    @change="handleThumbnailChange"
+                    class="form-control"
+                    type="file"
+                    accept="image/*"
+                    required
                 />
                 <div class="thumbnail-preview-container" v-if="thumbnailPreview">
-                  <img :src="thumbnailPreview" class="thumbnail-preview" alt="썸네일 미리보기" />
+                  <img :src="thumbnailPreview" class="thumbnail-preview" alt="썸네일 미리보기"/>
                   <button class="remove-thumbnail" @click="removeThumbnail">✕</button>
                 </div>
               </div>
             </div>
+
+
+            <div class="form-group">
+              <label class="form-label">카테고리 선택</label>
+              <select v-model="category" class="form-control discount-select">
+                <option disabled :value="0">카테고리를 선택해주세요</option>
+                <option value="혈압">혈압</option>
+                <option value="눈">눈</option>
+                <option value="뼈/관절/연골">뼈/관절/연골</option>
+                <option value="장건강">장건강</option>
+                <option value="영양보충">영양보충</option>
+              </select>
+            </div>
+
+
+
           </div>
 
-          <!-- 오른쪽 컬럼: 상품 및 할인 설정 -->
-          <div class="setup-column">
-            <div class="form-group">
-              <label class="form-label">판매 상품 선택 <span class="sub-label">(최대 3개)</span></label>
-              <div class="product-selection">
-                <div class="product-list">
-                  <div 
-                    v-for="product in availableProducts" 
+
+
+        <!-- 오른쪽 컬럼: 상품 및 할인 설정 -->
+        <div class="setup-column">
+          <div class="form-group">
+            <label class="form-label">판매 상품 선택 <span class="sub-label">(최대 3개)</span></label>
+            <div class="product-selection">
+              <div class="product-list">
+                <div
+                    v-for="product in availableProducts"
                     :key="product.id"
                     class="product-item-select"
                     :class="{ 
@@ -74,118 +92,118 @@
                       'disabled': selectedProducts.length >= 3 && !selectedProducts.includes(product)
                     }"
                     @click="toggleProduct(product)"
-                  >
-                    <div class="product-info">
-                      <div class="product-name">{{ product.name }}</div>
-                      <div class="product-price">{{ product.price.toLocaleString() }}원</div>
-                    </div>
-                    <div class="selection-indicator">
-                      <span v-if="selectedProducts.includes(product)">✓</span>
-                    </div>
+                >
+                  <div class="product-info">
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-price">{{ product.price.toLocaleString() }}원</div>
+                  </div>
+                  <div class="selection-indicator">
+                    <span v-if="selectedProducts.includes(product)">✓</span>
                   </div>
                 </div>
               </div>
-              <p v-if="showMaxProductsError" class="error-message">
-                최대 3개의 상품만 선택할 수 있습니다.
-              </p>
             </div>
+            <p v-if="showMaxProductsError" class="error-message">
+              최대 3개의 상품만 선택할 수 있습니다.
+            </p>
+          </div>
 
-            <div class="form-group">
-              <label class="form-label">할인율 설정</label>
-              <select v-model.number="discountRate" class="form-control discount-select">
-                <option disabled :value="0">할인율을 선택해주세요</option>
-                <option :value="0">할인 미적용</option>
-                <option :value="10">10% 할인</option>
-                <option :value="15">15% 할인</option>
-                <option :value="20">20% 할인</option>
-                <option :value="25">25% 할인</option>
-                <option :value="30">30% 할인</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label class="form-label">할인율 설정</label>
+            <select v-model.number="discountRate" class="form-control discount-select">
+              <option disabled :value="0">할인율을 선택해주세요</option>
+              <option :value="0">할인 미적용</option>
+              <option :value="10">10% 할인</option>
+              <option :value="15">15% 할인</option>
+              <option :value="20">20% 할인</option>
+              <option :value="25">25% 할인</option>
+              <option :value="30">30% 할인</option>
+            </select>
+          </div>
 
-            <div v-if="discountedProducts.length" class="discount-preview">
-              <h5>할인 적용 예시</h5>
-              <div class="discount-items">
-                <div v-for="item in discountedProducts" :key="item.id" class="discount-item">
-                  <div class="product-name">{{ item.name }}</div>
-                  <div class="price-info">
-                    <span class="original-price">{{ item.price.toLocaleString() }}원</span>
-                    <span class="arrow">→</span>
-                    <span class="discounted-price">{{ item.discountedPrice.toLocaleString() }}원</span>
-                  </div>
+          <div v-if="discountedProducts.length" class="discount-preview">
+            <h5>할인 적용 예시</h5>
+            <div class="discount-items">
+              <div v-for="item in discountedProducts" :key="item.id" class="discount-item">
+                <div class="product-name">{{ item.name }}</div>
+                <div class="price-info">
+                  <span class="original-price">{{ item.price.toLocaleString() }}원</span>
+                  <span class="arrow">→</span>
+                  <span class="discounted-price">{{ item.discountedPrice.toLocaleString() }}원</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="setup-footer">
-          <button 
-            class="btn btn-primary start-button" 
+      <div class="setup-footer">
+        <button
+            class="btn btn-primary start-button"
             @click="enterBroadcast"
             :disabled="!isFormValid"
-          >
-            방송 시작하기
-          </button>
-        </div>
+        >
+          방송 시작하기
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- 방송 준비/송출 화면 -->
+  <!-- 방송 준비/송출 화면 -->
 
-    <!-- 라이브 스트리밍 전체 화면 -->
-    <div class="stream-session" v-if="session">
-      <div class="stream-content">
-        <div class="main-content">
-          <div class="stream-header">
-            <h2>{{ streamTitle }}</h2>
-            <div class="stream-info">
-              <span class="viewer-count">👥 시청자 {{ viewerCount }}명</span>
-            </div>
+  <!-- 라이브 스트리밍 전체 화면 -->
+  <div class="stream-session" v-if="session">
+    <div class="stream-content">
+      <div class="main-content">
+        <div class="stream-header">
+          <h2>{{ streamTitle }}</h2>
+          <div class="stream-info">
+            <span class="viewer-count">👥 시청자 {{ viewerCount }}명</span>
           </div>
-          <div class="video-container">
-            <div v-if="!publisher" class="loading-message">
-              카메라 연결 중...
-            </div>
-            <user-video v-else :stream-manager="publisher" />
-          </div>
-          <div class="product-info">
-            <div class="product-list">
-              <div v-for="item in discountedProducts" :key="item.id" class="product-item">
-                <h3>{{ item.name }}</h3>
-                <p class="price">{{ item.discountedPrice.toLocaleString() }}원</p>
-                <p class="original-price">(정가 {{ item.price.toLocaleString() }}원)</p>
-                <p class="description">{{ item.description }}</p>
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
         </div>
-        <div class="chat-container">
-          <ChatContainer />
+        <div class="video-container">
+          <div v-if="!publisher" class="loading-message">
+            카메라 연결 중...
+          </div>
+          <user-video v-else :stream-manager="publisher"/>
         </div>
+        <div class="product-info">
+          <div class="product-list">
+            <div v-for="item in discountedProducts" :key="item.id" class="product-item">
+              <h3>{{ item.name }}</h3>
+              <p class="price">{{ item.discountedPrice.toLocaleString() }}원</p>
+              <p class="original-price">(정가 {{ item.price.toLocaleString() }}원)</p>
+              <p class="description">{{ item.description }}</p>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
+      </div>
+      <div class="chat-container">
+        <ChatContainer/>
       </div>
     </div>
+  </div>
 
-    
+
   </div>
 </template>
 
 <script setup>
 
 import {useAuthStore} from "@/modules/auth/stores/auth";
+
 const auth = useAuthStore()
 
-
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
-import { ref, onBeforeUnmount, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router'
+import {ref, onBeforeUnmount, onMounted, computed} from 'vue';
+import {useRoute} from 'vue-router'
 import axios from 'axios';
-import { OpenVidu } from 'openvidu-browser';
+import {OpenVidu} from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
 
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-  : 'http://localhost:8080/';
+    : 'http://localhost:8080/';
 
 // OpenVidu 관련 상태
 const OV = ref(undefined);
@@ -206,16 +224,19 @@ const discountRate = ref(0); // 할인율
 const viewerCount = ref(0); // 시청자 수 상태 관리
 const startTime = ref('');
 const endTime = ref('');
+const category = ref('');
+
+
 
 // 방송 상태 관리
 // const isLive = ref(false);
 
 // 할인율 적용
 const discountedProducts = computed(() =>
-  selectedProducts.value.map(p => ({
-    ...p,
-    discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
-  }))
+    selectedProducts.value.map(p => ({
+      ...p,
+      discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
+    }))
 )
 
 // 최대 상품 선택 초과 에러 상태
@@ -225,8 +246,8 @@ const showMaxProductsError = ref(false);
 const productList = async () => {
   try {
     const response = await axios.get(
-      `${APPLICATION_SERVER_URL}api/sessions/${vendorId}/productList`,
-      { headers: { 'Content-Type': 'application/json' } }
+        `${APPLICATION_SERVER_URL}api/sessions/${vendorId}/productList`,
+        {headers: {'Content-Type': 'application/json'}}
     );
     availableProducts.value = response.data;
     console.log('상품 리스트: ', availableProducts.value);
@@ -259,11 +280,10 @@ function toggleProduct(prod) {
   }
 }
 
-
 // 방송 준비 함수 (기존의 startStream 함수를 분리)
 const enterBroadcast = async () => {
   if (!streamTitle.value || selectedProducts.value.length === 0 || selectedProducts.value.length
-    > 3) {
+      > 3) {
     alert('방송 제목을 입력하고 1~3개의 상품을 선택해주세요.');
     return;
   }
@@ -324,13 +344,14 @@ const notifyServerStreamEnded = async (sessionId) => {
   // 종료 시간 알림
   try {
     await axios.delete(
-      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
-      {
-        headers: { 'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.token}`},
-        //params: {endTime: endTime.value}
-      },
-
+        `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.token}`
+          },
+          //params: {endTime: endTime.value}
+        },
     );
     console.log('서버에 방송 종료 알림 완료');
   } catch (error) {
@@ -342,7 +363,9 @@ const notifyServerStreamEnded = async (sessionId) => {
 // 방송 종료 시 세션 종료 및 서버에 방송 종료 알림 전송 
 const endStream = async () => {
   try {
-    if (!session.value) return;
+    if (!session.value) {
+      return;
+    }
 
     const currentSessionId = session.value.sessionId;
 
@@ -385,6 +408,7 @@ const createSession = async () => {
   formData.append('discountRate', discountRate.value);
   formData.append('startTime', startTime.value);
   formData.append('vendorId', vendorId);
+  formData.append('category', category.value);
 
   const response = await axios.post(
       APPLICATION_SERVER_URL + 'api/sessions',
@@ -395,7 +419,7 @@ const createSession = async () => {
         }
       }
   );
-  console.log("여기"+ response.data.sessionId);
+  console.log("여기" + response.data.sessionId);
   return response.data.sessionId;
 };
 
@@ -404,9 +428,9 @@ const createSession = async () => {
 // 백엔드에서 토큰을 생성하고 반환한다. 
 const createToken = async (sessionId) => {
   const response = await axios.post(
-    APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-    {},
-    { headers: { 'Content-Type': 'application/json' } }
+      APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+      {},
+      {headers: {'Content-Type': 'application/json'}}
   );
   return response.data;
 };
@@ -430,11 +454,12 @@ onBeforeUnmount(() => {
 
 // 폼 유효성 검사
 const isFormValid = computed(() => {
-  return streamTitle.value && 
-         announcement.value && 
-         thumbnailFile.value && 
-         selectedProducts.value.length > 0 && 
-         selectedProducts.value.length <= 3;
+  return streamTitle.value &&
+      announcement.value &&
+      category.value &&
+      thumbnailFile.value &&
+      selectedProducts.value.length > 0 &&
+      selectedProducts.value.length <= 3;
 });
 
 // 썸네일 제거 함수
@@ -522,7 +547,7 @@ const removeThumbnail = () => {
 .form-control:focus {
   border-color: #007bff;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .thumbnail-upload {
@@ -538,8 +563,8 @@ const removeThumbnail = () => {
 }
 
 .thumbnail-preview {
-  max-width: 300px;
-  max-height: 500px;
+  max-width: 200px;
+  max-height: 400px;
   border-radius: 12px;
   object-fit: contain;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

@@ -174,7 +174,7 @@ const router = useRouter()
 
 async function buyNow() {
   try{
-    const response = await axios.get('http://localhost:8080/order', {
+    const response = await axios.get('http://localhost:8080/api/order', {
       params : {
         productId: productId.value.toString(),
         quantity: quantity.value
