@@ -23,12 +23,40 @@
     <!-- 선택된 방송 통계 정보 표시 영역 -->
     <div class="details" v-if="selectedItem">
       <h2>{{ selectedItem.title }} 통계 자료</h2>
-      <ul>
-        <li>방송 날짜: {{ selectedItem.date }}</li>
-        <li>조회수: {{ selectedItem.stats.viewers }}</li>
-        <li>좋아요: {{ selectedItem.stats.likes }}</li>
-        <li>댓글 수: {{ selectedItem.stats.comments }}</li>
-      </ul>
+      <div class="detail-content">
+        <!-- 왼쪽 통계 카드 그룹 -->
+        <div class="stats-cards">
+          <div class="stats-card-small">
+            <div class="small-title">총 시청자 수</div>
+            <div class="small-value">{{ selectedItem.stats.viewers }}</div>
+          </div>
+          <div class="stats-card-small">
+            <div class="small-title">방송 시간</div>
+            <div class="small-value">{{ selectedItem.stats.duration }}</div>
+          </div>
+          <div class="stats-card-small">
+            <div class="small-title">채팅 수</div>
+            <div class="small-value">{{ selectedItem.stats.chats }}</div>
+          </div>
+          <div class="stats-card-small">
+            <div class="small-title">주문 건수</div>
+            <div class="small-value">{{ selectedItem.stats.orders }}</div>
+          </div>
+          <div class="stats-card-small">
+            <div class="small-title">총 매출액</div>
+            <div class="small-value">{{ selectedItem.stats.sales }}</div>
+          </div>
+          <div class="stats-card-small">
+            <div class="small-title">시청자 대비 구매자 비율</div>
+            <div class="small-value">{{ selectedItem.stats.conversionRate }}</div>
+          </div>
+        </div>
+        <!-- 오른쪽 AI 분석 영역 -->
+        <div class="ai-analysis">
+          <div class="ai-box">AI 분석 자료</div>
+          <button class="ai-button">AI 분석</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -36,69 +64,93 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-// 검색할 날짜 (YYYY-MM-DD 포맷)
 const searchDate = ref('')
-
-// 예시용 방송 데이터 (통계 필드를 포함)
 const items = ref([
-  { id: 'A', title: '방송 제목 A', date: '2025-06-10', stats: { viewers: 120, likes: 30, comments: 5 } },
-  { id: 'B', title: '방송 제목 B', date: '2025-06-11', stats: { viewers: 80, likes: 12, comments: 2 } },
-  { id: 'F', title: '방송 제목 F', date: '2025-06-12', stats: { viewers: 200, likes: 45, comments: 10 } },
-  { id: 'C', title: '방송 제목 C', date: '2025-06-13', stats: { viewers: 150, likes: 25, comments: 8 } },
-  { id: 'E', title: '방송 제목 E', date: '2025-06-14', stats: { viewers: 90, likes: 15, comments: 3 } },
-  { id: 'D', title: '방송 제목 D', date: '2025-06-15', stats: { viewers: 60, likes: 8, comments: 1 } },
+  {
+    id: 'A', title: '방송 제목 A', date: '2025-06-10',
+    stats: {
+      viewers: '100명', duration: '30분', chats: '350건',
+      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
+    }
+  },
+  {
+    id: 'B', title: '방송 제목 B', date: '2025-06-10',
+    stats: {
+      viewers: '100명', duration: '30분', chats: '350건',
+      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
+    }
+  },
+  {
+    id: 'C', title: '방송 제목 C', date: '2025-06-10',
+    stats: {
+      viewers: '100명', duration: '30분', chats: '350건',
+      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
+    }
+  },
+  {
+    id: 'D', title: '방송 제목 D', date: '2025-06-10',
+    stats: {
+      viewers: '100명', duration: '30분', chats: '350건',
+      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
+    }
+  },
+  {
+    id: 'E', title: '방송 제목 E', date: '2025-06-10',
+    stats: {
+      viewers: '100명', duration: '30분', chats: '350건',
+      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
+    }
+  },
+  {
+    id: 'F', title: '방송 제목 F', date: '2025-06-10',
+    stats: {
+      viewers: '100명', duration: '30분', chats: '350건',
+      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
+    }
+  },
+  // ... 다른 항목
 ])
-
-// 현재 선택된 방송 아이템
 const selectedItem = ref(null)
 
-// 카드 클릭 시 해당 아이템을 선택
 function selectItem(item) {
   selectedItem.value = item
 }
 
-// 날짜 검색 필터링
-const filteredItems = computed(() => {
-  const list = items.value
-  if (!searchDate.value) return list
-  return list.filter(item => item.date.includes(searchDate.value))
-})
+const filteredItems = computed(() =>
+    searchDate.value
+        ? items.value.filter(i => i.date.includes(searchDate.value))
+        : items.value
+)
 </script>
 
 <style scoped>
 .statistics {
   padding: 20px;
   font-family: sans-serif;
-  margin-top: 70px;
-  margin-left: 200px;
-  margin-right: 200px;
+  margin: 70px 200px;
 }
 
 .statistics-header {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-  gap: 12px;
 }
 
 .statistics-header input {
   width: 100%;
   max-width: 300px;
   padding: 8px 12px;
-  font-size: 1rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 10px;
+  font-size: 1rem;
 }
 
 .cards-container {
   border: 1px solid #ccc;
   padding: 32px;
-  border-radius: 4px;
+  border-radius: 10px;
   display: grid;
-  /* 반응형: 최소 너비 240px, 여유 있으면 자동으로 열 추가 */
-  //grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
   margin-bottom: 24px;
@@ -106,22 +158,22 @@ const filteredItems = computed(() => {
 }
 
 .card {
-  margin-left: 30px;
-  margin-right: 30px;
   background: #fff;
   padding: 16px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 10px;
   box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.1s;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  cursor: pointer;
-  transition: transform 0.1s;
 }
+
 .card:hover {
   transform: translateY(-2px);
 }
+
 .card--active {
   border-color: #4f46e5;
   background: #eef2ff;
@@ -141,24 +193,77 @@ const filteredItems = computed(() => {
   background: #fff;
   padding: 16px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 10px;
   box-shadow: 2px 2px 6px rgba(0,0,0,0.05);
   margin-top: 16px;
 }
 
-.details h2 {
-  margin-bottom: 12px;
+.detail-content {
+  display: flex;
+  gap: 24px;
 }
 
-.details ul {
-  list-style: none;
-  padding: 0;
+.stats-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 16px;
+  width: 60%;
 }
 
-.details li {
-  margin: 0;
+.stats-card-small {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+}
+
+.small-title {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.small-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #111;
+}
+
+.ai-analysis {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 40%;
+}
+
+.ai-box {
+  flex: 1;
+  background: #f5f5f5;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.ai-button {
+  margin-top: 16px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #4f46e5;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.ai-button:hover {
+  background: #4338ca;
 }
 </style>
