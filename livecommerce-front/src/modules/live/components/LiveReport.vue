@@ -3,13 +3,18 @@
     <!-- 헤더: 제목 + 날짜 검색 -->
     <div class="statistics-header">
       <h1>통계 자료</h1>
-      <input v-model="searchDate" type="text" placeholder="날짜 검색 (YYYY-MM-DD)" />
+      <input
+          v-model="searchDate"
+          type="text"
+          placeholder="날짜 검색 (YYYY-MM-DD)"
+          class="search-input"
+      />
     </div>
 
     <!-- 카드들을 감싸는 컨테이너 -->
     <div class="cards-container">
       <div
-          v-for="item in filteredItems"
+          v-for="item in paginatedItems"
           :key="item.id"
           class="card"
           @click="selectItem(item)"
@@ -18,6 +23,13 @@
         <div class="card-title">{{ item.title }}</div>
         <div class="card-date">{{ item.date }}</div>
       </div>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <div v-if="totalPages > 1" class="pagination">
+      <button @click="prevPage" :disabled="currentPage === 1">이전</button>
+      <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
     </div>
 
     <!-- 선택된 방송 통계 정보 표시 영역 -->
@@ -66,49 +78,23 @@ import { ref, computed } from 'vue'
 
 const searchDate = ref('')
 const items = ref([
-  {
-    id: 'A', title: '방송 제목 A', date: '2025-06-10',
-    stats: {
-      viewers: '100명', duration: '30분', chats: '350건',
-      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
-    }
-  },
-  {
-    id: 'B', title: '방송 제목 B', date: '2025-06-10',
-    stats: {
-      viewers: '100명', duration: '30분', chats: '350건',
-      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
-    }
-  },
-  {
-    id: 'C', title: '방송 제목 C', date: '2025-06-10',
-    stats: {
-      viewers: '100명', duration: '30분', chats: '350건',
-      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
-    }
-  },
-  {
-    id: 'D', title: '방송 제목 D', date: '2025-06-10',
-    stats: {
-      viewers: '100명', duration: '30분', chats: '350건',
-      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
-    }
-  },
-  {
-    id: 'E', title: '방송 제목 E', date: '2025-06-10',
-    stats: {
-      viewers: '100명', duration: '30분', chats: '350건',
-      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
-    }
-  },
-  {
-    id: 'F', title: '방송 제목 F', date: '2025-06-10',
-    stats: {
-      viewers: '100명', duration: '30분', chats: '350건',
-      orders: '20건', sales: '3,000,000원', conversionRate: '35%'
-    }
-  },
-  // ... 다른 항목
+  // 예시 데이터
+  { id: 'A', title: '방송 제목 A', date: '2025-06-10', stats: { viewers: '100명', duration: '30분', chats: '350건', orders: '20건', sales: '3,000,000원', conversionRate: '35%' } },
+  { id: 'B', title: '방송 제목 B', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'C', title: '방송 제목 C', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'D', title: '방송 제목 D', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'E', title: '방송 제목 E', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'F', title: '방송 제목 F', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'G', title: '방송 제목 G', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'H', title: '방송 제목 H', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'I', title: '방송 제목 I', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'J', title: '방송 제목 J', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'K', title: '방송 제목 K', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'L', title: '방송 제목 L', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'M', title: '방송 제목 M', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'N', title: '방송 제목 N', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  { id: 'O', title: '방송 제목 O', date: '2025-06-11', stats: { viewers: '150명', duration: '45분', chats: '420건', orders: '30건', sales: '4,500,000원', conversionRate: '40%' } },
+  // ... 더 많은 항목
 ])
 const selectedItem = ref(null)
 
@@ -121,13 +107,32 @@ const filteredItems = computed(() =>
         ? items.value.filter(i => i.date.includes(searchDate.value))
         : items.value
 )
+
+// 페이징
+const currentPage = ref(1)
+const pageSize = 9
+const totalPages = computed(() => Math.ceil(filteredItems.value.length / pageSize))
+
+const paginatedItems = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return filteredItems.value.slice(start, start + pageSize)
+})
+
+function nextPage() {
+  if (currentPage.value < totalPages.value) currentPage.value++
+}
+function prevPage() {
+  if (currentPage.value > 1) currentPage.value--
+}
 </script>
 
 <style scoped>
 .statistics {
-  padding: 20px;
-  font-family: sans-serif;
+  padding: 50px;
+  font-family: 'Noto Sans KR', sans-serif;
   margin: 70px 200px;
+  background-color: #fefefe;
+  border-radius: 10px;
 }
 
 .statistics-header {
@@ -137,7 +142,15 @@ const filteredItems = computed(() =>
   margin-bottom: 16px;
 }
 
-.statistics-header input {
+.statistics-header h1 {
+  font-size: 2.8rem;
+  color: #2c3e50;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.search-input {
   width: 100%;
   max-width: 300px;
   padding: 8px 12px;
@@ -153,8 +166,9 @@ const filteredItems = computed(() =>
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   min-height: 240px;
+  background: #fafafa;
 }
 
 .card {
@@ -170,23 +184,30 @@ const filteredItems = computed(() =>
   justify-content: space-between;
 }
 
-.card:hover {
-  transform: translateY(-2px);
+.card--active { background: #eef2ff; border-color: #4f46e5; }
+.card:hover { transform: translateY(-2px); }
+.card-title { font-size: 1.25rem; font-weight: 600; }
+.card-date { text-align: right; color: #777; }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-.card--active {
-  border-color: #4f46e5;
-  background: #eef2ff;
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.card-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-
-.card-date {
-  text-align: right;
-  color: #777;
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .details {
@@ -198,11 +219,16 @@ const filteredItems = computed(() =>
   margin-top: 16px;
 }
 
-.detail-content {
-  display: flex;
-  gap: 24px;
+.details h2 {
+  font-size: 2rem;
+  color: #34495e;
+  font-weight: 600;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 8px;
 }
 
+.detail-content { display: flex; gap: 24px; }
 .stats-cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -210,60 +236,11 @@ const filteredItems = computed(() =>
   gap: 16px;
   width: 60%;
 }
-
-.stats-card-small {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 12px;
-  text-align: center;
-}
-
-.small-title {
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-  color: #333;
-}
-
-.small-value {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #111;
-}
-
-.ai-analysis {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  width: 40%;
-}
-
-.ai-box {
-  flex: 1;
-  background: #f5f5f5;
-  border: 1px dashed #ccc;
-  border-radius: 6px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  color: #666;
-}
-
-.ai-button {
-  margin-top: 16px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  background: #4f46e5;
-  color: white;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.ai-button:hover {
-  background: #4338ca;
-}
+.stats-card-small { background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; padding: 12px; text-align: center; }
+.small-title { font-size: 0.9rem; margin-bottom: 8px; color: #333; }
+.small-value { font-size: 1.1rem; font-weight: 700; color: #111; }
+.ai-analysis { display: flex; flex-direction: column; align-items: center; justify-content: space-between; width: 40%; }
+.ai-box { flex: 1; background: #f5f5f5; border: 1px dashed #ccc; border-radius: 6px; width: 100%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #666; }
+.ai-button { margin-top: 16px; padding: 8px 16px; border: none; border-radius: 4px; background: #4f46e5; color: white; cursor: pointer; font-size: 1rem; }
+.ai-button:hover { background: #4338ca; }
 </style>
