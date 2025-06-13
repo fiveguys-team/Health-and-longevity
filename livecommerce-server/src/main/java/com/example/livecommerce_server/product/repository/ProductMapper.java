@@ -24,4 +24,6 @@ public interface ProductMapper {
 
     List<ProductListDTO> selectProductsByStatus(@Param("status") String status); //  상태별 목록 조회 추가
     AdminProductDetailDTO findAdminProductDetailByCertNo(@Param("certNo") String certNo);
+    List<ProductDTO> findProductsByVendorIdAndStatus(@Param("vendorId") Long vendorId, @Param("status") String status);
+
 }

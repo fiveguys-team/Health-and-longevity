@@ -45,8 +45,11 @@ public class ProductController {
     }
 
     @GetMapping("/vendor/{vendorId}/products")
-    public ResponseEntity<List<ProductDTO>> getProducts(@PathVariable Long vendorId) {
-        return ResponseEntity.ok(productService.getProductsByVendor(vendorId));
+    public ResponseEntity<List<ProductDTO>> getProducts(
+            @PathVariable Long vendorId,
+            @RequestParam(required = false) String status
+    ) {
+        return ResponseEntity.ok(productService.getProductsByVendor(vendorId, status));
     }
 
     @GetMapping("/product/detail/{productId}")

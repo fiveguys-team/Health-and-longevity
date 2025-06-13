@@ -144,8 +144,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getProductsByVendor(Long vendorId) {
-        return productMapper.findProductsByVendorId(vendorId);
+    public List<ProductDTO> getProductsByVendor(Long vendorId, String status) {
+        if (status == null || status.isEmpty()) {
+            return productMapper.findProductsByVendorId(vendorId);
+        } else {
+            return productMapper.findProductsByVendorIdAndStatus(vendorId, status);
+        }
     }
 
     @Override
