@@ -42,7 +42,8 @@
                     </div>
                     <p class="mt-1 text-gray-800 dark:text-gray-200 max-w-[80%] break-words" :class="{
                         'bg-blue-500 text-white px-3 py-2 rounded-lg': message.username === '나',
-                        'bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg': message.username !== '나'
+                        'bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg': message.username !== '나' && !message.isWarning,
+                        'bg-red-100 text-red-700 px-3 py-2 rounded-lg border border-red-300': message.isWarning
                     }">
                         {{ message.content }}
                     </p>
@@ -69,6 +70,7 @@
 import { ref, onMounted, nextTick, watch, onBeforeUnmount } from 'vue';
 import { websocketService } from '../services/websocket.service';
 
+
 // 상태 관리
 const messages = ref([]);
 const newMessage = ref('');
@@ -79,16 +81,37 @@ const currentNotice = ref('');
 // 테스트용 roomId
 const roomId = 1; // 실제로는 props로 받아야 함
 
-// WebSocket 메시지 수신 처리
+// Vue 컴포넌트에서 수정
 const handleMessage = (receivedMessage) => {
+    console.log('서버에서 받은 메시지 전체:', receivedMessage); // 디버깅용
+
     messages.value.push({
         id: Date.now(),
-        username: receivedMessage.sender,
-        content: receivedMessage.message,
+        username: receivedMessage.userName || `사용자${receivedMessage.userId}`, // userName 우선, 없으면 userId 사용
+        content: receivedMessage.content, // content 필드 사용
         time: receivedMessage.createdAt || new Date().toISOString()
     });
 };
 
+// 경고 메시지 처리 함수 추가
+const handleWarning = (warningMessage) => {
+    // 1) 채팅 히스토리에 시스템 버블 추가
+    messages.value.push({
+        id: Date.now(),
+        username: '시스템',
+        content: warningMessage.content,
+        time: new Date().toISOString(),
+        isWarning: true
+    });
+
+    // 2) 맨 마지막 인덱스 기억
+    const idx = messages.value.length - 1;
+
+    // 3) 3초 뒤에 채팅 버블 제거
+    setTimeout(() => {
+        messages.value.splice(idx, 1);
+    }, 3000);
+};
 // 메시지 전송
 const sendMessage = () => {
     if (!newMessage.value.trim()) return;
@@ -124,8 +147,8 @@ onMounted(() => {
     currentNotice.value = "라이브 방송 중에는 예의 바른 채팅 부탁드립니다.";
     participantCount.value = 128;
 
-    // WebSocket 연결
-    websocketService.connect(roomId, handleMessage);
+    // WebSocket 연결 (경고 콜백 추가)
+    websocketService.connect(roomId, handleMessage, handleWarning);
 });
 
 onBeforeUnmount(() => {

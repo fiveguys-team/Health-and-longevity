@@ -174,7 +174,7 @@ const router = useRouter()
 
 async function buyNow() {
   try{
-    const response = await axios.get('http://localhost:8080/order', {
+    const response = await axios.get('http://localhost:8080/api/order', {
       params : {
         productId: productId.value.toString(),
         quantity: quantity.value
@@ -184,6 +184,7 @@ async function buyNow() {
     console.log('Order stored:', store.orderItem)
     router.push({name:'order'})
   } catch (err) {
+    alert('API 호출 실패\n' + err);
     console.log('Order API 호출 실패', err)
   }
 }

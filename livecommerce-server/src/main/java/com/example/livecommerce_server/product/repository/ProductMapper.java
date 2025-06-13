@@ -14,6 +14,7 @@ public interface ProductMapper {
     void updateProduct(ProductDTO product); //
 
     List<ProductDTO> findProductsByVendorId(Long vendorId);
+    List<ProductDTO> findProductsByProductId(@Param("productIds")List<String> productIds);
 
     List<ProductListDTO> selectRequestedProducts();
 

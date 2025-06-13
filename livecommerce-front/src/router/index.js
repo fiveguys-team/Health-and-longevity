@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from "@/modules/auth/stores/auth";
 import IndexOne from '@/views/index/index-one.vue'
 import AboutUs from '@/views/inner-pages/about-us.vue'
 import PricingPage from '@/views/inner-pages/pricing-page.vue'
@@ -39,10 +40,10 @@ import Vendor from '@/views/shop/vendor-category.vue'
 
 // modules/도메인/views/ 하위 test용 view
 import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
-import LiveChart from "@/modules/live/views/LiveChart.vue"
+import LiveChart from "@/modules/live/views/LiveStreamList.vue"
 import LiveRegister from "@/modules/live/views/LiveRegister.vue"
 import StoreLiveStreaming from "@/modules/live/views/StoreLiveStreaming.vue";
-import LiveReport from "@/modules/live/views/LiveReport.vue";
+import LiveReport from "@/modules/live/components/LiveReport.vue";
 
 
 import AuthTest from "@/modules/auth/views/AuthTest.vue"
@@ -69,7 +70,7 @@ const routes = [
   {path: '/faq',component: FaqPage},
   {path: '/terms-and-conditions',component: TermsAndConditions},
   {path: '/error',component: ErrorPage},
-  {path: '/my-profile',component: MyProfile},
+  {path: '/my-profile',component: MyProfile, meta: {requiresAuth: true}},
   {path: '/my-account',component: MyAccount},
   {path: '/edit-account',component: EditAccount},
   {path: '/wishlist',component: WishlistPage},
@@ -90,7 +91,9 @@ const routes = [
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
 
-  { path: "/admin-dashboard", component: adminDashboard },
+  { path: "/admin-dashboard", component: adminDashboard,
+    meta: {requiresAuth: true, roles: ['ADMIN']}
+  },
   //{ path: "/store-dashboard", component: storeDashboard },
 
    // 상품, 리뷰 view
@@ -155,7 +158,7 @@ const routes = [
   {
     path: "/admin",
     component: () => import("@/views/dashboard/adminDashboard.vue"),
-    meta: { requiresAuth: true, adminOnly: true },
+    meta: { requiresAuth: true, roles: ['ADMIN'] },
     children: [
       {
         path: "chat/reports",
@@ -181,9 +184,38 @@ const routes = [
     ],
   },
 
+    // 입점업체 대시보드 라우트입니다.
+  {
+    path: "/vendor",
+    component: () => import("@/views/dashboard/storeDashboard.vue"),
+    meta: { requiresAuth: true, roles: ['VENDOR'] },
+    children: [
+      {
+        path: "live/reportList",
+        name: "reportList",
+        component: () => import("@/modules/live/components/LiveReport.vue"),
+      },
+
+      // {
+      //   path: 'products',
+      //   name: 'AdminProductList',
+      //   component: () => import('@/modules/product/views/AdminProductList.vue')
+      // },
+      // {
+      //   path: 'product/detail/:id',
+      //   name: 'AdminProductDetail',
+      //   component: () => import('@/modules/product/views/AdminProductDetail.vue'),
+      //   props : true
+      // }
+    ],
+  },
+
+
+
   {
     path: '/store-dashboard',
     component: () => import('@/views/dashboard/storeDashboard.vue'), // 이건 그대로 레이아웃 역할
+    meta: {requiresAuth: true, roles: ['VENDOR']},
     children: [
       {
         path: 'product/register',
@@ -208,13 +240,25 @@ const routes = [
   },
 ];
 
-
-
-
-
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  if (to.meta.requiresAuth) {
+    if (!authStore.token) return next('/login')
+
+    if (to.meta.roles && !to.meta.roles.includes(authStore.role)) {
+      alert('권한이 없습니다.')
+      return next('/')
+    }
+  }
+
+  next()
+})
+
 
 export default router;
