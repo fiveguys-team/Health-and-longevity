@@ -9,4 +9,14 @@
         VALUES (#{liveId}, #{participantsCnt}, #{createdAt}, #{updatedAt})
     </insert>
 
+
+
+
+    <update id="updateParticipantCount">
+        UPDATE CHAT_ROOM_M
+        SET participants_cnt = #{count},
+            updated_at = NOW()
+        WHERE room_id = #{roomId}
+    </update>
+
 </mapper>

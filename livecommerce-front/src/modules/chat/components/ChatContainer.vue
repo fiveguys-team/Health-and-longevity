@@ -95,15 +95,22 @@ const handleMessage = (receivedMessage) => {
 
 // 경고 메시지 처리 함수 추가
 const handleWarning = (warningMessage) => {
-    console.log('경고 메시지 받음:', warningMessage);
-    // 경고 메시지를 채팅창에 빨간색으로 표시
+    // 1) 채팅 히스토리에 시스템 버블 추가
     messages.value.push({
         id: Date.now(),
         username: '시스템',
         content: warningMessage.content,
         time: new Date().toISOString(),
-        isWarning: true // 경고 메시지 구분용
+        isWarning: true
     });
+
+    // 2) 맨 마지막 인덱스 기억
+    const idx = messages.value.length - 1;
+
+    // 3) 3초 뒤에 채팅 버블 제거
+    setTimeout(() => {
+        messages.value.splice(idx, 1);
+    }, 3000);
 };
 // 메시지 전송
 const sendMessage = () => {
