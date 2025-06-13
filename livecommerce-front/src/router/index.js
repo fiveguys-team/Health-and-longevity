@@ -43,7 +43,7 @@ import LiveStreaming from '@/modules/live/views/LiveStreaming.vue'
 import LiveChart from "@/modules/live/views/LiveStreamList.vue"
 import LiveRegister from "@/modules/live/views/LiveRegister.vue"
 import StoreLiveStreaming from "@/modules/live/views/StoreLiveStreaming.vue";
-import LiveReport from "@/modules/live/views/LiveReport.vue";
+import LiveReport from "@/modules/live/components/LiveReport.vue";
 
 
 import AuthTest from "@/modules/auth/views/AuthTest.vue"
@@ -183,6 +183,34 @@ const routes = [
       }
     ],
   },
+
+    // 입점업체 대시보드 라우트입니다.
+  {
+    path: "/vendor",
+    component: () => import("@/views/dashboard/storeDashboard.vue"),
+    meta: { requiresAuth: true, roles: ['VENDOR'] },
+    children: [
+      {
+        path: "live/reportList",
+        name: "reportList",
+        component: () => import("@/modules/live/components/LiveReport.vue"),
+      },
+
+      // {
+      //   path: 'products',
+      //   name: 'AdminProductList',
+      //   component: () => import('@/modules/product/views/AdminProductList.vue')
+      // },
+      // {
+      //   path: 'product/detail/:id',
+      //   name: 'AdminProductDetail',
+      //   component: () => import('@/modules/product/views/AdminProductDetail.vue'),
+      //   props : true
+      // }
+    ],
+  },
+
+
 
   {
     path: '/store-dashboard',
