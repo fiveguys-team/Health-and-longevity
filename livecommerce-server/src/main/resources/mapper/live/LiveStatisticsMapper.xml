@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.livecommerce_server.live.mapper.LiveStatisticsMapper">
+
+<!--    시청자 입장 기록 저장-->
+    <insert id="insertViewerJoin" parameterType="LiveViewerStatsDTO">
+		INSERT INTO LIVE_VIEWER_LOG (live_id, user_id, join_at, is_anonymous)
+		VALUES (#{liveId},#{userId},#{joinAt},#{isAnonymous})
+	</insert>
+
+<!--    시청자 퇴장 기록 저장-->
+    <update id="updateViewerLeave">
+        UPDATE LIVE_VIEWER_LOG SET leave_at = #{leaveAt}
+        WHERE live_id = #{liveId} AND user_id = #{userId} AND leave_at IS NULL
+    </update>
+
+<!--    현재 시청자 수 조회-->
+    <select id="selectCurrentViewerCount" resultType="Integer">
+        SELECT COUUNT(DISTINCT user_id) FROM LIVE_VIEWER_LOG
+        WHERE live_id = #{liveId} AND leave_at IS NULL
+    </select>
+
+
+<!--	라이브 방송 통계 대시보드 저장-->
+    <insert id="insertLiveDashboard" parameterType="LiveStatisticsVO">
+        INSERT INTO LIVE_DASHBOARD_D (liveDashboard_id, live_id ,total_viewers ,max_concurrent_viewers ,average_watch_duration ,total_chats, total_orders, total_reve)
+        VALUES (#{liveDashboardId}, #{liveId}, #{totalViewers}, #{maxConcurrentViewers}, #{averageWatchDuration}, #{totalChats}, #{totalOrders}, #{totalReve})
+    </insert>
+
+<!--	총 시청자 수 조회-->
+    <select id="selectTotalViewers" resultType="Integer" parameterType="string">
+        SELECT COUNT(DISTINCT user_id) FROM LIVE_VIEWER_LOG WHERE live_id = #{liveId}
+    </select>
+
+<!--	최대 동시 시청자 수 조회-->
+    <select id="selectMaxConcurrentViewers" resultType="Integer" parameterType="string">
+		SELECT IFNULL(MAX(current_count), 0) AS max_concurrent_viewers
+		FROM (SELECT SUM(delta) OVER (
+              ORDER BY ts
+              ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            ) AS current_count
+			  FROM (
+					   -- 입장 이벤트
+					   SELECT join_at AS ts, 1 AS delta
+					   FROM live_viewer_log
+					   WHERE live_id = #{liveId}
+
+					   UNION ALL
+
+					   -- 퇴장 이벤트 (퇴장 시간이 있는 경우만)
+					   SELECT leave_at AS ts, -1 AS delta
+					   FROM live_viewer_log
+					   WHERE live_id = #{liveId}
+						 AND leave_at IS NOT NULL) AS events) AS timeline
+	</select>
+
+<!--	평균 시청 시간 조회 (초 단위)-->
+	<select id="selectAverageWatchDuration" resultType="Integer" parameterType="string">
+        SELECT IFNULL(AVG(TIMESTAMPDIFF(SECOND, join_at, leave_at)), 0) FROM LIVE_VIEWER_LOG
+        WHERE live_id = #{liveId} AND leave_at IS NOT NULL
+    </select>
+</mapper> 
