@@ -16,18 +16,14 @@
       <div class="main-content">
         <!-- Video Area -->
         <div class="live-video-container">
-          <user-video :stream-manager="mainStreamManager" />
+          <user-video :stream-manager="mainStreamManager"/>
         </div>
 
         <!-- Products Display -->
         <div class="products">
-          <div
-            class="product-card"
-            v-for="item in streamData.products"
-            :key="item.id"
-          >
+          <div class="product-card" v-for="item in streamData.products" :key="item.id">
             <div class="product-image">
-              <img :src="item.imageUrl" alt="상품 이미지" />
+              <img :src="item.imageUrl" alt="상품 이미지"/>
             </div>
             <div class="product-name">{{ item.name }}</div>
             <div class="price">
@@ -41,7 +37,7 @@
 
       <!-- Right: Chat Area -->
       <div class="chat-area">
-        <chat-container />
+        <chat-container/>
       </div>
     </div>
 
@@ -53,17 +49,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import {ref, onMounted, onBeforeUnmount, computed} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
 import axios from 'axios';
-import { OpenVidu } from 'openvidu-browser';
+import {OpenVidu} from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 
 // 라우터 설정
 const route = useRoute();
 const router = useRouter();
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/';
+const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
+    : 'http://localhost:8080/';
 
 // OpenVidu 관련 상태 관리
 const OV = ref(undefined);                 // OpenVidu 인스턴스
@@ -83,7 +80,7 @@ let timerId;
  * 1. 스트림을 구독하고 비디오 표시 설정
  * 2. 호스트 정보 저장
  */
-const handleStreamCreated = async ({ stream }) => {
+const handleStreamCreated = async ({stream}) => {
   try {
     // 스트림 구독 설정
     mainStreamManager.value = await session.value.subscribeAsync(stream, {
@@ -161,12 +158,12 @@ const handleParticipantEvicted = (event) => {
 const getToken = async (sessionId) => {
   try {
     const response = await axios.post(
-      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
-      {},
-      {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 5000 // 5초 타임아웃 설정
-      }
+        `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
+        {},
+        {
+          headers: {'Content-Type': 'application/json'},
+          timeout: 5000 // 5초 타임아웃 설정
+        }
     );
     return response.data;
   } catch (error) {
@@ -220,7 +217,7 @@ const joinSession = async (sessionId) => {
       throw new Error('토큰을 받아올 수 없습니다.');
     }
 
-    await session.value.connect(token, { clientData: { type: 'viewer' } });
+    await session.value.connect(token, {clientData: {type: 'viewer'}});
 
   } catch (error) {
     console.error('세션 참가 중 오류 발생:', error);

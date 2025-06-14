@@ -72,118 +72,118 @@
             </div>
 
 
-
           </div>
 
 
-
-        <!-- 오른쪽 컬럼: 상품 및 할인 설정 -->
-        <div class="setup-column">
-          <div class="form-group">
-            <label class="form-label">판매 상품 선택 <span class="sub-label">(최대 3개)</span></label>
-            <div class="product-selection">
-              <div class="product-list">
-                <div
-                    v-for="product in availableProducts"
-                    :key="product.id"
-                    class="product-item-select"
-                    :class="{ 
+          <!-- 오른쪽 컬럼: 상품 및 할인 설정 -->
+          <div class="setup-column">
+            <div class="form-group">
+              <label class="form-label">판매 상품 선택 <span class="sub-label">(최대 3개)</span></label>
+              <div class="product-selection">
+                <div class="product-list">
+                  <div
+                      v-for="product in availableProducts"
+                      :key="product.id"
+                      class="product-item-select"
+                      :class="{
                       'selected': selectedProducts.includes(product),
                       'disabled': selectedProducts.length >= 3 && !selectedProducts.includes(product)
                     }"
-                    @click="toggleProduct(product)"
-                >
-                  <div class="product-info">
-                    <div class="product-name">{{ product.name }}</div>
-                    <div class="product-price">{{ product.price.toLocaleString() }}원</div>
+                      @click="toggleProduct(product)"
+                  >
+                    <div class="product-info">
+                      <div class="product-name">{{ product.name }}</div>
+                      <div class="product-price">{{ product.price.toLocaleString() }}원</div>
+                    </div>
+                    <div class="selection-indicator">
+                      <span v-if="selectedProducts.includes(product)">✓</span>
+                    </div>
                   </div>
-                  <div class="selection-indicator">
-                    <span v-if="selectedProducts.includes(product)">✓</span>
+                </div>
+              </div>
+              <p v-if="showMaxProductsError" class="error-message">
+                최대 3개의 상품만 선택할 수 있습니다.
+              </p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">할인율 설정</label>
+              <select v-model.number="discountRate" class="form-control discount-select">
+                <option disabled :value="0">할인율을 선택해주세요</option>
+                <option :value="0">할인 미적용</option>
+                <option :value="10">10% 할인</option>
+                <option :value="15">15% 할인</option>
+                <option :value="20">20% 할인</option>
+                <option :value="25">25% 할인</option>
+                <option :value="30">30% 할인</option>
+              </select>
+            </div>
+
+            <div v-if="discountedProducts.length" class="discount-preview">
+              <h5>할인 적용 예시</h5>
+              <div class="discount-items">
+                <div v-for="item in discountedProducts" :key="item.id" class="discount-item">
+                  <div class="product-name">{{ item.name }}</div>
+                  <div class="price-info">
+                    <span class="original-price">{{ item.price.toLocaleString() }}원</span>
+                    <span class="arrow">→</span>
+                    <span class="discounted-price">{{
+                        item.discountedPrice.toLocaleString()
+                      }}원</span>
                   </div>
                 </div>
               </div>
             </div>
-            <p v-if="showMaxProductsError" class="error-message">
-              최대 3개의 상품만 선택할 수 있습니다.
-            </p>
           </div>
+        </div>
 
-          <div class="form-group">
-            <label class="form-label">할인율 설정</label>
-            <select v-model.number="discountRate" class="form-control discount-select">
-              <option disabled :value="0">할인율을 선택해주세요</option>
-              <option :value="0">할인 미적용</option>
-              <option :value="10">10% 할인</option>
-              <option :value="15">15% 할인</option>
-              <option :value="20">20% 할인</option>
-              <option :value="25">25% 할인</option>
-              <option :value="30">30% 할인</option>
-            </select>
+        <div class="setup-footer">
+          <button
+              class="btn btn-primary start-button"
+              @click="enterBroadcast"
+              :disabled="!isFormValid"
+          >
+            방송 시작하기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 방송 준비/송출 화면 -->
+
+    <!-- 라이브 스트리밍 전체 화면 -->
+    <div class="stream-session" v-if="session">
+      <div class="stream-content">
+        <div class="main-content">
+          <div class="stream-header">
+            <h2>{{ streamTitle }}</h2>
+            <div class="stream-info">
+              <span class="viewer-count">👥 시청자 {{ viewerCount }}명</span>
+            </div>
           </div>
-
-          <div v-if="discountedProducts.length" class="discount-preview">
-            <h5>할인 적용 예시</h5>
-            <div class="discount-items">
-              <div v-for="item in discountedProducts" :key="item.id" class="discount-item">
-                <div class="product-name">{{ item.name }}</div>
-                <div class="price-info">
-                  <span class="original-price">{{ item.price.toLocaleString() }}원</span>
-                  <span class="arrow">→</span>
-                  <span class="discounted-price">{{ item.discountedPrice.toLocaleString() }}원</span>
-                </div>
+          <div class="video-container">
+            <div v-if="!publisher" class="loading-message">
+              카메라 연결 중...
+            </div>
+            <user-video v-else :stream-manager="publisher"/>
+          </div>
+          <div class="product-info">
+            <div class="product-list">
+              <div v-for="item in discountedProducts" :key="item.id" class="product-item">
+                <h3>{{ item.name }}</h3>
+                <p class="price">{{ item.discountedPrice.toLocaleString() }}원</p>
+                <p class="original-price">(정가 {{ item.price.toLocaleString() }}원)</p>
+                <p class="description">{{ item.description }}</p>
               </div>
             </div>
           </div>
+          <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
         </div>
-      </div>
-
-      <div class="setup-footer">
-        <button
-            class="btn btn-primary start-button"
-            @click="enterBroadcast"
-            :disabled="!isFormValid"
-        >
-          방송 시작하기
-        </button>
+        <div class="chat-container">
+          <ChatContainer/>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- 방송 준비/송출 화면 -->
-
-  <!-- 라이브 스트리밍 전체 화면 -->
-  <div class="stream-session" v-if="session">
-    <div class="stream-content">
-      <div class="main-content">
-        <div class="stream-header">
-          <h2>{{ streamTitle }}</h2>
-          <div class="stream-info">
-            <span class="viewer-count">👥 시청자 {{ viewerCount }}명</span>
-          </div>
-        </div>
-        <div class="video-container">
-          <div v-if="!publisher" class="loading-message">
-            카메라 연결 중...
-          </div>
-          <user-video v-else :stream-manager="publisher"/>
-        </div>
-        <div class="product-info">
-          <div class="product-list">
-            <div v-for="item in discountedProducts" :key="item.id" class="product-item">
-              <h3>{{ item.name }}</h3>
-              <p class="price">{{ item.discountedPrice.toLocaleString() }}원</p>
-              <p class="original-price">(정가 {{ item.price.toLocaleString() }}원)</p>
-              <p class="description">{{ item.description }}</p>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
-      </div>
-      <div class="chat-container">
-        <ChatContainer/>
-      </div>
-    </div>
-  </div>
 
 
   </div>
@@ -225,8 +225,6 @@ const viewerCount = ref(0); // 시청자 수 상태 관리
 const startTime = ref('');
 const endTime = ref('');
 const category = ref('');
-
-
 
 // 방송 상태 관리
 // const isLive = ref(false);
