@@ -4,6 +4,7 @@
 
 <mapper namespace="com.example.livecommerce_server.product.repository.ProductDetailMapper">
 
+  <!-- 1. 상세 정보 저장 -->
   <insert id="insertProductDetail">
     INSERT INTO product_detail (
       product_id,
@@ -32,23 +33,62 @@
              )
   </insert>
 
-
-  <select id="findDetailByProductId">
+  <!-- 2. 상품 ID로 상세 조회 (상세 페이지용) -->
+  <select id="findDetailByProductId"
+    parameterType="string"
+    resultType="com.example.livecommerce_server.product.dto.ProductDetailDTO">
     SELECT
-      product_id AS productId,
-      cert_no AS certNo,
-      product_name AS productName,
-      expiry_date AS expiryDate,
-      approval_date AS approvalDate,
-      how_to_take AS howToTake,
-      main_function AS mainFunction,
-      precautions,
+      product_id     AS productId,
+      cert_no        AS certNo,
+      product_name   AS productName,
+      expiry_date    AS expiryDate,
+      approval_date  AS approvalDate,
+      how_to_take    AS howToTake,
+      main_function  AS mainFunction,
+      precautions    AS precautions,
       storage_method AS storageMethod,
-      standard,
-      ingredients
+      standard       AS standard,
+      ingredients    AS ingredients
     FROM product_detail
     WHERE product_id = #{productId}
   </select>
 
+  <!-- 3. 인증번호로 상세 조회 (중복 확인용) -->
+  <select id="findByCertNo"
+    parameterType="string"
+    resultType="com.example.livecommerce_server.product.dto.ProductDetailDTO">
+    SELECT
+      d.product_id     AS productId,
+      d.cert_no        AS certNo,
+      d.product_name   AS productName,
+      d.expiry_date    AS expiryDate,
+      d.approval_date  AS approvalDate,
+      d.how_to_take    AS howToTake,
+      d.main_function  AS mainFunction,
+      d.precautions    AS precautions,
+      d.storage_method AS storageMethod,
+      d.standard       AS standard,
+      d.ingredients    AS ingredients,
+      p.status         AS status
+    FROM product_detail d
+           JOIN product p ON d.product_id = p.product_id
+    WHERE d.cert_no = #{certNo}
+  </select>
+
+  <!-- 4. 상세 정보 수정 -->
+  <update id="updateProductDetail">
+    UPDATE product_detail
+    SET
+      product_name   = #{productName},
+      expiry_date    = #{expiryDate},
+      approval_date  = #{approvalDate},
+      how_to_take    = #{howToTake},
+      main_function  = #{mainFunction},
+      precautions    = #{precautions},
+      storage_method = #{storageMethod},
+      standard       = #{standard},
+      ingredients    = #{ingredients}
+    WHERE product_id = #{productId}
+  </update>
 
 </mapper>

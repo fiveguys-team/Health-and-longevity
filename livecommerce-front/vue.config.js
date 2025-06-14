@@ -8,11 +8,11 @@ module.exports = defineConfig({
     config.resolve.alias.set("@", path.resolve(__dirname, "src"));
   },
   devServer: {
-    port: 3000,// 원하는 포트 번호로 변경 (예: 3000, 5000, 8081 등)
+    port: 3000, // Vue 개발 서버 포트
     proxy: {
-      '/api': {
-        target: 'http://localhost:8080', // 백엔드 서버 주소
-        changeOrigin: true
+      '/product': {
+        target: 'http://localhost:8080', // Spring 서버 주소
+        changeOrigin: true,
       }
     }
   },

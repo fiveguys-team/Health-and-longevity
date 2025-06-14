@@ -23,10 +23,10 @@
               class="bg-[#FAFAFA] dark:bg-dark-secondary p-[30px] md:p-[40px] lg:p-[50px] border border-[#17243026] border-opacity-15 rounded-xl"
               data-aos="fade-up">
 
-<!--            <p class="mb-5 w-full bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300 whitespace-normal">-->
-<!--              쿠폰 코드가 있으신가요?-->
-<!--              <button @click="open = !open" class="ml-1 add-coupon-code underline text-[#209A60]">추가하려면 클릭하세요</button>-->
-<!--            </p>-->
+            <!--            <p class="mb-5 w-full bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300 whitespace-normal">-->
+            <!--              쿠폰 코드가 있으신가요?-->
+            <!--              <button @click="open = !open" class="ml-1 add-coupon-code underline text-[#209A60]">추가하려면 클릭하세요</button>-->
+            <!--            </p>-->
 
             <div v-if="open" class="coupon-wrapper gap-3 md:flex mb-[30px]">
               <input
@@ -87,7 +87,7 @@
               </div>
             </div>
 
-<!--            -->
+            <!--            -->
             <!-- ── 우편번호 / 기본주소 / 상세주소 ── -->
             <div class="grid gap-5 md:gap-6 mt-5">
               <!-- 우편번호 검색 버튼 + 결과 표시 -->
@@ -137,6 +137,7 @@
             <div class="mt-5">
               <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">배송 요청사항</label>
               <textarea
+                  v-model="form.note"
                   class="w-full h-[120px] bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                   name="Message"
                   placeholder="메시지를 입력하세요"
@@ -157,7 +158,7 @@
 
           <div data-aos="fade-up" data-aos-delay="200">
             <div v-if="orderItem"
-                class="bg-[#FAFAFA] dark:bg-dark-secondary pt-[30px] md:pt-[40px] lg:pt-[50px] px-[30px] md:px-[40px] lg:px-[50px] pb-[30px] border border-[#17243026] border-opacity-15 rounded-xl">
+                 class="bg-[#FAFAFA] dark:bg-dark-secondary pt-[30px] md:pt-[40px] lg:pt-[50px] px-[30px] md:px-[40px] lg:px-[50px] pb-[30px] border border-[#17243026] border-opacity-15 rounded-xl">
               <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-10">
                 상품 정보
               </h4>
@@ -214,7 +215,7 @@
               <p>🛒 주문할 상품이 없습니다.</p>
             </div>
             <div class="mt-7 md:mt-12">
-<!--              <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-10">결제 방법</h4>-->
+              <!--              <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-10">결제 방법</h4>-->
               <div class="wrapper">
                 <div class="box_section">
                   <!-- 결제 UI -->
@@ -256,6 +257,8 @@ import 'swiper/swiper-bundle.css';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import bg from "@/assets/img/shortcode/breadcumb.jpg";
+import  {prepareOrder} from "@/modules/order/services/orderApi";
+
 
 function generateRandomString() {
   return window.btoa(Math.random().toString()).slice(0, 20);
@@ -357,10 +360,10 @@ const ready = ref(false);
 const widgets = ref(null);
 
 // 금액, 통화 정보
-const amount = reactive({
+const amount = computed(() => ({
   currency: "KRW",
-  value: 50000,
-});
+  value: totalAmount.value || 0,
+}));
 
 async function fetchPaymentWidgets() {
   try {
@@ -382,7 +385,7 @@ async function renderPaymentWidgets() {
 
   try {
     // 1) 위젯에 주문 금액 세팅 (renderPaymentMethods, renderAgreement 호출 전에 반드시 설정해야 함)
-    await widgets.value.setAmount(amount);
+    await widgets.value.setAmount(amount.value);
 
     // 2) 결제 UI와 약관 UI 동시 렌더링
     await Promise.all([
@@ -407,23 +410,56 @@ async function renderPaymentWidgets() {
 async function requestPayment() {
   if (!widgets.value || !ready.value) return;
 
+  if (!orderItem.value || totalAmount.value <= 0) {
+    alert("결제 금액이 유효하지 않습니다.");
+    return;
+  }
+
+
   if(orderItem.value.stockCount <= 0){
     alert('해당 제품의 재고 수량이 부족합니다!');
     return;
   }
 
   try {
-    // 결제 요청 전, 서버에 orderId와 amount를 저장/검증하는 로직이 선행되어야 안전합니다.
+    const payload = {
+      userId: 1, //추후 본인 아이디로 변경필요.
+      orderItems: [
+        {
+          productId: orderItem.value.productId,
+          quantity: orderItem.value.quantity,
+        }
+      ],
+      shippingRequest: form.note,
+      postalCode: postalCode.value,
+      basicAddress: basicAddress.value,
+      detailedAddress: form.detailAddress
+    };
+
+
+    const res = await prepareOrder(payload);
+    const { orderId, orderName, customerName } = res.data;
+
     await widgets.value.requestPayment({
-      orderId: generateRandomString(),                   // 고유 주문 번호 (서버와 일치해야 함)
-      orderName: "토스 티셔츠 외 2건",                     // 결제창에 표시될 상품명
-      successUrl: `${window.location.origin}/payment-success`, // 결제 성공 후 리디렉트 URL
-      failUrl: `${window.location.origin}/payment-failure`,              // 결제 실패 후 리디렉트 URL
-      customerEmail: "customer123@gmail.com",
-      customerName: "김토스",
-      // 가상계좌나 퀵이체 휴대폰 자동완성을 위해 필요한 경우 활성화하세요.
-      // customerMobilePhone: "01012341234",
+      orderId,
+      orderName,
+      customerName,
+      successUrl: `${window.location.origin}/payment-success`,
+      failUrl: `${window.location.origin}/payment-failure`
     });
+
+
+    // // 결제 요청 전, 서버에 orderId와 amount를 저장/검증하는 로직이 선행되어야 안전합니다.
+    // await widgets.value.requestPayment({
+    //   orderId: generateRandomString(),                   // 고유 주문 번호 (서버와 일치해야 함)
+    //   orderName: "토스 티셔츠 외 2건",                     // 결제창에 표시될 상품명
+    //   successUrl: `${window.location.origin}/payment-success`, // 결제 성공 후 리디렉트 URL
+    //   failUrl: `${window.location.origin}/payment-failure`,              // 결제 실패 후 리디렉트 URL
+    //   customerEmail: "customer123@gmail.com",
+    //   customerName: "김토스",
+    //   // 가상계좌나 퀵이체 휴대폰 자동완성을 위해 필요한 경우 활성화하세요.
+    //   // customerMobilePhone: "01012341234",
+    // });
   } catch (error) {
     console.error("Error requesting payment:", error);
   }

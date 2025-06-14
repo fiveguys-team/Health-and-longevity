@@ -5,12 +5,16 @@
 
 <mapper namespace="com.example.livecommerce_server.live.mapper.LiveMapper">
 	<insert id="insertLiveInfo">
-		INSERT into live_m (live_id, vendor_id, session_id, title, start_at, status_cd, announcement)
-		values(#{live_id}, #{vendor_id}, #{session_id}, #{title}, #{start_time}, #{status}, #{announcement})
+		INSERT into live_m (live_id, vendor_id, session_id, title, start_at, status_cd, announcement, category)
+		values(#{live_id}, #{vendor_id}, #{session_id}, #{title}, #{start_time}, #{status}, #{announcement}, #{category})
 	</insert>
 
 	<update id="updateLiveInfo">
 		update live_m set end_cd = #{endTime}, status_cd = "OFF" where session_id = #{sessionId}
 	</update>
+
+	<select id="selectVendorName" resultType="String">
+		SELECT name FROM vendor_m WHERE vendor_id = #{vendorId}
+	</select>
 
 </mapper>

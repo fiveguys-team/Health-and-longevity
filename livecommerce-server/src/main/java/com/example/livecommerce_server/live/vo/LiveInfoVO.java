@@ -19,4 +19,5 @@ public class LiveInfoVO {
 	//private String thumbnail;
 	private String status;
 	private String announcement;
+	private String category;
 }
