@@ -4,6 +4,8 @@
 
 
 <mapper namespace="com.example.livecommerce_server.live.mapper.LiveProductMapper">
+
+<!--	라이브 방송 중 판매하는 상품 정보 저장-->
 	<insert id="insertLiveProduct" parameterType="java.util.List">
 		INSERT INTO live_product_j (live_id, product_id, discountRate)
 		VALUES
@@ -15,5 +17,12 @@
 			)
 		</foreach>
 	</insert>
+
+<!--	입점업체가 판매하는 상품 리스트 반환-->
+	<select id="selectVendorProduct" resultType="VendorProductVO" parameterType="String">
+		SELECT product_id, name, price, stock_count as stock, product_image as image FROM PRODUCT
+		WHERE vendor_id = #{vendorId} and status = 'APPROVED'
+	</select>
+
 
 </mapper>
