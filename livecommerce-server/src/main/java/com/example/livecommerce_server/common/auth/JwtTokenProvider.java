@@ -22,9 +22,11 @@ public class JwtTokenProvider {
         this.SECRET_KEY = new SecretKeySpec(java.util.Base64.getDecoder().decode(secretKey), SignatureAlgorithm.HS512.getJcaName());
     }
 
-    public String createToken(String email, String role) {
+    public String createToken(String email, String role, String name, String id) {
         //Claims 는 jwt 토큰의 payload 부분을 의미한다.
-        Claims claims = Jwts.claims().setSubject(email);
+        Claims claims = Jwts.claims().setSubject(id);
+        claims.put("email", email);
+        claims.put("name", name);
         claims.put("role", role);
         Date now = new Date();
         String token = Jwts.builder()

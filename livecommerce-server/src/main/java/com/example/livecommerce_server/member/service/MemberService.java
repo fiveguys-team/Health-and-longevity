@@ -1,6 +1,7 @@
 package com.example.livecommerce_server.member.service;
 
 import com.example.livecommerce_server.member.domain.Member;
+import com.example.livecommerce_server.member.domain.Role;
 import com.example.livecommerce_server.member.domain.SocialType;
 import com.example.livecommerce_server.member.dto.MemberCreateDto;
 import com.example.livecommerce_server.member.dto.MemberLoginDto;
@@ -23,9 +24,15 @@ public class MemberService {
     }
 
     public Member create(MemberCreateDto memberCreateDto) {
+        String rawPassword = memberCreateDto.getPassword();
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        System.out.println("[DEBUG] 입력된 비밀번호(평문): " + rawPassword);
+        System.out.println("[DEBUG] 암호화된 비밀번호: " + encodedPassword);
+
         Member member = Member.builder()
                 .email(memberCreateDto.getEmail())
-                .password(passwordEncoder.encode(memberCreateDto.getPassword()))
+                .name(memberCreateDto.getName())
+                .password(encodedPassword)
                 .build();
         memberRepository.create(member);
         return member;
@@ -38,26 +45,15 @@ public class MemberService {
         }
 
         Member member = optMember.get();
-        if (passwordEncoder.matches(passwordEncoder.encode(memberLoginDto.getPassword()), member.getPassword())) {
+        String inputPassword = memberLoginDto.getPassword();
+        String savedEncodedPassword = member.getPassword();
+        if (!passwordEncoder.matches(inputPassword, savedEncodedPassword)) {
+            System.out.println("[DEBUG] 입력된 비밀번호(평문): " + inputPassword);
+            System.out.println("[DEBUG] 저장된 비밀번호(암호화): " + savedEncodedPassword);
+            System.out.println("[DEBUG] matches 결과: false");
             throw new IllegalArgumentException("password가 일치하지 않습니다.");
+        } else {
+            return member;
         }
-        return member;
     }
-
-     public Member getMemberBySocialId(String socialId) {
-         Member member = memberRepository.findBySocialId(socialId).orElse(null);
-         return member;
-     }
-
-    public Member createOauth(String socialId, String email, SocialType socialType) {
-        Member member = Member.builder()
-                .email(email)
-                .socialType(socialType)
-                .socialId(socialId)
-                .build();
-
-        memberRepository.create(member);
-        return member;
-    }
-
 }

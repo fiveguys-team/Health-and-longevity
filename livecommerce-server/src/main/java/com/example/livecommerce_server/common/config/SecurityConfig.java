@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a ->
                         a
                                 // 모든 경로를 인증 없이 열기
+                                .requestMatchers("/test/ping").hasRole("ADMIN")
                                 .anyRequest().permitAll()
                 )
 //                .authorizeHttpRequests(a -> {
