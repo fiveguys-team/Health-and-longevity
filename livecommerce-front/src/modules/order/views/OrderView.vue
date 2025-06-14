@@ -137,6 +137,7 @@
             <div class="mt-5">
               <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">배송 요청사항</label>
               <textarea
+                  v-model="form.note"
                   class="w-full h-[120px] bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                   name="Message"
                   placeholder="메시지를 입력하세요"
