@@ -4,23 +4,24 @@ import com.example.livecommerce_server.product.dto.ProductDTO;
 import com.example.livecommerce_server.product.dto.ProductDetailDTO;
 import com.example.livecommerce_server.product.dto.ProductRegisterRequestDTO;
 import com.example.livecommerce_server.product.service.ProductService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/product")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    // 인증번호로 상품 정보 조회 (API 호출)
+    // 1. 인증번호로 상품 상세 정보 조회 (식품안전나라 API 등)
     @GetMapping("/cert/{certNo}")
-    public ResponseEntity<ProductDetailDTO> getProductDetailList(@PathVariable String certNo) {
+    public ResponseEntity<ProductDetailDTO> getProductDetailFromApi(@PathVariable String certNo) {
         ProductDetailDTO dto = productService.fetchProductDetailFromAPIfind(certNo);
         if (dto == null) {
             return ResponseEntity.notFound().build();
@@ -28,13 +29,12 @@ public class ProductController {
         return ResponseEntity.ok(dto);
     }
 
-    // 상품 등록 요청 (입점업체 -> 관리자 승인 대기 상태)
+    // 2. 상품 등록 요청 (입점업체 → 관리자 승인 대기)
     @PostMapping(value = "/request", consumes = "multipart/form-data")
     public ResponseEntity<String> requestProductAdd(
             @RequestPart("product") ProductRegisterRequestDTO request,
             @RequestPart("image") MultipartFile imageFile
     ) {
-
         try {
             productService.saveProductRequestadd(request, imageFile);
             return ResponseEntity.ok("상품 등록 요청이 완료되었습니다.");
@@ -44,19 +44,25 @@ public class ProductController {
         }
     }
 
+    // 3. 입점업체의 상품 목록 조회
     @GetMapping("/vendor/{vendorId}/products")
-    public ResponseEntity<List<ProductDTO>> getProducts(
+    public ResponseEntity<List<ProductDTO>> getProductsByVendor(
             @PathVariable Long vendorId,
             @RequestParam(required = false) String status
     ) {
-        return ResponseEntity.ok(productService.getProductsByVendor(vendorId, status));
+        List<ProductDTO> productList = productService.getProductsByVendor(vendorId, status);
+        return ResponseEntity.ok(productList);
     }
 
-    @GetMapping("/product/detail/{productId}")
+    // 4. 특정 상품 상세 정보 조회 (상품 ID 기준)
+    @GetMapping("/detail/{productId}")
     public ResponseEntity<ProductDetailDTO> getProductDetail(@PathVariable String productId) {
-        return ResponseEntity.ok(productService.getProductDetailById(productId));
+
+        ProductDetailDTO dto = productService.getProductDetailById(productId);
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(dto);
     }
-
-
-
 }

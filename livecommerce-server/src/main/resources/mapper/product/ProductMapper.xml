@@ -43,7 +43,7 @@
     SET status = #{status}
     WHERE product_id = #{id}
   </update>
- s
+
 
   <select id="selectRequestedProducts">
     SELECT

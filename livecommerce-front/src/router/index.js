@@ -96,13 +96,13 @@ const routes = [
   },
   //{ path: "/store-dashboard", component: storeDashboard },
 
-   // 상품, 리뷰 view
+  // 상품, 리뷰 view
   { path: '/products', component: ProductCategory },
   { path: '/product-details/:id', component: ProductDetails },
   {path: '/shop/:category', component: ProductCategory},
   { path: '/product/:category', component: ProductCategory },
 
-   //입점업체
+  //입점업체
   //{ path: '/partner/product/register', component: ProductRegister },
   { path: '/partner/product/status', component: ProductStatus },
   { path: '/partner/product/review', component: ProductReview },
@@ -117,10 +117,10 @@ const routes = [
   {path: '/live-streaming',component: LiveStreaming},
   {path: '/live-chart', component: LiveChart},
   {path: '/live-register', component: LiveRegister},
-  {path: '/live-report', component: LiveReport}, 
+  {path: '/live-report', component: LiveReport},
   // 입점업체 방송 준비 및 송출 페이지
   {path: '/store-live-streaming/:vendorId', component: StoreLiveStreaming},
-    
+
   {path: '/host',
     component: StoreLiveStreaming
   },
@@ -184,7 +184,7 @@ const routes = [
     ],
   },
 
-    // 입점업체 대시보드 라우트입니다.
+  // 입점업체 대시보드 라우트입니다.
   {
     path: "/vendor",
     component: () => import("@/views/dashboard/storeDashboard.vue"),
@@ -204,6 +204,11 @@ const routes = [
       {
         path: "product/status",
         name: "VendorProductStatus",
+        component: () => import("@/modules/product/views/ProductStatus.vue"),
+      },
+      {
+        path: "product/detail/:id",
+        name: "VendorProductDetail",
         component: () => import("@/modules/product/views/ProductStatus.vue"),
       }
 
