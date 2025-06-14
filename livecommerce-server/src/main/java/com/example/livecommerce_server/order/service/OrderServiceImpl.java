@@ -73,6 +73,7 @@ public class OrderServiceImpl implements OrderService {
             totalAmount += discountedPrice * item.getQuantity();
         }
 
+        //주문 ID 생성과 동시에 주문 임시 테이블 생성
         String paymentId = paymentService.addTempPaymentAndReturnId();
 
         // 주문 마스터 테이블 insert
@@ -108,6 +109,7 @@ public class OrderServiceImpl implements OrderService {
         String orderName = generateOrderName(products);
         String customerName = "홍길동"; // 시큐리티로 자기 이름.
 
+        // 리스폰스 데이터
         return OrderPrepareResponseDTO.builder()
                 .orderId(orderId)
                 .amount(totalAmount)
