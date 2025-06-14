@@ -20,7 +20,7 @@
                     </div>
                     <div class="mt-5" data-aos="fade-up" data-aos-delay="400">
                         <label class="text-base sm:text-lg font-medium leading-none mb-2.5 block dark:text-white">Password</label>
-                        <input class="w-full h-12 md:h-14 bg-white dark:bg-transparent border border-bdr-clr focus:border-primary p-4 outline-none duration-300 placeholder:text-xl placeholder:transform placeholder:translate-y-[10px]" type="password" placeholder="* * * * * * * *">
+                        <input v-model="password" class="w-full h-12 md:h-14 bg-white dark:bg-transparent border border-bdr-clr focus:border-primary p-4 outline-none duration-300 placeholder:text-xl placeholder:transform placeholder:translate-y-[10px]" type="password" placeholder="* * * * * * * *">
                     </div>
                     <div class="mt-7" data-aos="fade-up" data-aos-delay="500">
                         <label class="flex items-center gap-2 iam-agree">

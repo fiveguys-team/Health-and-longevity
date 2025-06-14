@@ -42,32 +42,16 @@
 </template>
 
 <script setup>
-    import {ref, defineProps, defineEmits, onMounted, computed} from 'vue'
+import {ref, defineProps, defineEmits, computed} from 'vue'
     import SwitcherS from '../switcher-s.vue'
-    import Cookies from 'js-cookie'
+    import { useAuthStore } from "@/modules/auth/stores/auth";
 
     const cartList = ref(false)
-    const isLogin = ref(false)
+    const authStore = useAuthStore();
+    const isLogin = computed(() => !!authStore.token);
 
-    onMounted(() => {
-      // 토큰이 URL 파라미터가 아닌 쿠키에 있을 경우 처리
-      const token = Cookies.get("token")
-      console.log(token)
-
-      if (token) {
-        localStorage.setItem('token', token)
-        Cookies.remove("token")
-        window.location.href = "/"
-      }
-
-      if (localStorage.getItem("token")) {
-        isLogin.value = true
-      }
-    })
-
-    const role = Cookies.get("role");
     const profileRoute = computed(() => {
-      switch (role) {
+      switch (authStore.role) {
         case 'ADMIN':
           return '/admin-dashboard'
         case 'VENDOR':
@@ -78,8 +62,7 @@
     })
 
     const doLogout = () => {
-      localStorage.clear()
-      window.location.reload()
+      authStore.logout();
     }
 
     const props = defineProps({
