@@ -258,6 +258,7 @@ import Aos from 'aos';
 import 'aos/dist/aos.css';
 import bg from "@/assets/img/shortcode/breadcumb.jpg";
 import  {prepareOrder} from "@/modules/order/services/orderApi";
+import {cancelPayment} from "@/modules/payment/services/payment";
 
 
 function generateRandomString() {
@@ -303,7 +304,6 @@ const basicAddress = ref("");
 
 // “기본배송지로 설정” 여부
 const isDefaultAddress = ref(false);
-
 
 const handleSubmit = () => {
   if (!nameRegex.test(form.name)) {
@@ -408,7 +408,10 @@ async function renderPaymentWidgets() {
 }
 
 async function requestPayment() {
-  if (!widgets.value || !ready.value) return;
+  if (!widgets.value || !ready.value) {
+    alert("시스템에 오류가 있습니다 관리자에게 문의하세요.");
+    return;
+  }
 
   if (!orderItem.value || totalAmount.value <= 0) {
     alert("결제 금액이 유효하지 않습니다.");
@@ -420,6 +423,8 @@ async function requestPayment() {
     alert('해당 제품의 재고 수량이 부족합니다!');
     return;
   }
+
+  let orderId = ''
 
   try {
     const payload = {
@@ -438,7 +443,8 @@ async function requestPayment() {
 
 
     const res = await prepareOrder(payload);
-    const { orderId, orderName, customerName } = res.data;
+    const { orderName, customerName } = res.data;
+    orderId = res.data.orderId;
 
     await widgets.value.requestPayment({
       orderId,
@@ -448,20 +454,13 @@ async function requestPayment() {
       failUrl: `${window.location.origin}/payment-failure`
     });
 
-
-    // // 결제 요청 전, 서버에 orderId와 amount를 저장/검증하는 로직이 선행되어야 안전합니다.
-    // await widgets.value.requestPayment({
-    //   orderId: generateRandomString(),                   // 고유 주문 번호 (서버와 일치해야 함)
-    //   orderName: "토스 티셔츠 외 2건",                     // 결제창에 표시될 상품명
-    //   successUrl: `${window.location.origin}/payment-success`, // 결제 성공 후 리디렉트 URL
-    //   failUrl: `${window.location.origin}/payment-failure`,              // 결제 실패 후 리디렉트 URL
-    //   customerEmail: "customer123@gmail.com",
-    //   customerName: "김토스",
-    //   // 가상계좌나 퀵이체 휴대폰 자동완성을 위해 필요한 경우 활성화하세요.
-    //   // customerMobilePhone: "01012341234",
-    // });
   } catch (error) {
-    console.error("Error requesting payment:", error);
+    if (error.code === 'USER_CANCEL') {
+      await cancelPayment(orderId);
+      alert('결제가 취소되었습니다.');
+    } else {
+      console.error("Error requesting payment:", error);
+    }
   }
 }
 
