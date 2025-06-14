@@ -23,4 +23,17 @@
                      #{paymentStatusCode}
                  )
     </insert>
+
+    <update id="updatePaymentByOrderId" parameterType="com.example.livecommerce_server.payment.dto.PaymentUpdateDTO">
+        UPDATE payment_d
+        SET
+            payment_status_code = #{status},
+            paid_at = #{approvedAt},
+            payment_method = #{method},
+            payment_payload = #{payload},
+            payment_key = #{paymentKey}
+        WHERE payments_id = (
+            SELECT payments_id FROM orders_m WHERE order_id = #{orderId}
+        )
+    </update>
 </mapper>
