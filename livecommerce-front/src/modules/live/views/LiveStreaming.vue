@@ -1,357 +1,59 @@
-<!--<script setup>-->
-<!--import { onMounted } from 'vue';-->
-
-
-<!--import NavbarOne from '@/components/navbar/navbar-one.vue';-->
-<!--// import FooterOne from '@/components/footer/footer-one.vue';-->
-<!--// import FooterThree from '@/components/footer/footer-three.vue';-->
-<!--import ScrollToTop from '@/components/scroll-to-top.vue';-->
-
-<!--import 'swiper/swiper-bundle.css';-->
-
-<!--import LiveScreen from '@/modules/live/components/LiveScreen.vue';-->
-
-<!--import Aos from 'aos';-->
-<!--import 'aos/dist/aos.css';-->
-
-<!--onMounted(() => {-->
-<!--  Aos.init()-->
-<!--});-->
-<!--</script>-->
-
-<!--<template>-->
-<!--  <div>-->
-<!--    <NavbarOne />-->
-
-<!--    <div class="live-container">-->
-<!--      &lt;!&ndash; 상단: 방송 제목 & 메타정보 &ndash;&gt;-->
-<!--      <div class="header-bar">-->
-<!--        <div class="title-cell">방송 제목</div>-->
-<!--        <div class="meta-cell">참여자 수</div>-->
-<!--        <div class="meta-cell">방송 경과 시간</div>-->
-<!--        <div class="meta-cell">방송 종료 시간</div>-->
-<!--      </div>-->
-
-<!--      &lt;!&ndash; 본문 영역: 왼쪽(영상 + 상품) / 오른쪽(공지 및 채팅) &ndash;&gt;-->
-<!--      <div class="main-content">-->
-<!--        &lt;!&ndash; 왼쪽 영역 &ndash;&gt;-->
-<!--        <div class="left-area">-->
-<!--          &lt;!&ndash; 라이브 영상 화면 &ndash;&gt;-->
-<!--          <div class="video-wrapper">-->
-<!--            <LiveScreen />-->
-<!--            &lt;!&ndash; <div class="video-header">📺 [라이브 영상 화면 (OpenVidu)]</div> &ndash;&gt;-->
-<!--          </div>-->
-<!--          &lt;!&ndash; 상품 목록 &ndash;&gt;-->
-<!--          <div class="product-list">-->
-<!--            <div class="product-card">-->
-<!--              <div class="product-title">상품 A</div>-->
-<!--              <div class="product-thumb">사진</div>-->
-<!--              <div class="product-info">제품명, 가격</div>-->
-<!--            </div>-->
-<!--            <div class="product-card">-->
-<!--              <div class="product-title">상품 B</div>-->
-<!--              <div class="product-thumb">사진</div>-->
-<!--              <div class="product-info">제품명, 가격</div>-->
-<!--            </div>-->
-<!--            <div class="product-card">-->
-<!--              <div class="product-title">상품 C</div>-->
-<!--              <div class="product-thumb">사진</div>-->
-<!--              <div class="product-info">제품명, 가격</div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; 오른쪽 영역 채팅 &ndash;&gt;-->
-<!--        <div class="right-area">-->
-<!--          &lt;!&ndash; 공지 & FAQ &ndash;&gt;-->
-<!--          <div class="notice-box">-->
-<!--            <div class="notice-header">-->
-<!--              📢 오늘 방송 중 루테인 10% 할인 + 선착순 50명 무료배송!-->
-<!--            </div>-->
-<!--            <ul class="faq-list">-->
-<!--              <li>[유저1] 루테인 복용 방법은 어떻게 되나요?</li>-->
-<!--              <li>[유저2] 무료배송 이벤트는 언제까지인가요?</li>-->
-<!--              <li>[유저3] 무료배송 이벤트는 언제까지인가요?</li>-->
-<!--              <li>…</li>-->
-<!--            </ul>-->
-<!--          </div>-->
-
-<!--          &lt;!&ndash; 채팅 입력창 &ndash;&gt;-->
-<!--          <div class="chat-input-area">-->
-<!--            <input type="text" class="chat-input" placeholder="[채팅 입력창]" />-->
-<!--            <button class="send-button">SEND</button>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    &lt;!&ndash; <FooterThree /> &ndash;&gt;-->
-
-<!--    <ScrollToTop />-->
-
-<!--  </div>-->
-<!--</template>-->
-
-<!--<style scoped>-->
-<!--/* ─────────────────────────────────────────────────────────────────────────-->
-<!--   전체 컨테이너-->
-<!--───────────────────────────────────────────────────────────────────────── */-->
-<!--.live-container {-->
-<!--  display: flex;-->
-<!--  flex-direction: column;-->
-<!--  border: 2px solid #444;    /* 전체 테두리 색상 */-->
-<!--  background-color: #f2f2f2; /* 전체 배경 */-->
-<!--  font-family: "Noto Sans KR", sans-serif;-->
-<!--  margin: 16px;-->
-<!--  /* 필요한 경우 max-width: 1200px; margin: 0 auto; 등으로 중앙 정렬 추가 가능 */-->
-<!--}-->
-
-<!--/* ─────────────────────────────────────────────────────────────────────────-->
-<!--   1. 상단: 방송 제목 & 메타정보-->
-<!--───────────────────────────────────────────────────────────────────────── */-->
-<!--.header-bar {-->
-<!--  display: grid;-->
-<!--  grid-template-columns: 3fr 1fr 1fr 1fr; /* 첫 칸(제목)을 넓게, 나머지는 동일 폭 */-->
-<!--  background-color: #fff;-->
-<!--  border-bottom: 2px solid #444;-->
-<!--  align-items: center;-->
-<!--  height: 50px;      /* 상단 바 높이 */-->
-<!--}-->
-
-<!--.header-bar .title-cell {-->
-<!--  padding-left: 12px;-->
-<!--  font-size: 1.2rem;-->
-<!--  font-weight: bold;-->
-<!--  border-right: 2px solid #444;-->
-<!--}-->
-
-<!--.header-bar .meta-cell {-->
-<!--  text-align: center;-->
-<!--  font-weight: 500;-->
-<!--  border-right: 2px solid #444;-->
-<!--}-->
-
-<!--.header-bar .meta-cell:last-child {-->
-<!--  border-right: none; /* 마지막 칸 테두리 제거 */-->
-<!--}-->
-
-<!--/* ─────────────────────────────────────────────────────────────────────────-->
-<!--   2. 본문: 왼쪽(영상+상품) / 오른쪽(공지+채팅)-->
-<!--───────────────────────────────────────────────────────────────────────── */-->
-<!--.main-content {-->
-<!--  display: flex;-->
-<!--  flex-direction: row;-->
-<!--  height: 800px;-->
-<!--  /* 높이를 지정하지 않으면 콘텐츠에 따라 늘어남 */-->
-<!--}-->
-
-<!--/* ─ Left Area */-->
-<!--.left-area {-->
-<!--  flex: 3;-->
-<!--  display: flex;-->
-<!--  flex-direction: column;-->
-<!--  padding: 12px;-->
-<!--}-->
-
-<!--/* 2-1. 라이브 영상 화면 */-->
-<!--.video-wrapper {-->
-<!--  flex: 1;-->
-<!--  border: 2px solid #888;-->
-<!--  background-color: #ddd;-->
-<!--  display: flex;-->
-<!--  align-items: center;-->
-<!--  justify-content: center;-->
-<!--  margin-bottom: 12px;-->
-<!--}-->
-
-<!--.video-header {-->
-<!--  font-size: 1.1rem;-->
-<!--  font-weight: 600;-->
-<!--}-->
-
-<!--/* 2-2. 상품 목록 */-->
-<!--.product-list {-->
-<!--  display: flex;-->
-<!--  flex-direction: row;-->
-<!--  justify-content: space-between;-->
-<!--}-->
-
-<!--.product-card {-->
-<!--  flex: 1;-->
-<!--  border: 2px solid #555;-->
-<!--  background-color: #fafafa;-->
-<!--  margin-right: 12px;-->
-<!--  display: flex;-->
-<!--  flex-direction: column;-->
-<!--  align-items: center;-->
-<!--  padding: 8px;-->
-<!--}-->
-
-<!--.product-card:last-child {-->
-<!--  margin-right: 0;-->
-<!--}-->
-
-<!--.product-title {-->
-<!--  font-size: 1.1rem;-->
-<!--  font-weight: bold;-->
-<!--  margin-bottom: 8px;-->
-<!--}-->
-
-<!--.product-thumb {-->
-<!--  width: 100%;-->
-<!--  height: 80px; /* 썸네일 영역 높이 예시 */-->
-<!--  background-color: #e0e0e0;-->
-<!--  display: flex;-->
-<!--  align-items: center;-->
-<!--  justify-content: center;-->
-<!--  margin-bottom: 8px;-->
-<!--}-->
-
-<!--.product-info {-->
-<!--  font-size: 0.95rem;-->
-<!--  color: #333;-->
-<!--}-->
-
-<!--/* ─ Right Area */-->
-<!--.right-area {-->
-<!--  flex: 1;-->
-<!--  display: flex;-->
-<!--  flex-direction: column;-->
-<!--  padding: 12px;-->
-<!--}-->
-
-<!--/* 2-3. 공지 & FAQ 박스 */-->
-<!--.notice-box {-->
-<!--  flex: 1;-->
-<!--  border: 2px solid #444;-->
-<!--  border-radius: 8px;-->
-<!--  background-color: #fff;-->
-<!--  padding: 12px;-->
-<!--  margin-bottom: 12px;-->
-<!--  display: flex;-->
-<!--  flex-direction: column;-->
-<!--}-->
-
-<!--.notice-header {-->
-<!--  font-size: 1rem;-->
-<!--  font-weight: bold;-->
-<!--  margin-bottom: 8px;-->
-<!--}-->
-
-<!--.faq-list {-->
-<!--  list-style: none;-->
-<!--  padding-left: 0;-->
-<!--  margin: 0;-->
-<!--  font-size: 0.95rem;-->
-<!--}-->
-
-<!--.faq-list li {-->
-<!--  margin-bottom: 6px;-->
-<!--}-->
-
-<!--/* 2-4. 채팅 입력창 부분 */-->
-<!--.chat-input-area {-->
-<!--  display: flex;-->
-<!--  flex-direction: row;-->
-<!--  align-items: center;-->
-<!--}-->
-
-<!--.chat-input {-->
-<!--  flex: 1;-->
-<!--  height: 40px;-->
-<!--  border: 2px solid #888;-->
-<!--  border-radius: 4px;-->
-<!--  padding: 0 8px;-->
-<!--  font-size: 0.95rem;-->
-<!--}-->
-
-<!--.chat-input::placeholder {-->
-<!--  color: #999;-->
-<!--}-->
-
-<!--.send-button {-->
-<!--  width: 80px;-->
-<!--  height: 40px;-->
-<!--  margin-left: 8px;-->
-<!--  background-color: #6dc066;-->
-<!--  border: none;-->
-<!--  border-radius: 4px;-->
-<!--  color: #fff;-->
-<!--  font-weight: bold;-->
-<!--  cursor: pointer;-->
-<!--}-->
-
-<!--/* send 버튼 호버 효과 */-->
-<!--.send-button:hover {-->
-<!--  background-color: #5bb354;-->
-<!--}-->
-<!--</style>-->
-
-<!--
-  LiveStreaming.vue
-  소비자용 라이브 스트리밍 시청 컴포넌트
-
-  OpenVidu 세션에 참여하여 호스트의 스트림을 구독하고 표시
-  방송 정보, 상품 정보 등을 함께 표시
-
-  스트림 구독 및 표시
-   - OpenVidu 세션 참여
-   - 입점업체 스트림 구독
-   - UserVideo 컴포넌트를 통한 비디오 표시
-
- 방송 정보 표시
-    - 방송 제목
-    - 상품 정보 (이름, 가격, 설명)
-    - 구매 버튼
-
- [상태 관리]
- - OV: OpenVidu 인스턴스
- - session: 현재 연결된 세션
- - mainStreamManager: 메인 스트림 관리자 -> subscriber
- - streamData: 방송/상품 정보
- - loadingMessage: 로딩/에러 메시지
-
- [이벤트 핸들링]
- - streamCreated: 새 스트림 생성 시
- - streamDestroyed: 스트림 종료 시
- - sessionDisconnected: 세션 연결 해제 시
- - participantEvicted: 참가자 퇴장 시
-
--->
 <template>
-  <div class="viewer-container">
-    <!-- 스트림 시청 영역: 세션과 스트림이 있을 때만 표시 -->
-    <div class="stream-info" v-if="session && mainStreamManager">
-      <!-- 방송 정보 헤더 -->
-      <div class="stream-header">
-        <h2>{{ streamData.title }}</h2>
-        <!-- 상품 정보 표시 영역 -->
-        <div class="products-container">
-          <div v-for="item in streamData.products" :key="item.id" class="product-card">
-            <h3>{{ item.name }}</h3>
-            <strong>{{ item.discountedPrice.toLocaleString() }}원</strong>
-            <small class="text-muted">(정가 {{ item.price.toLocaleString() }}원)</small>
+  <div class="live-consumer">
+    <!-- Live Info Bar -->
+    <div class="live-info-bar" v-if="session && mainStreamManager">
+      <div class="live-title">{{ streamData.title }}</div>
+      <div class="vendor-name">{{ streamData.vendorName }}</div>
+      <div class="viewer-count">
+        <span class="viewer-number">{{ viewerCount }}</span>명
+      </div>
+      <div class="timer">⏱ {{ displayElapsed }} 방송중</div>
+    </div>
+
+    <!-- Body: Video + Products and Chat Side by Side -->
+    <div class="live-body" v-if="session && mainStreamManager">
+      <!-- Left: Video and Products -->
+      <div class="main-content">
+        <!-- Video Area -->
+        <div class="live-video-container">
+          <user-video :stream-manager="mainStreamManager" />
+        </div>
+
+        <!-- Products Display -->
+        <div class="products">
+          <div
+            class="product-card"
+            v-for="item in streamData.products"
+            :key="item.id"
+          >
+            <div class="product-image">
+              <img :src="item.imageUrl" alt="상품 이미지" />
+            </div>
+            <div class="product-name">{{ item.name }}</div>
+            <div class="price">
+              <span class="discount-price">{{ item.discountedPrice.toLocaleString() }}원</span>
+              <span class="original-price">{{ item.price.toLocaleString() }}원</span>
+            </div>
             <button class="btn btn-primary">구매하기</button>
           </div>
         </div>
       </div>
-      <!-- 비디오 스트림 표시 영역 -->
-      <div class="video-container">
-        <div class="main-video">
-          <user-video :stream-manager="mainStreamManager" />
-          <ChatContainer />
-        </div>
+
+      <!-- Right: Chat Area -->
+      <div class="chat-area">
+        <chat-container />
       </div>
     </div>
-    <!-- 로딩/에러 메시지 표시 영역 -->
-    <!--    <div class="loading" v-else>-->
-    <!--      <p>{{ loadingMessage }}</p>-->
-    <!--    </div>-->
+
+    <!-- Loading/Error Message -->
+    <div class="loading" v-else>
+      <p>{{ loadingMessage }}</p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
@@ -369,6 +71,12 @@ const session = ref(undefined);            // 현재 세션
 const mainStreamManager = ref(undefined);  // 메인 스트림 관리자
 const streamData = ref({});                // 방송/상품 정보
 const loadingMessage = ref('방송에 연결 중입니다...'); // 상태 메시지
+
+// Add new refs for viewer count and timer
+const viewerCount = ref(0);
+const startTime = ref(Date.now());
+const now = ref(Date.now());
+let timerId;
 
 /**
  * 새로운 스트림 생성 시 호출되는 이벤트 핸들러
@@ -605,121 +313,232 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   cleanupSession();
 });
+
+// Add timer logic
+onMounted(() => {
+  timerId = setInterval(() => {
+    now.value = Date.now();
+  }, 1000);
+});
+
+onBeforeUnmount(() => {
+  clearInterval(timerId);
+});
+
+const displayElapsed = computed(() => {
+  const diff = Math.floor((now.value - startTime.value) / 1000);
+  const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+  const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+  const s = String(diff % 60).padStart(2, '0');
+  return `${h}:${m}:${s}`;
+});
 </script>
 
 <style scoped>
-/* 컨테이너 스타일 */
-.viewer-container {
-  padding: 20px;
-  max-width: 1200px;
+.live-consumer {
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #333;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 방송 헤더 스타일 */
-.stream-header {
-  .stream-header {
-    margin-bottom: 20px;
+.live-info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fafafa;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.live-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.vendor-name {
+  color: #7f8c8d;
+}
+
+.viewer-count {
+  display: flex;
+  align-items: center;
+}
+
+.viewer-number {
+  margin-right: 4px;
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.timer {
+  font-weight: 500;
+  color: #2980b9;
+}
+
+.live-body {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.live-video-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+.products {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  margin-top: 30px;
+}
+
+.product-card {
+  flex: 1;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  height: fit-content;
+}
+
+.product-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.price {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.discount-price {
+  font-size: 16px;
+  color: #e74c3c;
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.original-price {
+  font-size: 14px;
+  color: #bdc3c7;
+  text-decoration: line-through;
+}
+
+.chat-area {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.chat-area :deep(chat-container) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.btn {
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2em;
+  color: #666;
+}
+
+@media (max-width: 1024px) {
+  .live-body {
+    flex-direction: column;
   }
 
-  /* 상품 정보 스타일 */
-
-  .products-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin: 20px 0;
+  .chat-area {
+    width: 100%;
+    height: 400px;
+    margin-top: 24px;
   }
 
-  /* 상품 카드 스타일 */
+  .products {
+    flex-wrap: wrap;
+  }
 
   .product-card {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+    flex: 1 1 calc(50% - 16px);
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .live-info-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 
-  .product-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .product-card h3 {
-    margin: 0 0 10px 0;
-    color: #333;
-    font-size: 1.2em;
-  }
-
-  .product-card .price {
-    font-size: 1.3em;
-    color: #dc3545;
-    font-weight: bold;
-    margin: 10px 0;
-  }
-
-  .product-card .description {
-    color: #666;
-    margin: 10px 0;
-    font-size: 0.9em;
-  }
-
-  .product-card .btn {
+  .live-info-bar > * {
     width: 100%;
-    margin-top: 10px;
   }
 
-  /* 비디오 컨테이너 스타일 */
-
-  .video-container {
-    width: 100%;
-    height: 0;
-    padding-bottom: 56.25%;
-    /* 16:9 비율 */
-    position: relative;
-    background-color: #000;
-    margin: 20px auto;
-    overflow: hidden;
+  .product-card {
+    flex: 1 1 100%;
   }
 
-  /* 비디오 컴포넌트 스타일 */
-
-  .video-container :deep(.stream-component) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* 메인 비디오 스타일 */
-
-  .main-video {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  /* 버튼 스타일 */
-
-  .btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  .btn-primary {
-    background-color: #007bff;
-    color: white;
-  }
-
-  /* 로딩 메시지 스타일 */
-
-  .loading {
-    text-align: center;
-    padding: 50px;
-    font-size: 1.2em;
-    color: #666;
+  .chat-area {
+    height: 300px;
   }
 }
 </style>

@@ -149,7 +149,7 @@ public class LiveController {
 					.map(m -> {
 						LiveProductDTO dto = new LiveProductDTO();
 						dto.setLiveId(liveChatDTO.getLiveId());
-						dto.setProductId(m.getId());                // id 필드만 꺼내서 productId에
+						dto.setProductId(m.getProductId());                // id 필드만 꺼내서 productId에
 						dto.setDiscountRate(liveDTO.getDiscountRate());
 						return dto;
 					})
