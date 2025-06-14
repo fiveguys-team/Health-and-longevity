@@ -5,6 +5,8 @@ import com.example.livecommerce_server.live.dto.LiveDTO;
 import com.example.livecommerce_server.live.dto.LiveEndRequestDto;
 import com.example.livecommerce_server.live.dto.LiveProductDTO;
 import com.example.livecommerce_server.live.dto.ProductInfo;
+import com.example.livecommerce_server.live.dto.VendorProductDTO;
+import com.example.livecommerce_server.live.service.LiveProductService;
 import com.example.livecommerce_server.live.service.LiveService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -58,6 +60,7 @@ public class LiveController {
 	private final ObjectMapper mapper = new ObjectMapper();
 
 	private final LiveService liveService;
+	private final LiveProductService liveProductService;
 
 	@Value("${openvidu.url}")
 	private String OPENVIDU_URL;
@@ -222,41 +225,9 @@ public class LiveController {
 	 * @return 상품 리스트
 	 */
 	@GetMapping("/api/sessions/{vendorId}/productList")
-	public ResponseEntity<List<ProductInfo>> productList(@PathVariable("vendorId") String vendorId) {
-		List<ProductInfo> list = new ArrayList<>();
-		ProductInfo productInfo1 = ProductInfo.builder()
-				.id("1")
-				.name("상품1")
-				.price(1000)
-				.build();
-
-		ProductInfo productInfo2 = ProductInfo.builder()
-				.id("2")
-				.name("상품2")
-				.price(2000)
-				.build();
-		ProductInfo productInfo3 = ProductInfo.builder()
-				.id("3")
-				.name("상품3")
-				.price(3000)
-				.build();
-		ProductInfo productInfo4 = ProductInfo.builder()
-				.id("4")
-				.name("상품3")
-				.price(4000)
-				.build();
-		ProductInfo productInfo5 = ProductInfo.builder()
-				.id("5")
-				.name("상품3")
-				.price(5000)
-				.build();
-		list.add(productInfo1);
-		list.add(productInfo2);
-		list.add(productInfo3);
-		list.add(productInfo4);
-		list.add(productInfo5);
-
-		return new ResponseEntity<>(list, HttpStatus.OK);
+	public ResponseEntity<List<VendorProductDTO>> productList(@PathVariable("vendorId") String vendorId) {
+		List<VendorProductDTO> productList = liveProductService.findVendorProduct(vendorId);
+		return new ResponseEntity<>(productList, HttpStatus.OK);
 	}
 }
 
