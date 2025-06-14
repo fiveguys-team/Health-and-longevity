@@ -2,14 +2,12 @@ package com.example.livecommerce_server.payment.service;
 
 import com.example.livecommerce_server.order.dto.OrderStatusUpdateDTO;
 import com.example.livecommerce_server.order.mapper.OrderMapper;
-import com.example.livecommerce_server.payment.dto.PaymentConfirmRequest;
-import com.example.livecommerce_server.payment.dto.PaymentConfirmResponse;
-import com.example.livecommerce_server.payment.dto.PaymentDTO;
-import com.example.livecommerce_server.payment.dto.PaymentUpdateDTO;
+import com.example.livecommerce_server.payment.dto.*;
 import com.example.livecommerce_server.payment.mapper.PaymentMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -32,11 +31,11 @@ public class PaymentServiceImpl implements PaymentService {
         String uuid = UUID.randomUUID().toString();
         PaymentDTO paymentDTO = PaymentDTO.builder()
                 .paymentsId(uuid)
-                .paymentMethod("TEMP")
+                .paymentMethod("PEND")
                 .paymentPayload("{}")
                 .paidAt("NOT_YET")
                 .createdAt(nowCompactString())
-                .paymentStatusCode("TEMP")
+                .paymentStatusCode("PEND")
                 .build();
 
         paymentMapper.insertTempPayment(paymentDTO);
@@ -71,7 +70,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
         orderMapper.updateOrderStatusByOrderId(orderStatusDTO);
 
-        PaymentUpdateDTO paymentDTO = PaymentUpdateDTO.builder()
+        PaymentSuccessUpdateDTO paymentDTO = PaymentSuccessUpdateDTO.builder()
                 .orderId(req.getOrderId())
                 .status(result.getStatus())
                 .approvedAt(formatApprovedAt(result.getApprovedAt()))
@@ -79,9 +78,24 @@ public class PaymentServiceImpl implements PaymentService {
                 .paymentKey(result.getPaymentKey())
                 .payload(new ObjectMapper().writeValueAsString(result))
                 .build();
-        paymentMapper.updatePaymentByOrderId(paymentDTO);
+        paymentMapper.updatePaymentSuccessByOrderId(paymentDTO);
 
         return result;
+    }
+
+    @Override
+    public boolean cancelPayment(PaymentStatusUpdateDTO paymentStatusUpdateDTO) {
+
+        int updatedPayment = paymentMapper.updatePaymentStatusByOrderId(paymentStatusUpdateDTO);
+
+        int updatedOrder = orderMapper.updateOrderStatusByOrderId(
+                OrderStatusUpdateDTO.builder()
+                        .orderId(paymentStatusUpdateDTO.getOrderId())
+                        .status(paymentStatusUpdateDTO.getStatus()) // "CANCL"
+                        .build()
+        );
+
+        return updatedPayment > 0 && updatedOrder > 0;
     }
 
     private String nowCompactString() {

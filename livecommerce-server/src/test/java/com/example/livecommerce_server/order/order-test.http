@@ -1,23 +1,32 @@
 ### 주문 프리페어 테스트
-POST http://localhost:8080/api/order/prepare
+#POST http://localhost:8080/api/order/prepare
+#Content-Type: application/json
+#
+#
+#{
+#  "userId": 1,
+#  "orderItems": [
+#    {
+#      "productId": "1",
+#      "quantity": 2
+#    },
+#    {
+#      "productId": "2",
+#      "quantity": 1
+#    }
+#  ],
+#  "shippingRequest": "문 앞에 두세요",
+#  "postalCode": "06233",
+#  "basicAddress": "서울 강남구 테헤란로 123",
+#  "detailedAddress": "101동 1001호"
+#}
+#
+
+### 결제 취소 API 테스트
+POST http://localhost:8080/api/payment/cancel
 Content-Type: application/json
 
-
 {
-  "userId": 1,
-  "orderItems": [
-    {
-      "productId": "1",
-      "quantity": 2
-    },
-    {
-      "productId": "2",
-      "quantity": 1
-    }
-  ],
-  "shippingRequest": "문 앞에 두세요",
-  "postalCode": "06233",
-  "basicAddress": "서울 강남구 테헤란로 123",
-  "detailedAddress": "101동 1001호"
+  "orderId": "db44b770-0ec4-43f6-a348-a19b3317d80f",
+  "status": "CANC"
 }
-

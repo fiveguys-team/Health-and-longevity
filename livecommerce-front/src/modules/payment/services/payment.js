@@ -24,3 +24,21 @@ export async function confirmPayment({ paymentKey, orderId, amount }) {
         throw error
     }
 }
+
+/**
+ * 결제 중도 취소 (사용자 수동 취소 시)
+ * @param {string} orderId
+ * @returns {Promise<string>} 서버 응답 메시지
+ */
+export async function cancelPayment(orderId) {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/cancel`, {
+            orderId,
+            status: 'CNCL'
+        });
+        return response.data;
+    } catch (error) {
+        console.error('❌ [cancelPayment] 결제 취소 실패:', error);
+        throw error;
+    }
+}

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentUpdateDTO {
+public class PaymentSuccessUpdateDTO {
     private String orderId;            // 주문 ID (조건절: orders_m에서 payment_id 찾기 위함)
     private String paymentKey;
     private String status;            // 결제 상태 (DONE, FAILED, CANCELED 등)
