@@ -26,6 +26,9 @@ import CheckoutPage from '@/views/shop/checkout-page.vue'
 import ContactPage from '@/views/inner-pages/contact-page.vue'
 import ProductCategory from '@/views/shop/product-category.vue'
 
+//테스트용 vue
+
+
 // 대시보드 views
 import adminDashboard from '@/views/dashboard/adminDashboard.vue'
 //import storeDashboard from '@/views/dashboard/storeDashboard.vue'
@@ -60,6 +63,7 @@ import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
 import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
 import ShopCart from "@/views/shop/shop-cart.vue";
+import test from "@/modules/live/views/testView.vue";
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -112,9 +116,8 @@ const routes = [
 
 
 
-
   // modules/도메인/views/ 하위 test용 view
-  {path: '/live-streaming',component: LiveStreaming},
+  {path: '/live-streaming',component: test},
   {path: '/live-chart', component: LiveChart},
   {path: '/live-register', component: LiveRegister},
   {path: '/live-report', component: LiveReport},
