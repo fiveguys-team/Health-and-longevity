@@ -2,6 +2,7 @@ package com.example.livecommerce_server.live.mapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.livecommerce_server.live.dto.LiveStatisticsDTO;
 import com.example.livecommerce_server.live.dto.LiveViewerStatsDTO;
 import com.example.livecommerce_server.live.vo.LiveStatisticsVO;
 import java.util.List;
@@ -72,7 +73,7 @@ class LiveStatisticsMapperTest {
 	@Test
 	@DisplayName("라이브 통계 조회")
 	void selectLiveStatisticsList() {
-		List<LiveStatisticsVO> list = liveStatisticsMapper.selectLiveStatisticsList("1");
+		List<LiveStatisticsDTO> list = liveStatisticsMapper.selectLiveStatisticsList("1");
 		list.forEach(System.out::println);
 	}
 

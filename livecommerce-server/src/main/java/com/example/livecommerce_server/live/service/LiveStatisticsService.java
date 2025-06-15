@@ -1,5 +1,6 @@
 package com.example.livecommerce_server.live.service;
 
+import com.example.livecommerce_server.live.dto.LiveStatisticsDTO;
 import com.example.livecommerce_server.live.dto.LiveViewerStatsDTO;
 import com.example.livecommerce_server.live.vo.LiveStatisticsVO;
 import java.util.List;
@@ -39,5 +40,5 @@ public interface LiveStatisticsService {
      * @param vendorId 입점업체 ID
      * @return 통계 리스트
      */
-    List<LiveStatisticsVO> findLiveStatisticsList(String vendorId);
+    List<LiveStatisticsDTO> findLiveStatisticsList(String vendorId);
 } 
