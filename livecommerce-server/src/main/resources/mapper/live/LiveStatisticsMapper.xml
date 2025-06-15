@@ -16,7 +16,7 @@
 
 <!--    현재 시청자 수 조회-->
     <select id="selectCurrentViewerCount" resultType="Integer">
-        SELECT COUUNT(DISTINCT user_id) FROM LIVE_VIEWER_LOG
+        SELECT COUNT(DISTINCT (user_id)) FROM LIVE_VIEWER_LOG
         WHERE live_id = #{liveId} AND leave_at IS NULL
     </select>
 

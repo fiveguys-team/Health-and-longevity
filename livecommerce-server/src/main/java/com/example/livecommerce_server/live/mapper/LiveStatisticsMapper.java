@@ -31,5 +31,9 @@ public interface LiveStatisticsMapper {
     // 평균 시청 시간 조회 (초 단위)
     int selectAverageWatchDuration(@Param("liveId") String liveId);
 
-    // 총 채팅 수, 주문 수, 매출액 등 추가 통계 조회 메서드 필요시 여기에 선언
+    // 총 채팅 수
+
+    // 주문 수
+
+    // 매출액 추후 개발 예정
 } 
