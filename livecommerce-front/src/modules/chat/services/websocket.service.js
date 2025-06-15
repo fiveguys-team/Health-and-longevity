@@ -12,18 +12,23 @@ class WebSocketService {
     const socket = new SockJS("http://localhost:8080/connect");
     this.stompClient = Stomp.over(socket);
 
+    // connect 시에는 headers 없이 연결
     this.stompClient.connect(
       {},
       () => {
         this.connected = true;
         console.log("WebSocket 연결 성공!");
 
-        // 메시지 구독 (서버 Controller의 convertAndSend 경로와 일치)
-        this.stompClient.subscribe(`/topic/${roomId}`, (message) => {
-          const receivedMessage = JSON.parse(message.body);
-          console.log("받은 메시지:", receivedMessage);
-          messageCallback(receivedMessage);
-        });
+        // subscribe 시 roomId를 header로 전달
+        this.stompClient.subscribe(
+          `/topic/${roomId}`,
+          (message) => {
+            const receivedMessage = JSON.parse(message.body);
+            console.log("받은 메시지:", receivedMessage);
+            messageCallback(receivedMessage);
+          },
+          { roomId: String(roomId) } // subscribe header에 roomId 전달
+        );
       },
       (error) => {
         console.error("WebSocket 연결 실패:", error);
@@ -42,13 +47,11 @@ class WebSocketService {
 
   sendMessage(roomId, message) {
     if (this.stompClient && this.connected) {
-      // ChatMessageReqDto에 맞는 구조 - userName 필드 추가!
+      // ChatMessageReqDto에 맞는 구조
       const chatMessage = {
-        content: message, // DTO의 content 필드에 맞춤
-        userId: 123, // 데모 데이터에 존재하는 user_id
-        userName: "테스트사용자", // userName 필드 추가!
-        // roomId는 URL 파라미터로 전달됨
-        // createdAt은 서버에서 설정
+        content: message,
+        userId: 1, // 테스트용 더미 데이터
+        userName: "테스트사용자" // 테스트용 더미 데이터
       };
 
       // 서버 설정의 /publish prefix에 맞춤
