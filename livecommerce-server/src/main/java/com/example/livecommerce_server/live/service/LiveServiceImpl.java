@@ -29,9 +29,8 @@ public class LiveServiceImpl implements LiveService {
 	 */
 	@Override
 	public LiveChatDTO addLiveInfo(LiveDTO liveDTO) {
-		String liveId = UUID.randomUUID().toString();
 		LiveInfoVO liveInfoVO = LiveInfoVO.builder()
-				.live_id(liveId)
+				.live_id(liveDTO.getLiveId())
 				.vendor_id(liveDTO.getVendorId())
 				.session_id(liveDTO.getSessionId())
 				.title(liveDTO.getTitle())
@@ -43,7 +42,7 @@ public class LiveServiceImpl implements LiveService {
 		liveMapper.insertLiveInfo(liveInfoVO);
 
 		return LiveChatDTO.builder()
-				.liveId(liveId)
+				.liveId(liveDTO.getLiveId())
 				.sessionId(liveDTO.getSessionId())
 				.build();
 	}
