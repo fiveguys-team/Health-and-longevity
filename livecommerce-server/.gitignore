@@ -50,3 +50,6 @@ Thumbs.db
 /src/test/resources/application-test.yml
 # .gitignore (이미 있다면 확인만)
 src/test/resources/application.yml
+
+# 테스트용 설정 파일 무시
+src/test/resources/application-test.yml

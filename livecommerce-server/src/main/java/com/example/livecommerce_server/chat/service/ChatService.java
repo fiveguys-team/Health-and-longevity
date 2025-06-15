@@ -10,4 +10,28 @@ public interface ChatService {
 
 
     Long createGroupRoom(String liveId);
+
+    /**
+     * 채팅방 참여자 수 증가
+     *
+     * @param roomId 채팅방 ID
+     * @return 업데이트 성공 여부
+     */
+    boolean increaseParticipantCount(Long roomId);
+
+    /**
+     * 채팅방 참여자 수 감소
+     *
+     * @param roomId 채팅방 ID
+     * @return 업데이트 성공 여부
+     */
+    boolean decreaseParticipantCount(Long roomId);
+
+    /**
+     * 채팅방 참여자 수 조회
+     *
+     * @param roomId 채팅방 ID
+     * @return 현재 참여자 수
+     */
+    int getParticipantCount(Long roomId);
 }

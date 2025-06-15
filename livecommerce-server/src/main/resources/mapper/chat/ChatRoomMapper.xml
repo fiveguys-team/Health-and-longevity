@@ -9,4 +9,20 @@
         VALUES (#{liveId}, #{participantsCnt}, #{createdAt}, #{updatedAt})
     </insert>
 
+    <!-- 채팅방 참여자 수 조회 -->
+    <select id="selectParticipantCount" resultType="java.lang.Integer">
+        SELECT participants_cnt
+        FROM CHAT_ROOM_M
+        WHERE room_id = #{roomId}
+    </select>
+    
+    <update id="updateParticipantCount">
+        UPDATE CHAT_ROOM_M
+        SET participants_cnt = participants_cnt + #{count},
+            updated_at = NOW()
+        WHERE room_id = #{roomId}
+        <!-- 참여자 수가 음수가 되지 않도록 체크 -->
+        AND participants_cnt + #{count} >= 0
+    </update>
+    
 </mapper>

@@ -2,7 +2,9 @@ package com.example.livecommerce_server.chat.service;
 
 import com.example.livecommerce_server.chat.mapper.ChatRoomMapper;
 import com.example.livecommerce_server.chat.vo.ChatRoom;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
  * 채팅 서비스 구현 클래스
  * 채팅방 생성, 메시지 저장 등 핵심 비즈니스 로직을 처리합니다.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
@@ -35,6 +38,109 @@ public class ChatServiceImpl implements ChatService {
 
         chatRoomMapper.insertChatRoom(chatRoom);
         return chatRoom.getRoomId();
+    }
+
+    /**
+     * 채팅방 참여자 수 증가
+     *
+     * @param roomId 채팅방 ID
+     * @return 업데이트 성공 여부
+     */
+    @Override
+    @Transactional
+    public boolean increaseParticipantCount(Long roomId) {
+        try{
+            //1. 채팅방 존재 여부 확인
+            if(!isRoomExists(roomId)){
+                log.warn("채팅방을 찾을 수 없습니다. roomId={}", roomId);
+                return false;
+            }
+            // 2. 참여자 수 증가 (+1)
+            // → CHAT_ROOM_M 테이블의 participants_cnt 증가
+            int result = chatRoomMapper.updateParticipantCount(roomId, 1);
+
+            if (result > 0) {
+                log.info("채팅방 참여자 수 증가 성공. roomId: {}", roomId);
+                return true;
+            }
+            return false;
+
+
+        }catch (Exception e) {
+            log.error("참여자 수 증가 중 오류 발생. roomId: {}", roomId, e);
+            return false;
+        }
+
+    }
+
+
+    /**
+     * 채팅방 참여자 수 감소
+     *
+     * @param roomId 채팅방 ID
+     * @return 업데이트 성공 여부
+     */
+    @Override
+    @Transactional
+    public boolean decreaseParticipantCount(Long roomId) {
+        try {
+            // 1. 현재 참여자 수 확인
+            // → 0명일 때는 감소시키지 않음
+            int currentCount = getParticipantCount(roomId);
+            if (currentCount <= 0) {
+                log.warn("참여자 수가 이미 0입니다. roomId: {}", roomId);
+                return false;
+            }
+
+            // 2. 참여자 수 감소 (-1)
+            // → XML에서도 음수 방지 조건 있지만, 서비스에서도 체크
+            int result = chatRoomMapper.updateParticipantCount(roomId, -1);
+
+            if (result > 0) {
+                log.info("채팅방 참여자 수 감소 성공. roomId: {}, 현재: {} → {}",
+                        roomId, currentCount, currentCount - 1);
+                return true;
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            log.error("참여자 수 감소 중 오류 발생. roomId: {}", roomId, e);
+            return false;
+        }
+    }
+
+    /**
+     * 채팅방 참여자 수 조회
+     *
+     * @param roomId 채팅방 ID
+     * @return 현재 참여자 수
+     */
+    @Override
+    public int getParticipantCount(Long roomId) {
+        try {
+            // 1. Optional로 안전하게 조회
+            // → 채팅방이 없으면 0 반환
+            return chatRoomMapper.selectParticipantCount(roomId)
+                    .orElse(0);
+
+        } catch (Exception e) {
+            log.error("참여자 수 조회 중 오류 발생. roomId: {}", roomId, e);
+            return 0;
+        }
+    }
+
+
+
+    /**
+     * 채팅방 존재 여부 확인 (내부 사용)
+     *
+     * @param roomId 채팅방 ID
+     * @return 존재 여부
+     */
+    private boolean isRoomExists(Long roomId) {
+        // 참여자 수 조회 결과가 있으면 채팅방 존재
+        return chatRoomMapper.selectParticipantCount(roomId).isPresent();
     }
 }
 
