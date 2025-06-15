@@ -38,5 +38,23 @@ class LiveStatisticsMapperTest {
 		liveStatisticsMapper.updateViewerLeave("cccccccc-cccc-cccc-cccc-cccccccccccc", "1", "2025-06-14T11:38:50.805866300Z");
 	}
 
+	@Test
+	@DisplayName("현재 시청자 수 조회")
+	void selectCurrentViewerCount() {
+		int viewerCount = liveStatisticsMapper.selectCurrentViewerCount(
+				"cccccccc-cccc-cccc-cccc-cccccccccccc");
+		log.info(String.valueOf(viewerCount));
+	}
+
+	// 라이브 방송 통계 대시보드 저장 테스트
+
+
+	@Test
+	@DisplayName("총 시청자 수 조회")
+	void selectTotalViewers() {
+		int selectTotalViewers = liveStatisticsMapper.selectTotalViewers("cccccccc-cccc-cccc-cccc-cccccccccccc");
+		log.info(String.valueOf(selectTotalViewers));
+	}
+
 
 }
