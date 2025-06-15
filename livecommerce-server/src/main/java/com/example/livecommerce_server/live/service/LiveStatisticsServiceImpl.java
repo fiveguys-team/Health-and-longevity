@@ -1,5 +1,6 @@
 package com.example.livecommerce_server.live.service;
 
+import com.example.livecommerce_server.live.dto.LiveStatisticsDTO;
 import com.example.livecommerce_server.live.dto.LiveViewerStatsDTO;
 import com.example.livecommerce_server.live.mapper.LiveStatisticsMapper;
 import com.example.livecommerce_server.live.vo.LiveStatisticsVO;
@@ -71,7 +72,8 @@ public class LiveStatisticsServiceImpl implements LiveStatisticsService {
     }
 
     @Override
-    public List<LiveStatisticsVO> findLiveStatisticsList(String vendorId) {
+    public List<LiveStatisticsDTO> findLiveStatisticsList(String vendorId) {
         return liveStatisticsMapper.selectLiveStatisticsList(vendorId);
+
     }
 } 
