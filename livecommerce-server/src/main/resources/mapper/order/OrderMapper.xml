@@ -64,4 +64,10 @@
             )
         </foreach>
     </insert>
+
+    <update id="updateOrderStatusByOrderId" parameterType="com.example.livecommerce_server.order.dto.OrderStatusUpdateDTO">
+        UPDATE orders_m
+        SET order_status_code = #{status}
+        WHERE order_id = #{orderId}
+    </update>
 </mapper>

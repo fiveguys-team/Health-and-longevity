@@ -1,54 +1,60 @@
 <template>
-  <div class="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow">
-    <h2 class="text-2xl font-bold mb-6">상품 등록 요청</h2>
+  <div class="max-w-3xl mx-auto p-10 bg-white rounded-xl shadow-md">
+    <h2 class="text-3xl font-extrabold mb-8 text-center text-gray-800 flex items-center justify-center gap-2">
+      <i class="fas fa-box-open"></i> 상품 등록 요청
+    </h2>
 
     <!-- 인증번호 입력 -->
-    <div class="flex gap-2 mb-4 items-center">
-      <label class="w-32 font-medium text-right">인증번호</label>
-      <input v-model="certNo" type="text" class="flex-1 border px-3 py-2" placeholder="품목제조번호" />
-      <button @click="fetchProductDetail" class="px-4 py-2 bg-blue-500 text-white rounded">인증</button>
+    <div class="flex gap-3 mb-6 items-center">
+      <label class="w-32 font-semibold text-right">인증번호</label>
+      <input v-model="certNo" type="text" class="flex-1 border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="품목제조번호" />
+      <button @click="fetchProductDetail" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded shadow">인증</button>
     </div>
 
-    <p class="text-sm text-gray-500 mb-4 text-center">아래는 API로 받은 정보입니다 (수정불가)</p>
+    <p class="text-sm text-gray-500 mb-6 text-center italic">아래는 API로 받은 정보입니다 (수정불가)</p>
 
     <!-- 자동입력 필드 -->
-    <div class="flex mb-3 items-center" v-for="(label, key) in fieldMap" :key="key">
-      <label class="w-32 font-medium text-right">{{ label }}</label>
-      <input type="text" class="flex-1 border px-3 py-2 bg-gray-100 text-gray-600" :value="productDetail[key]" readonly />
+    <div class="space-y-3 mb-8">
+      <div class="flex items-center" v-for="(label, key) in fieldMap" :key="key">
+        <label class="w-32 font-medium text-right">{{ label }}</label>
+        <input type="text" class="flex-1 border border-gray-300 px-4 py-2 bg-gray-100 text-gray-600 rounded" :value="productDetail[key]" readonly />
+      </div>
     </div>
 
-    <p class="text-sm text-gray-500 my-4 text-center">입점업체가 입력하는 항목</p>
+    <p class="text-sm text-gray-500 mb-4 text-center italic">입점업체가 입력하는 항목</p>
 
-    <div class="flex mb-3 items-center">
-      <label class="w-32 font-medium text-right">수량</label>
-      <input v-model="customInput.quantity" type="text" @input="onNumberInput('quantity')" class="flex-1 border px-3 py-2" />
+    <div class="space-y-3 mb-8">
+      <div class="flex items-center">
+        <label class="w-32 font-medium text-right">수량</label>
+        <input v-model="customInput.quantity" type="text" @input="onNumberInput('quantity')" class="flex-1 border border-gray-300 px-4 py-2 rounded" />
+      </div>
+
+      <div class="flex items-center">
+        <label class="w-32 font-medium text-right">가격</label>
+        <input v-model="customInput.price" type="text" @input="onNumberInput('price')" class="flex-1 border border-gray-300 px-4 py-2 rounded" />
+      </div>
+
+      <div class="flex items-center">
+        <label class="w-32 font-medium text-right">분류</label>
+        <select v-model="customInput.category" class="flex-1 border border-gray-300 px-4 py-2 rounded">
+          <option disabled value="">선택하세요</option>
+          <option>혈압</option>
+          <option>눈</option>
+          <option>뼈/관절/연결성분</option>
+          <option>장건강</option>
+          <option>영양보충</option>
+        </select>
+      </div>
+
+      <div class="flex items-center">
+        <label class="w-32 font-medium text-right">상품 이미지</label>
+        <input type="file" @change="onImageChange" accept="image/*" class="flex-1 border border-gray-300 px-4 py-2 rounded" />
+      </div>
     </div>
 
-    <div class="flex mb-3 items-center">
-      <label class="w-32 font-medium text-right">가격</label>
-      <input v-model="customInput.price" type="text" @input="onNumberInput('price')" class="flex-1 border px-3 py-2" />
-    </div>
-
-    <div class="flex mb-3 items-center">
-      <label class="w-32 font-medium text-right">분류</label>
-      <select v-model="customInput.category" class="flex-1 border px-3 py-2">
-        <option disabled value="">선택하세요</option>
-        <option>혈압</option>
-        <option>눈</option>
-        <option>뼈/관절/연결성분</option>
-        <option>장건강</option>
-        <option>영양보충</option>
-      </select>
-    </div>
-
-    <div class="flex mb-6 items-center">
-      <label class="w-32 font-medium text-right">상품 이미지</label>
-      <input type="file" @change="onImageChange" accept="image/*" class="flex-1 border px-3 py-2" />
-    </div>
-
-    <div class="flex justify-center gap-4">
-      <button class="px-6 py-2 bg-gray-300 text-black rounded">취소</button>
-      <button @click="submitRequest" class="px-6 py-2 bg-green-500 text-white rounded">등록 요청</button>
+    <div class="flex justify-center gap-6">
+      <button class="px-6 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">취소</button>
+      <button @click="submitRequest" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded shadow">등록 요청</button>
     </div>
   </div>
 </template>
@@ -200,4 +206,3 @@ const submitRequest = async () => {
   }
 }
 </script>
-

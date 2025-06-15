@@ -49,11 +49,12 @@
 <script setup>
 import NavbarOne from '@/components/navbar/navbar-one.vue';
 import loginImg from '@/assets/img/bg/login.jpg'
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import Aos from 'aos';
 import FooterOne from '@/components/footer/footer-one.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
-import axios from 'axios'
+import axios from 'axios';
+import { useAuthStore } from "@/modules/auth/stores/auth";
 
 const email = ref("")
 const password = ref("")
@@ -63,19 +64,6 @@ onMounted(() => {
     Aos.init()
 })
 
-const memberLogin = async () => {
-  const loginData = {
-    email: email.value,
-    password: password.value
-  }
-  const response = await axios.post("http://localhost:8080/member/doLogin", loginData)
-  const token = response.data.token
-  const role = response.data.role
-  localStorage.setItem('token', token)
-  localStorage.setItem('role', role)
-  window.location.href = "/"
-}
-
 const googleServerLogin = () => {
   window.location.href = "http://localhost:8080/oauth2/authorization/google"
 }
@@ -83,5 +71,30 @@ const googleServerLogin = () => {
 const kakaoServerLogin = () => {
   window.location.href = "http://localhost:8080/oauth2/authorization/kakao"
 }
+
+// memberLogin function using useAuthStore action
+const authStore = useAuthStore();
+
+const memberLogin = async () => {
+  try {
+    const loginData = {
+      email: email.value,
+      password: password.value
+    };
+
+    await axios.post("http://localhost:8080/member/doLogin", loginData, {
+      withCredentials: true
+    });
+
+    authStore.initFromCookie();
+
+    window.location.href = "/";
+    console.log(authStore.role);
+    console.log(authStore.token);
+  } catch (err) {
+    console.error(err);
+    alert("로그인에 실패했습니다.");
+  }
+};
 
 </script>

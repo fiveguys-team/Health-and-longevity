@@ -47,4 +47,56 @@ import FooterThree from '@/components/footer/footer-three.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
 
 import bg from '@/assets/img/shortcode/breadcumb.jpg'
+import { useRoute } from 'vue-router'
+import { onMounted } from 'vue'
+import {confirmPayment} from "@/modules/payment/services/payment";
+
+const route = useRoute()
+
+onMounted(async () => {
+  const paymentKey = route.query.paymentKey
+  const orderId = route.query.orderId
+  const amount = route.query.amount
+
+  console.log("✅ 결제 성공 정보:", { paymentKey, orderId, amount })
+
+  if (paymentKey && orderId && amount) {
+    try {
+      const data = await confirmPayment({
+        paymentKey,
+        orderId,
+        amount: Number(amount)
+      })
+
+      console.log('✅ Toss 승인 응답:', data)
+      // 이후 필요한 상태 업데이트나 화면 표시 처리 등
+    } catch (e) {
+      console.error('❌ Toss 결제 승인 오류:', e)
+    }
+  }
+})
+
+// const paymentKey = new URLSearchParams(window.location.search).get('paymentKey');
+// const orderId = new URLSearchParams(window.location.search).get('orderId');
+// const amount = new URLSearchParams(window.location.search).get('amount');
+//
+// const secretKey = 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6'; // 테스트 시크릿키
+// const encoded = btoa(`${secretKey}:`); // base64 인코딩
+//
+// fetch('https://api.tosspayments.com/v1/payments/confirm', {
+//   method: 'POST',
+//   headers: {
+//     Authorization: `Basic ${encoded}`,
+//     'Content-Type': 'application/json'
+//   },
+//   body: JSON.stringify({
+//     paymentKey,
+//     orderId,
+//     amount: Number(amount),
+//   })
+// })
+//     .then(res => res.json())
+//     .then(data => console.log('✅ Toss 응답:', data))
+//     .catch(err => console.error('❌ Toss 확인 요청 실패:', err));
+
 </script>
