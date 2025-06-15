@@ -32,5 +32,11 @@ class LiveStatisticsMapperTest {
 		liveStatisticsMapper.insertViewerJoin(viewer);
 	}
 
+	@Test
+	@DisplayName("시청자 퇴장 정보 저장")
+	void updateViewerLeave() {
+		liveStatisticsMapper.updateViewerLeave("cccccccc-cccc-cccc-cccc-cccccccccccc", "1", "2025-06-14T11:38:50.805866300Z");
+	}
+
 
 }
