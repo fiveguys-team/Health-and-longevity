@@ -3,6 +3,8 @@ package com.example.livecommerce_server.live.mapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.livecommerce_server.live.dto.LiveViewerStatsDTO;
+import com.example.livecommerce_server.live.vo.LiveStatisticsVO;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,6 +67,13 @@ class LiveStatisticsMapperTest {
 		int watchDuration = liveStatisticsMapper.selectAverageWatchDuration(
 				"cccccccc-cccc-cccc-cccc-cccccccccccc");
 		log.info(String.valueOf(watchDuration));
+	}
+
+	@Test
+	@DisplayName("라이브 통계 조회")
+	void selectLiveStatisticsList() {
+		List<LiveStatisticsVO> list = liveStatisticsMapper.selectLiveStatisticsList("1");
+		list.forEach(System.out::println);
 	}
 
 

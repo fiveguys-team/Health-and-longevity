@@ -59,4 +59,12 @@
         SELECT IFNULL(AVG(TIMESTAMPDIFF(SECOND, join_at, leave_at)), 0) FROM LIVE_VIEWER_LOG
         WHERE live_id = #{liveId} AND leave_at IS NOT NULL
     </select>
+
+<!--	입점업체의 통계 리스트 조회-->
+	<select id="selectLiveStatisticsList" resultType="LiveStatisticsVO" parameterType="string">
+		SELECT liveDashboard_id, D.live_id, total_viewers, max_concurrent_viewers, average_watch_duration, total_chats, total_orders, total_reve
+		FROM LIVE_DASHBOARD_D D, LIVE_M M WHERE D.live_id = M.live_id AND M.vendor_id = #{vendorId}
+
+	</select>
+
 </mapper> 
