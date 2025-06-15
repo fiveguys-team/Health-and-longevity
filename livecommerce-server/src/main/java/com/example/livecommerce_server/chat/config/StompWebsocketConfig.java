@@ -33,7 +33,13 @@ public class StompWebsocketConfig  implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/publish");
 
         //        /topic/1형태로 메시지를 수신(subscribe)해야 함을 설정
-        registry.enableSimpleBroker("/topic");
+        // /topic/1형태로 메시지를 수신(subscribe)해야 함을 설정
+        // /user 경로 추가!! 이 부분이 누락되어 있었습니다
+        registry.enableSimpleBroker("/topic", "/user");
+
+        // 사용자별 메시지를 위한 설정 추가!!
+        registry.setUserDestinationPrefix("/user");
+    }
     }
 
 
@@ -43,4 +49,3 @@ public class StompWebsocketConfig  implements WebSocketMessageBrokerConfigurer {
 //    public void configureClientInboundChannel(ChannelRegistration registration) {
 ////        registration.interceptors(stompHandler);
 //    }
-}

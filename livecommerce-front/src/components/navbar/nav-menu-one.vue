@@ -47,76 +47,28 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, onMounted, computed } from 'vue'
+import { ref, defineProps, defineEmits, computed } from 'vue'
 import SwitcherS from '../switcher-s.vue'
-import Cookies from 'js-cookie'
 import { useAuthStore } from "@/modules/auth/stores/auth";
 
 const cartList = ref(false)
-const isLogin = ref(false)
-const authStore = useAuthStore()
-
-// JWT 토큰 디코딩 함수
-const decodeJwtToken = (token) => {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-
-    return JSON.parse(jsonPayload);
-  } catch (error) {
-    console.error('토큰 디코딩 실패:', error);
-    return null;
-  }
-};
-
-onMounted(() => {
-  // 토큰이 쿠키에 있을 경우 처리
-  const token = Cookies.get("token");
-  const role = Cookies.get("role");
-
-  if (token) {
-    // 토큰 디코딩하여 사용자 정보 추출
-    const decodedToken = decodeJwtToken(token);
-    if (decodedToken) {
-      // auth 스토어에 정보 저장
-      authStore.login(
-        token,
-        role,
-        decodedToken.userId,
-        decodedToken.userName || decodedToken.email // userName이 없으면 email 사용
-      );
-    }
-
-    // 쿠키 삭제
-    Cookies.remove("token");
-    Cookies.remove("role");
-
-    window.location.href = "/";
-  }
-
-  if (authStore.token) {
-    isLogin.value = true;
-  }
-});
+const authStore = useAuthStore();
+const isLogin = computed(() => !!authStore.token);
 
 const profileRoute = computed(() => {
   switch (authStore.role) {
     case 'ADMIN':
-      return '/admin-dashboard';
+      return '/admin-dashboard'
     case 'VENDOR':
-      return '/store-dashboard';
+      return '/store-dashboard'
     default:
-      return '/my-profile';
+      return '/my-profile'
   }
-});
+})
 
 const doLogout = () => {
   authStore.logout();
-  window.location.reload();
-};
+}
 
 const props = defineProps({
   toggle: Boolean,
@@ -125,6 +77,6 @@ const props = defineProps({
 const emit = defineEmits(['toggle-change']);
 
 function handleToggle() {
-  emit('toggle-change', !props.toggle);
+  emit('toggle-change', !props.toggle); // Correctly use `toggle` prop here
 }
 </script>

@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.livecommerce_server.member.repository.MemberRepository">
     <insert id="create" parameterType="com.example.livecommerce_server.member.domain.Member">
-        insert into USER_M (email, password, name, interest, social_id, social_type, role, email_verified)
-        values (#{email}, #{password}, #{name}, #{interest}, #{socialId}, #{socialType}, #{role}, #{emailVerified})
+        insert into USER_M (email, password, name, interest, social_id, social_type, email_verified)
+        values (#{email}, #{password}, #{name}, #{interest}, #{socialId}, #{socialType}, #{emailVerified})
     </insert>
 
     <select id="findBySocialId" resultType="com.example.livecommerce_server.member.domain.Member">

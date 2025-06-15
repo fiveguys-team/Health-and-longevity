@@ -67,36 +67,16 @@ import { ref, onMounted } from 'vue';
 import Aos from 'aos';
 import FooterOne from '@/components/footer/footer-one.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
-import axios from 'axios'
+import axios from 'axios';
 import { useAuthStore } from "@/modules/auth/stores/auth";
 
 const email = ref("")
 const password = ref("")
 const rememberMe = ref(false)
-const authStore = useAuthStore()
 
 onMounted(() => {
     Aos.init()
 })
-
-const memberLogin = async () => {
-    try {
-        const loginData = {
-            email: email.value,
-            password: password.value
-        }
-        const response = await axios.post("http://localhost:8080/member/doLogin", loginData)
-        const { token, role, userId, userName } = response.data
-
-        // auth 스토어를 통해 로그인 정보 저장
-        authStore.login(token, role, userId, userName)
-
-        window.location.href = "/"
-    } catch (error) {
-        console.error('로그인 실패:', error)
-        alert('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.')
-    }
-}
 
 const googleServerLogin = () => {
     window.location.href = "http://localhost:8080/oauth2/authorization/google"
@@ -105,5 +85,30 @@ const googleServerLogin = () => {
 const kakaoServerLogin = () => {
     window.location.href = "http://localhost:8080/oauth2/authorization/kakao"
 }
+
+// memberLogin function using useAuthStore action
+const authStore = useAuthStore();
+
+const memberLogin = async () => {
+    try {
+        const loginData = {
+            email: email.value,
+            password: password.value
+        };
+
+        await axios.post("http://localhost:8080/member/doLogin", loginData, {
+            withCredentials: true
+        });
+
+        authStore.initFromCookie();
+
+        window.location.href = "/";
+        console.log(authStore.role);
+        console.log(authStore.token);
+    } catch (err) {
+        console.error(err);
+        alert("로그인에 실패했습니다.");
+    }
+};
 
 </script>

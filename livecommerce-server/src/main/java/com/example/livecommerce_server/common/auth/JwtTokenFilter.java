@@ -1,5 +1,6 @@
 package com.example.livecommerce_server.common.auth;
 
+import com.example.livecommerce_server.common.config.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
@@ -51,8 +52,14 @@ public class JwtTokenFilter extends GenericFilter {
                 // Authentication 객체 생성
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get("role")));
-                UserDetails userDetails = new User(claims.getSubject(), "", authorities);
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, jwtToken, userDetails.getAuthorities());
+                CustomUserDetails customUserDetails = new CustomUserDetails(
+                        claims.getSubject(),
+                        (String) claims.get("name"),
+                        (String) claims.get("email"),
+                        (String) claims.get("role"),
+                        authorities
+                );
+                Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetails, jwtToken, customUserDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
