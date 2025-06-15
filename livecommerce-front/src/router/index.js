@@ -194,7 +194,7 @@ const routes = [
     meta: { requiresAuth: true, roles: ['VENDOR'] },
     children: [
       {
-        path: "live/reportList",
+        path: "live/reportList/:vendorId",
         name: "reportList",
         component: () => import("@/modules/live/components/LiveReport.vue"),
       },

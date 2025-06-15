@@ -1,5 +1,6 @@
 package com.example.livecommerce_server.live.mapper;
 
+import com.example.livecommerce_server.live.dto.LiveStatisticsDTO;
 import com.example.livecommerce_server.live.dto.LiveViewerStatsDTO;
 import com.example.livecommerce_server.live.vo.LiveStatisticsVO;
 import java.util.List;
@@ -33,7 +34,7 @@ public interface LiveStatisticsMapper {
     int selectAverageWatchDuration(@Param("liveId") String liveId);
 
     // 라이브 통계 조회
-    List<LiveStatisticsVO> selectLiveStatisticsList(@Param("vendorId") String vendorId);
+    List<LiveStatisticsDTO> selectLiveStatisticsList(@Param("vendorId") String vendorId);
 
     // 총 채팅 수
 
