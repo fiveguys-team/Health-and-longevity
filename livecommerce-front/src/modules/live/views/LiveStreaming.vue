@@ -51,29 +51,78 @@
 <script setup>
 import {ref, onMounted, onBeforeUnmount, computed} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
+import {useAuthStore} from "@/modules/auth/stores/auth";
 import axios from 'axios';
 import {OpenVidu} from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
+import { v4 as uuidv4 } from 'uuid';
 
 // 라우터 설정
 const route = useRoute();
 const router = useRouter();
+const auth = useAuthStore();
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
     : 'http://localhost:8080/';
 
 // OpenVidu 관련 상태 관리
-const OV = ref(undefined);                 // OpenVidu 인스턴스
-const session = ref(undefined);            // 현재 세션
-const mainStreamManager = ref(undefined);  // 메인 스트림 관리자
-const streamData = ref({});                // 방송/상품 정보
-const loadingMessage = ref('방송에 연결 중입니다...'); // 상태 메시지
+const OV = ref(undefined);
+const session = ref(undefined);
+const mainStreamManager = ref(undefined);
+const streamData = ref({});
+const loadingMessage = ref('방송에 연결 중입니다...');
 
-// Add new refs for viewer count and timer
+// 시청자 통계 관련 상태
 const viewerCount = ref(0);
 const startTime = ref(Date.now());
 const now = ref(Date.now());
 let timerId;
+let viewerCountInterval;
+
+// 사용자 ID 관리
+const getUserId = () => {
+  // 로그인한 사용자는 auth에서 ID 가져오기
+  if (auth.user?.id) {
+    return auth.user.id;
+  }
+
+  // 비로그인 사용자는 localStorage에서 ID 가져오기 또는 생성
+  let anonymousId = localStorage.getItem('anonymousId');
+  if (!anonymousId) {
+    // 새로운 익명 ID 생성 (UUID v4)
+    anonymousId = `anon_${uuidv4()}`;
+    localStorage.setItem('anonymousId', anonymousId);
+  }
+  return anonymousId;
+};
+
+// 시청자 입장 처리
+const addViewerJoin = async () => {
+  try {
+    const sessionId = route.params.sessionId;
+    const userId = getUserId();
+    await axios.post(`${APPLICATION_SERVER_URL}api/sessions/${sessionId}/users/${userId}/join`, {
+      isAnonymous: !auth.user?.id // 익명 사용자 여부 전달
+    });
+    console.log('시청자 입장 처리 완료');
+  } catch (error) {
+    console.error('시청자 입장 처리 실패:', error);
+  }
+};
+
+// 시청자 퇴장 처리
+const saveViewerLeave = async () => {
+  try {
+    const sessionId = route.params.sessionId;
+    const userId = getUserId();
+    await axios.post(`${APPLICATION_SERVER_URL}api/sessions/${sessionId}/users/${userId}/leave`, {
+      isAnonymous: !auth.user?.id
+    });
+    console.log('시청자 퇴장 처리 완료');
+  } catch (error) {
+    console.error('시청자 퇴장 처리 실패:', error);
+  }
+};
 
 /**
  * 새로운 스트림 생성 시 호출되는 이벤트 핸들러
@@ -178,6 +227,17 @@ const getToken = async (sessionId) => {
   }
 };
 
+// 시청자 수 업데이트
+const updateViewerCount = async () => {
+  try {
+    const sessionId = route.params.sessionId;
+    const response = await axios.get(`${APPLICATION_SERVER_URL}api/sessions/${sessionId}/viewers/count`);
+    viewerCount.value = response.data;
+  } catch (error) {
+    console.error('시청자 수 업데이트 실패:', error);
+  }
+};
+
 /**
  * 세션 참가 함수
  * 1. OpenVidu 세션 초기화
@@ -218,6 +278,10 @@ const joinSession = async (sessionId) => {
     }
 
     await session.value.connect(token, {clientData: {type: 'viewer'}});
+    
+    // 시청자 입장 처리 및 시청자 수 업데이트 시작
+    await addViewerJoin();
+    viewerCountInterval = setInterval(updateViewerCount, 5000); // 5초마다 시청자 수 업데이트
 
   } catch (error) {
     console.error('세션 참가 중 오류 발생:', error);
@@ -272,6 +336,14 @@ const cleanupSession = () => {
         mainStreamManager.value = undefined;
       }
 
+      // 시청자 퇴장 처리
+      saveViewerLeave();
+      
+      // 시청자 수 업데이트 중지
+      if (viewerCountInterval) {
+        clearInterval(viewerCountInterval);
+      }
+
       // 세션 연결 해제
       session.value.disconnect();
     }
@@ -282,6 +354,7 @@ const cleanupSession = () => {
     session.value = undefined;
     OV.value = undefined;
     streamData.value = {};
+    viewerCount.value = 0;
   }
 };
 
@@ -294,9 +367,12 @@ window.addEventListener('beforeunload', () => {
 onMounted(async () => {
   try {
     const sessionId = route.params.sessionId;
-    //const sessionId = session.value.sessionId;
-    console.log("sessionId: " + sessionId);
     await joinSession(sessionId);
+    
+    // 타이머 시작
+    timerId = setInterval(() => {
+      now.value = Date.now();
+    }, 1000);
   } catch (error) {
     console.error('방송 참여 중 오류 발생:', error);
     loadingMessage.value = '방송 참여 중 오류가 발생했습니다.';
@@ -309,17 +385,9 @@ onMounted(async () => {
 // 컴포넌트 언마운트 시 정리
 onBeforeUnmount(() => {
   cleanupSession();
-});
-
-// Add timer logic
-onMounted(() => {
-  timerId = setInterval(() => {
-    now.value = Date.now();
-  }, 1000);
-});
-
-onBeforeUnmount(() => {
-  clearInterval(timerId);
+  if (timerId) {
+    clearInterval(timerId);
+  }
 });
 
 const displayElapsed = computed(() => {

@@ -191,9 +191,8 @@
 
 <script setup>
 
-import {useAuthStore} from "@/modules/auth/stores/auth";
-
-const auth = useAuthStore()
+// import {useAuthStore} from "@/modules/auth/stores/auth";
+// const auth = useAuthStore()
 
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import {ref, onBeforeUnmount, onMounted, computed} from 'vue';
@@ -223,7 +222,6 @@ const selectedProducts = ref([]); // 선택된 상품들
 const discountRate = ref(0); // 할인율
 const viewerCount = ref(0); // 시청자 수 상태 관리
 const startTime = ref('');
-const endTime = ref('');
 const category = ref('');
 
 // 방송 상태 관리
@@ -338,7 +336,6 @@ const enterBroadcast = async () => {
 // [서버에 방송 종료 알림 전송]
 // 방송 종료 시 세션 종료 및 서버에 방송 종료 알림 전송 
 const notifyServerStreamEnded = async (sessionId) => {
-  endTime.value = new Date().toISOString();
   // 종료 시간 알림
   try {
     await axios.delete(
@@ -346,9 +343,8 @@ const notifyServerStreamEnded = async (sessionId) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth.token}`
+            //'Authorization': `Bearer ${auth.token}`
           },
-          //params: {endTime: endTime.value}
         },
     );
     console.log('서버에 방송 종료 알림 완료');
