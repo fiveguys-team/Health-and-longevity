@@ -107,7 +107,7 @@ import logoDark from '@/assets/img/svg/logo.png'
 import logoLight from '@/assets/img/svg/logo.png'
 import { useRoute } from 'vue-router'
 
-const vendorId = 123;
+const vendorId = 1;
 
 const $route = useRoute()
 </script>
