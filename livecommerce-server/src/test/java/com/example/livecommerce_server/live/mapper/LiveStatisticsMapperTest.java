@@ -56,5 +56,16 @@ class LiveStatisticsMapperTest {
 		log.info(String.valueOf(selectTotalViewers));
 	}
 
+	//  최대 동시 시청자 수 조회
+
+
+	@Test
+	@DisplayName("평균 시청 시간 조회 (초 단위)")
+	void selectAverageWatchDuration() {
+		int watchDuration = liveStatisticsMapper.selectAverageWatchDuration(
+				"cccccccc-cccc-cccc-cccc-cccccccccccc");
+		log.info(String.valueOf(watchDuration));
+	}
+
 
 }
