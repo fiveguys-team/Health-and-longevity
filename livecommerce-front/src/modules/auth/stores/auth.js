@@ -32,6 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
         document.cookie = `role=${newRole}; path=/`
         document.cookie = `name=${newName}; path=/`
         document.cookie = `id=${newId}; path=/`
+        console.log('쿠키 확인:', document.cookie)
     }
 
     const logout = () => {
