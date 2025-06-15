@@ -24,7 +24,6 @@ class WebSocketService {
     const socket = new SockJS("http://localhost:8080/connect");
     this.stompClient = Stomp.over(socket);
 
-    // connect 시에는 headers 없이 연결
     this.stompClient.connect(
       {}, // 헤더가 필요하면 여기에 추가
       () => {
