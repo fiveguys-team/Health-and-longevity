@@ -56,10 +56,9 @@
           </li>
 
           <li>
-            <router-link
-                to="/vendor/live/reportList"
+            <router-link :to="`/vendor/live/reportList/${vendorId}`"
                 class="flex items-center px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-light"
-                :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/vendor/live/reportList' }"
+                :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === `/vendor/live/reportList/${vendorId}` }"
             >
               <span class="mx-3">레포트</span>
             </router-link>
