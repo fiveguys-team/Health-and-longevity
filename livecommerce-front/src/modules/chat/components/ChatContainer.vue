@@ -143,12 +143,24 @@ watch(() => messages.value, async () => {
 }, { deep: true });
 
 onMounted(() => {
-    // 테스트용 초기 데이터
+    // 공지사항 초기화
     currentNotice.value = "라이브 방송 중에는 예의 바른 채팅 부탁드립니다.";
-    participantCount.value = 128;
 
-    // WebSocket 연결 (경고 콜백 추가)
+    // WebSocket 연결
     websocketService.connect(roomId, handleMessage, handleWarning);
+
+    // 실시간 참여자 수 구독 (stompClient 연결 후 구독)
+    setTimeout(() => {
+        if (websocketService.stompClient && websocketService.stompClient.connected) {
+            websocketService.stompClient.subscribe(
+                `/topic/room.${roomId}.participants`,
+                (message) => {
+                    participantCount.value = parseInt(message.body, 10);
+                },
+                { roomId: roomId.toString() } // roomId를 헤더로 추가
+            );
+        }
+    }, 500);
 });
 
 onBeforeUnmount(() => {
