@@ -48,29 +48,26 @@ public class ChatServiceImpl implements ChatService {
      */
     @Override
     @Transactional
-    public boolean increaseParticipantCount(Long roomId) {
-        try{
-            //1. 채팅방 존재 여부 확인
-            if(!isRoomExists(roomId)){
+    public int increaseParticipantCount(Long roomId) {
+        try {
+            if (!isRoomExists(roomId)) {
                 log.warn("채팅방을 찾을 수 없습니다. roomId={}", roomId);
-                return false;
+                return -1;
             }
-            // 2. 참여자 수 증가 (+1)
-            // → CHAT_ROOM_M 테이블의 participants_cnt 증가
+
             int result = chatRoomMapper.updateParticipantCount(roomId, 1);
-
             if (result > 0) {
-                log.info("채팅방 참여자 수 증가 성공. roomId: {}", roomId);
-                return true;
+                int count = getParticipantCount(roomId);
+                log.info("참여자 수 증가 성공. roomId: {}, 현재: {}", roomId, count);
+                return count;
             }
-            return false;
 
+            return -1;
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("참여자 수 증가 중 오류 발생. roomId: {}", roomId, e);
-            return false;
+            return -1;
         }
-
     }
 
 
@@ -82,31 +79,26 @@ public class ChatServiceImpl implements ChatService {
      */
     @Override
     @Transactional
-    public boolean decreaseParticipantCount(Long roomId) {
+    public int decreaseParticipantCount(Long roomId) {
         try {
-            // 1. 현재 참여자 수 확인
-            // → 0명일 때는 감소시키지 않음
             int currentCount = getParticipantCount(roomId);
             if (currentCount <= 0) {
                 log.warn("참여자 수가 이미 0입니다. roomId: {}", roomId);
-                return false;
+                return currentCount;
             }
 
-            // 2. 참여자 수 감소 (-1)
-            // → XML에서도 음수 방지 조건 있지만, 서비스에서도 체크
             int result = chatRoomMapper.updateParticipantCount(roomId, -1);
-
             if (result > 0) {
-                log.info("채팅방 참여자 수 감소 성공. roomId: {}, 현재: {} → {}",
-                        roomId, currentCount, currentCount - 1);
-                return true;
+                int newCount = getParticipantCount(roomId);
+                log.info("참여자 수 감소 성공. roomId: {}, 현재: {}", roomId, newCount);
+                return newCount;
             }
 
-            return false;
+            return currentCount;
 
         } catch (Exception e) {
             log.error("참여자 수 감소 중 오류 발생. roomId: {}", roomId, e);
-            return false;
+            return -1;
         }
     }
 

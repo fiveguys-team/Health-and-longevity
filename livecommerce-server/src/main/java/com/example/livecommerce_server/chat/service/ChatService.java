@@ -17,7 +17,7 @@ public interface ChatService {
      * @param roomId 채팅방 ID
      * @return 업데이트 성공 여부
      */
-    boolean increaseParticipantCount(Long roomId);
+    int increaseParticipantCount(Long roomId);
 
     /**
      * 채팅방 참여자 수 감소
@@ -25,7 +25,7 @@ public interface ChatService {
      * @param roomId 채팅방 ID
      * @return 업데이트 성공 여부
      */
-    boolean decreaseParticipantCount(Long roomId);
+    int decreaseParticipantCount(Long roomId);
 
     /**
      * 채팅방 참여자 수 조회

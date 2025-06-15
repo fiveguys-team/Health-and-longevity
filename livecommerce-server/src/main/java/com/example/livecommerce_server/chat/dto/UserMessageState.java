@@ -27,6 +27,8 @@ public class UserMessageState {
      */
     private int consecutiveCount;
 
+
+
     /**
      * 채팅 차단이 해제되는 시간
      * null이면 차단되지 않은 상태
@@ -74,6 +76,7 @@ public class UserMessageState {
     public void block(int seconds) {
         this.blockedUntil = LocalDateTime.now().plusSeconds(seconds);
     }
+
 
 
 
