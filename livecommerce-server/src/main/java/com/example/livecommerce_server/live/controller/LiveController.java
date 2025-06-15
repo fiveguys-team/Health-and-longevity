@@ -4,11 +4,13 @@ import com.example.livecommerce_server.live.dto.LiveChatDTO;
 import com.example.livecommerce_server.live.dto.LiveDTO;
 import com.example.livecommerce_server.live.dto.LiveEndRequestDto;
 import com.example.livecommerce_server.live.dto.LiveProductDTO;
+import com.example.livecommerce_server.live.dto.LiveStatisticsDTO;
 import com.example.livecommerce_server.live.dto.ProductInfo;
 import com.example.livecommerce_server.live.dto.VendorProductDTO;
 import com.example.livecommerce_server.live.service.LiveProductService;
 import com.example.livecommerce_server.live.service.LiveService;
 import com.example.livecommerce_server.live.service.LiveStatisticsService;
+import com.example.livecommerce_server.live.vo.LiveStatisticsVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.openvidu.java.client.Connection;
@@ -313,6 +315,16 @@ public class LiveController {
 	public ResponseEntity<List<VendorProductDTO>> productList(@PathVariable("vendorId") String vendorId) {
 		List<VendorProductDTO> productList = liveProductService.findVendorProduct(vendorId);
 		return new ResponseEntity<>(productList, HttpStatus.OK);
+	}
+
+	/**
+	 * 입점업체의 통계 레포트 자료를 반환합니다.
+	 *
+	 */
+	@GetMapping("/api/sessions/{vendorId}/report")
+	public ResponseEntity<List<LiveStatisticsDTO>> vendorReportList(@PathVariable("vendorId") String vendorId) {
+		List<LiveStatisticsDTO> reportList = liveStatisticsService.findLiveStatisticsList(vendorId);
+		return new ResponseEntity<>(reportList, HttpStatus.OK);
 	}
 }
 
