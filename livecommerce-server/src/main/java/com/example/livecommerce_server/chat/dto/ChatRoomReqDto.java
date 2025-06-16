@@ -17,4 +17,8 @@ public class ChatRoomReqDto {
      */
     @NotNull
     private String liveId;
+
+    // 응답용 필드들
+    private Long roomId;
+    private String announcement;
 }

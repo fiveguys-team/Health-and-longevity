@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +57,8 @@ public class MemberController {
         roleCookie.setPath("/");
         roleCookie.setMaxAge(60 * 60);
 
-        Cookie nameCookie = new Cookie("name", member.getName());
+        String encodedName = URLEncoder.encode(member.getName(), StandardCharsets.UTF_8);
+        Cookie nameCookie = new Cookie("name", encodedName);
 //        nameCookie.setHttpOnly(true);
         nameCookie.setPath("/");
         nameCookie.setMaxAge(60 * 60);

@@ -29,4 +29,8 @@ public interface ChatRoomMapper {
      */
     int updateParticipantCount(@Param("roomId") Long roomId,
                                @Param("count") int count);
+
+
+    // 추가: liveId로 announcement 조회
+    String selectAnnouncementByLiveId(@Param("liveId") String liveId);
 }
