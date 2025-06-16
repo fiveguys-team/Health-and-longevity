@@ -53,7 +53,6 @@
             </div>
           </div>
 
-
           <!-- 오른쪽 컬럼: 상품 및 할인 설정 -->
           <div class="setup-column">
             <div class="form-group">
@@ -117,11 +116,7 @@
         </div>
 
         <div class="setup-footer">
-          <button
-              class="btn btn-primary start-button"
-              @click="enterBroadcast"
-              :disabled="!isFormValid"
-          >
+          <button class="start-button" @click="enterBroadcast" :disabled="!isFormValid">
             방송 시작하기
           </button>
         </div>
@@ -156,7 +151,7 @@
               </div>
             </div>
           </div>
-          <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
+          <button  @click="endStream">방송 종료</button>
         </div>
         <div class="chat-container">
           <ChatContainer/>
