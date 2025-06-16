@@ -6,7 +6,7 @@
       <div class="text-center w-full">
         <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">Cart</h2>
         <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
-          <li><router-link to="/">Home</router-link></li>
+          <li><router-link to="/">홈</router-link></li>
           <li>/</li>
           <li class="text-primary">Cart</li>
         </ul>
@@ -225,7 +225,6 @@ import IncDec from '@/components/inc-dec.vue';
 import FooterThree from '@/components/footer/footer-three.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
 
-import bg from '@/assets/img/shortcode/breadcumb.jpg'
 import cart1 from '@/assets/img/gallery/cart/cart-01.jpg'
 import cart2 from '@/assets/img/gallery/cart/cart-02.jpg'
 import cart3 from '@/assets/img/gallery/cart/cart-03.jpg'
