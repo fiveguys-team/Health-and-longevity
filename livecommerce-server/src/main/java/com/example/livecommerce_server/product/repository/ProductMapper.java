@@ -2,7 +2,9 @@ package com.example.livecommerce_server.product.repository;
 
 import com.example.livecommerce_server.product.dto.AdminProductDetailDTO;
 import com.example.livecommerce_server.product.dto.ProductDTO;
+import com.example.livecommerce_server.product.dto.ProductDetailUserDTO;
 import com.example.livecommerce_server.product.dto.ProductListDTO;
+import com.example.livecommerce_server.product.dto.UserProductDTO;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -25,5 +27,7 @@ public interface ProductMapper {
     List<ProductListDTO> selectProductsByStatus(@Param("status") String status); //  상태별 목록 조회 추가
     AdminProductDetailDTO findAdminProductDetailByCertNo(@Param("certNo") String certNo);
     List<ProductDTO> findProductsByVendorIdAndStatus(@Param("vendorId") Long vendorId, @Param("status") String status);
-
+    List<UserProductDTO> selectUserApprovedProducts();
+    List<UserProductDTO> selectUserApprovedProductsFiltered(@Param("status") String status, @Param("category") String category);
+    ProductDetailUserDTO selectProductDetailUserById(String id);
 }
