@@ -50,6 +50,9 @@ import {useRouter} from 'vue-router';
 import axios from 'axios';
 import NavbarOne from "@/components/navbar/navbar-one.vue";
 
+const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
+    : 'http://localhost:8080/';
+
 const router = useRouter();
 const searchQuery = ref('');
 const selectedCategory = ref('');
@@ -77,7 +80,7 @@ const filteredStreams = computed(() => {
 
 const fetchLiveStreams = async () => {
   try {
-    const response = await axios.get('/api/sessions', {
+    const response = await axios.get(`${APPLICATION_SERVER_URL}api/sessions`, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Accept': 'application/json; charset=utf-8'
@@ -86,6 +89,7 @@ const fetchLiveStreams = async () => {
 
     if (response.data && Array.isArray(response.data)) {
       streams.value = response.data;
+      console.log(streams.value);
     } else {
       // 테스트용 더미 데이터로 초기화
       streams.value = [
