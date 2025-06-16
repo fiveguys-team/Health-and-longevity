@@ -87,7 +87,9 @@
             <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up">
               <IncDec v-model="quantity" />
               <div class="flex gap-4 mt-4 sm:mt-6">
-                <router-link to="/cart" class="btn btn-outline">장바구니</router-link>
+                     <button class="btn btn-outline" @click="goToCart">
+                       장바구니
+                     </button>
                 <button class="btn btn-outline" @click="buyNow">구매</button>
               </div>
             </div>
@@ -120,10 +122,14 @@ import bg from '@/assets/img/shortcode/breadcumb.jpg' // ✅ 배경 이미지 im
 import Aos from 'aos'
 import { useOrderStore } from '@/modules/order/stores/order'
 import { detailReview } from '@/data/data'
+import {useAuthStore} from "@/modules/auth/stores/auth";
 
 const route = useRoute()
 const router = useRouter()
 const store = useOrderStore()
+
+const authStore = useAuthStore();
+const userId = authStore.id;
 
 const data = ref(null)
 const quantity = ref(1)
@@ -173,20 +179,54 @@ const hours = computed(() => 23 - new Date(now.value).getHours())
 const minutes = computed(() => 60 - new Date(now.value).getMinutes())
 const seconds = computed(() => 60 - new Date(now.value).getSeconds())
 
+const productId = computed(() => route.params.id)
+
+function goToCart() {
+  if (userId === null) {
+    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.')
+    router.push({
+      path: '/login',
+      query: { redirect: route.fullPath }
+    })
+    return
+  }
+  // 로그인 되어 있을 때 실제 장바구니 페이지로
+  router.push({ path: '/cart' })
+}
+
+
 // 구매 API
 async function buyNow() {
+
+  if (userId === null) {
+    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+    router.push({
+      path: '/login',
+      query: { redirect: route.fullPath }
+    });
+    return;
+  }
+
   try {
-    const res = await axios.get('http://localhost:8080/api/order', {
+    console.log('[✅ 호출 시작] productId:', productId.value, 'quantity:', quantity.value)
+
+    const response = await axios.get('http://localhost:8080/api/order', {
       params: {
-        productId: data.value.id,
+        productId: productId.value,
         quantity: quantity.value
       }
-    })
-    store.setOrderItem({ ...res.data, quantity: quantity.value })
-    router.push({ name: 'order' })
+    });
+
+    console.log('[🎯 API 응답]', response.data);
+
+    store.setOrderItem({ ...response.data, quantity: quantity.value });
+
+    console.log('[📦 저장된 주문정보]', store.orderItem);
+
+    router.push({ name: 'order' });
   } catch (err) {
-    alert('주문 요청 실패\n' + err)
-    console.log('주문 API 오류', err)
+    alert('API 호출 실패\n' + err);
+    console.error('[❌ Order API 호출 실패]', err);
   }
 }
 </script>
