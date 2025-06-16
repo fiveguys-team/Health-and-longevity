@@ -1,6 +1,7 @@
 package com.example.livecommerce_server.payment.mapper;
 
 import com.example.livecommerce_server.payment.dto.PaymentDTO;
+import com.example.livecommerce_server.payment.dto.PaymentRefundUpdateDTO;
 import com.example.livecommerce_server.payment.dto.PaymentStatusUpdateDTO;
 import com.example.livecommerce_server.payment.dto.PaymentSuccessUpdateDTO;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,5 +15,7 @@ public interface PaymentMapper {
     int updatePaymentSuccessByOrderId(PaymentSuccessUpdateDTO paymentUpdateDTO);
 
     int updatePaymentStatusByOrderId(PaymentStatusUpdateDTO paymentStatusUpdateDTO);
+
+    int updatePaymentRefundByPaymentKey(PaymentRefundUpdateDTO paymentRefundUpdateDTO);
 
 }
