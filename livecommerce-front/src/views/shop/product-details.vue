@@ -73,16 +73,8 @@
             <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up">
               <IncDec v-model="quantity" />
               <div class="flex gap-4 mt-4 sm:mt-6">
-                <router-link to="/cart" class="btn btn-outline">장바구니</router-link>
+                <button class="btn btn-outline" @click="addToCart">장바구니 담기</button>
                 <button class="btn btn-outline" @click="buyNow">구매</button>
-                <!--                <router-link :to="{-->
-                <!--                path: '/order',-->
-                <!--                query: {-->
-                <!--                  productId: data?.id,-->
-                <!--                  quantity-->
-                <!--                }-->
-                <!--                }" class="btn btn-outline">-->
-                <!--                  구매</router-link>-->
               </div>
             </div>
           </div>
@@ -113,6 +105,11 @@ import testImg from '@/assets/img/product/testimg.jpg';
 import Aos from 'aos';
 import { productList } from '@/data/data';
 import { detailReview } from '@/data/data';
+import {useAuthStore} from "@/modules/auth/stores/auth";
+
+
+const authStore = useAuthStore();
+const userId = authStore.id;
 
 onMounted(() => {
   Aos.init();
@@ -172,7 +169,26 @@ const store = useOrderStore()
 const productId = computed(() => parseInt(route.params.id, 10))
 const router = useRouter()
 
+async function addToCart() {
+  // 1) 로그인 체크
+  if (userId === null) {
+    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.')
+    router.push({path: '/login', query: {redirect: route.fullPath}})
+    return
+  }
+}
+
 async function buyNow() {
+
+  if (userId === null) {
+    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+    router.push({
+      path: '/login',
+      query: { redirect: route.fullPath }
+    });
+    return;
+  }
+
   try {
     console.log('[✅ 호출 시작] productId:', productId.value, 'quantity:', quantity.value)
 
