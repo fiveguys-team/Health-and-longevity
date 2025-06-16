@@ -31,8 +31,8 @@ public class ChatController {
      */
     @PostMapping("/room/auto-create")
     public ResponseEntity<?> autoCreateRoom(@RequestBody ChatRoomReqDto reqDto) {
-        chatService.createGroupRoom(reqDto.getLiveId());
-        return ResponseEntity.ok().body(reqDto);
+        ChatRoomReqDto response = chatService.createGroupRoom(reqDto.getLiveId());
+        return ResponseEntity.ok().body(response);
     }
 
 

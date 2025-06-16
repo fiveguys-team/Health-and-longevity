@@ -1,5 +1,6 @@
 package com.example.livecommerce_server.chat.service;
 
+import com.example.livecommerce_server.chat.dto.ChatRoomReqDto;
 import com.example.livecommerce_server.chat.mapper.ChatRoomMapper;
 import com.example.livecommerce_server.chat.vo.ChatRoom;
 import jakarta.transaction.Transactional;
@@ -28,7 +29,8 @@ public class ChatServiceImpl implements ChatService {
      * @return 생성된 채팅방의 roomId (PK)
      */
     @Override
-    public Long createGroupRoom(String liveId) {
+    public ChatRoomReqDto  createGroupRoom(String liveId) {
+        // 1. 채팅방 생성
         ChatRoom chatRoom = ChatRoom.builder()
                 .liveId(liveId)
                 .participantsCnt(0)
@@ -37,7 +39,17 @@ public class ChatServiceImpl implements ChatService {
                 .build();
 
         chatRoomMapper.insertChatRoom(chatRoom);
-        return chatRoom.getRoomId();
+
+        // 2. announcement 조회
+        String announcement = chatRoomMapper.selectAnnouncementByLiveId(liveId);
+
+        // 3. 응답 DTO 생성
+        ChatRoomReqDto response = new ChatRoomReqDto();
+        response.setRoomId(chatRoom.getRoomId());
+        response.setLiveId(liveId);
+        response.setAnnouncement(announcement);
+
+        return response;
     }
 
     /**

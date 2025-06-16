@@ -180,8 +180,21 @@
           <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
         </div>
         <div class="chat-container">
-          <ChatContainer/>
-        </div>
+  <!-- 채팅방 ID가 생성된 경우에만 ChatContainer를 렌더링 -->
+  <ChatContainer 
+    v-if="chatRoomId"
+    :room-id="chatRoomId"
+    :initial-announcement="chatAnnouncement"
+  />
+  
+  <!-- 채팅방 생성 중 또는 실패 시 표시 -->
+  <div v-else class="chat-loading">
+    <div class="loading-message">
+      <i class="fas fa-spinner fa-spin"></i>
+      채팅방을 준비하고 있습니다...
+    </div>
+  </div>
+</div>
       </div>
     </div>
 
@@ -204,6 +217,7 @@ import UserVideo from '@/modules/live/components/UserVideo.vue';
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
     : 'http://localhost:8080/';
 
+    
 // OpenVidu 관련 상태
 const OV = ref(undefined);
 const session = ref(undefined);
@@ -223,6 +237,11 @@ const discountRate = ref(0); // 할인율
 const viewerCount = ref(0); // 시청자 수 상태 관리
 const startTime = ref('');
 const category = ref('');
+
+// 1. 채팅방 정보를 저장할 ref 추가
+const liveId = ref(null);
+const chatRoomId = ref(null);        // 생성된 채팅방 ID
+const chatAnnouncement = ref('');    // 채팅방 공지사항
 
 // 방송 상태 관리
 // const isLive = ref(false);
@@ -299,7 +318,10 @@ const enterBroadcast = async () => {
         type: 'host',
         title: streamTitle.value,
         thumbnail: thumbnailFile.value,
-        products: discountedProducts.value
+        products: discountedProducts.value,
+        liveId: liveId.value,              // 이제 접근 가능
+        chatRoomId: chatRoomId.value,       // 이미 ref로 되어 있음
+        announcement: chatAnnouncement.value
       }
     });
 
@@ -385,14 +407,38 @@ const getToken = async () => {
   return await createToken(sessionId);
 };
 
+// 2. 채팅방 생성 API 호출 함수 추가
+/**
+ * 라이브 시작 시 채팅방을 자동으로 생성합니다.
+ * 
+ * @param {string} liveId - 생성된 라이브 ID
+ * @returns {Promise<Object>} 채팅방 정보 (roomId, announcement)
+ */
+const createChatRoom = async (liveId) => {
+  try {
+    const response = await axios.post(
+      `${APPLICATION_SERVER_URL}api/chat/room/auto-create`,
+      { liveId },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    
+    console.log('채팅방 생성 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('채팅방 생성 실패:', error);
+    throw error;
+  }
+};
+
 // [세션 생성 후 세션ID를 반환]
 // customSessionId를 통해 세션 생성 API를 호출하면 
 // 백엔드에서 세션 객체를 생성하고 세션ID를 반환한다. 
+// 4. createSession 함수 수정 - liveId 받아서 채팅방 생성
 const createSession = async () => {
   // FormData 객체 생성
   const formData = new FormData();
 
-  // 기본 세션 정보
+  // 기본 세션 정보 설정
   formData.append('title', streamTitle.value);
   formData.append('announcement', announcement.value);
   if (thumbnailFile.value) {
@@ -404,16 +450,38 @@ const createSession = async () => {
   formData.append('vendorId', vendorId);
   formData.append('category', category.value);
 
+  // 1단계: 라이브 세션 생성
   const response = await axios.post(
-      APPLICATION_SERVER_URL + 'api/sessions',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
+    APPLICATION_SERVER_URL + 'api/sessions',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       }
+    }
   );
-  console.log("여기" + response.data.sessionId);
+  
+  console.log("라이브 생성 응답:", response.data);
+  
+  // 2단계: 반환받은 liveId로 채팅방 생성
+  liveId.value = response.data.liveId;  //  중요: 서버에서 반환한 liveId
+  
+  try {
+    // 채팅방 자동 생성 API 호출
+    const chatRoomData = await createChatRoom(liveId.value);
+    
+    // 채팅방 정보 저장 (ChatContainer에 전달할 데이터)
+    chatRoomId.value = chatRoomData.roomId;
+    chatAnnouncement.value = chatRoomData.announcement || announcement.value;
+    
+    console.log('채팅방 생성 완료 - roomId:', chatRoomId.value);
+  } catch (error) {
+    console.error('채팅방 생성 실패:', error);
+    // 채팅방 생성 실패해도 방송은 진행 (옵션)
+    alert('채팅 기능을 사용할 수 없습니다. 방송은 계속 진행됩니다.');
+  }
+  
+  // 3단계: sessionId 반환 (OpenVidu 연결용)
   return response.data.sessionId;
 };
 
@@ -865,5 +933,26 @@ select option:checked {
   font-size: 0.9em;
   margin-top: 8px;
   margin-bottom: 0;
+}
+/* 채팅 로딩 상태 스타일 */
+.chat-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.loading-message {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.loading-message i {
+  margin-right: 8px;
+  font-size: 16px;
 }
 </style>
