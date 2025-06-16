@@ -1,6 +1,7 @@
 <template>
     <div>
         <NavbarOne />
+
         <div class="flex">
             <div class="w-1/2 hidden md:block lg:flex-1">
                 <img class="h-full object-cover" :src="bg" alt="forget password">
@@ -30,17 +31,22 @@
             </div>
         </div>
         <FooterOne />
+
         <ScrollToTop />
+
     </div>
 </template>
+
 <script setup>
 import { onMounted } from 'vue';
 
 import NavbarOne from '@/components/navbar/navbar-one.vue';
 import FooterOne from '@/components/footer/footer-one.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
+
 import bg from '@/assets/img/bg/forget-pass.jpg'
 import Aos from 'aos';
+
 onMounted(() => {
     Aos.init()
 })
