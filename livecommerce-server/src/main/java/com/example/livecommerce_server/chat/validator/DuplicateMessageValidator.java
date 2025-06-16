@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,14 +25,14 @@ public class DuplicateMessageValidator  {
     // 설정값들 (추후 application.yml로 외부화 가능)
     private static final int CONSECUTIVE_LIMIT = 3;      // 연속 동일 메시지 제한 횟수
     private static final int DELAY_SECONDS = 3;          // 2회째부터 적용할 딜레이(초)
-    private static final int BLOCK_SECONDS = 5;          // 3회째 차단 시간(초)
+    private static final int BLOCK_SECONDS = 30;          // 3회째 차단 시간(초)
 
 
     /**
      * 메시지 전송 가능 여부를 검증합니다.
      *
-     * @param userId 사용자 ID
-     * @param roomId 채팅방 ID
+     * @param userId  사용자 ID
+     * @param roomId  채팅방 ID
      * @param message 전송하려는 메시지
      * @return 검증 결과
      */
@@ -40,14 +41,21 @@ public class DuplicateMessageValidator  {
         String userKey = generateUserKey(userId, roomId);
 
         // 2. 사용자의 현재 상태 조회
-        UserMessageState state = userStates.computeIfAbsent(userKey,
+        UserMessageState state = userStates.computeIfAbsent(
+                userKey,
                 k -> UserMessageState.builder().build()
         );
 
         // 3. 차단 상태 확인
         if (state.isBlocked()) {
-            log.warn("차단된 사용자의 메시지 시도 - userId: {}, roomId: {}", userId, roomId);
-            return ValidationResult.blocked("동일한 메시지를 반복 전송하여 일시적으로 채팅이 제한됩니다.");
+            long remaining = Duration
+                    .between(LocalDateTime.now(), state.getBlockedUntil())
+                    .getSeconds();
+            log.warn("차단된 사용자의 메시지 시도 - userId: {}, roomId: {}, 남은 차단 시간: {}초",
+                    userId, roomId, remaining);
+            return ValidationResult.blocked(
+                    "도배로 인해 " + remaining + "초 동안 채팅이 제한됩니다."
+            );
         }
 
         // 4. 첫 메시지이거나 다른 메시지인 경우 → 상태 초기화
@@ -65,20 +73,25 @@ public class DuplicateMessageValidator  {
                 userId, state.getConsecutiveCount(), message);
 
         // 6. 연속 횟수에 따른 처리
-        if (state.getConsecutiveCount() >= CONSECUTIVE_LIMIT) {
-            // 3회째 → 5초 차단
+        if (state.getConsecutiveCount() == 2) {
+            // 2회째 → 지연
+            log.info("딜레이 적용 - userId: {}, delaySeconds: {}",
+                    userId, DELAY_SECONDS);
+            return ValidationResult.delayed(DELAY_SECONDS);
+
+        } else if (state.getConsecutiveCount() >= CONSECUTIVE_LIMIT) {
+            // 3회째 → 차단
             state.block(BLOCK_SECONDS);
             log.warn("사용자 차단 - userId: {}, blockSeconds: {}", userId, BLOCK_SECONDS);
-            return ValidationResult.blocked("동일한 메시지를 반복 전송하여 일시적으로 채팅이 제한됩니다.");
-        } else if (state.getConsecutiveCount() == 2) {
-            // 2회째 → 3초 딜레이
-            log.info("딜레이 적용 - userId: {}, delaySeconds: {}", userId, DELAY_SECONDS);
-            return ValidationResult.delayed(DELAY_SECONDS);
+            return ValidationResult.blocked(
+                    BLOCK_SECONDS + "초 동안 채팅이 제한됩니다."
+            );
         }
 
-        // 7. 1회째는 그냥 통과
+        // 1회째는 그냥 통과
         return ValidationResult.allowed();
     }
+
 
     /**
      * 사용자별 고유 키 생성

@@ -2,9 +2,12 @@
     <div>
         <NavbarOne/>
 
-        <div>
-         구현 해야될 부분
-        </div> 
+        <div class="text-center my-10">
+            <button @click="handlePingTest" class="btn btn-theme-solid">
+                Ping 테스트 요청 보내기
+            </button>
+            <p class="mt-4 text-lg text-green-600" v-if="responseMessage">{{ responseMessage }}</p>
+        </div>
 
         <FooterThree/>
 
@@ -14,8 +17,8 @@
 </template>
 
 <script setup>
-    import { onMounted } from 'vue';
-
+    import { onMounted, ref } from 'vue';
+    import axiosInstance from "@/api/axios";
 
     import NavbarOne from '@/components/navbar/navbar-one.vue';
     // import FooterOne from '@/components/footer/footer-one.vue';
@@ -25,7 +28,7 @@
 
     import 'swiper/swiper-bundle.css';
 
-   
+
     import Aos from 'aos';
     import 'aos/dist/aos.css';
 
@@ -33,5 +36,16 @@
         Aos.init()
     });
 
+    const responseMessage = ref('');
 
+    const handlePingTest = async () => {
+        try {
+            const res = await axiosInstance.get('/test/ping');
+            responseMessage.value = res.data.message;
+            console.log(res.data);
+        } catch (err) {
+            console.error(err);
+            responseMessage.value = '요청 실패';
+        }
+    };
 </script>

@@ -3,8 +3,10 @@ package com.example.livecommerce_server.live.mapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.livecommerce_server.live.vo.LiveProductVO;
+import com.example.livecommerce_server.live.vo.VendorProductVO;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Slf4j
 @Transactional
 @ActiveProfiles("test")
 class LiveProductMapperTest {
@@ -48,6 +51,19 @@ class LiveProductMapperTest {
 		list.add(vo3);
 
 		liveProductMapper.insertLiveProduct(list);
+	}
+
+	@Test
+	@DisplayName("입점업체 상품 리스트를 반환하는 메서드 ")
+	void selectVendorProduct() {
+		// when
+		List<VendorProductVO> list = liveProductMapper.selectVendorProduct("1");
+
+		list.forEach(System.out::println);
+		list.forEach(vo -> log.info("list = {}", vo));
+
+
+
 	}
 
 }

@@ -50,7 +50,7 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
             memberRepository.update(member);
         }
         // jwt 토큰 생성
-        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
+        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(),  member.getUserId().toString(), member.getName());
         // 클라이언트 redirect 방식으로 token 전달
 //        response.sendRedirect("http://localhost:3000?token=" + jwtToken);
         Cookie jwtCookie = new Cookie("token", jwtToken);
@@ -60,6 +60,14 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         Cookie roleCookie = new Cookie("role", member.getRole().toString());
         roleCookie.setPath("/");
         response.addCookie(roleCookie);
+
+        Cookie nameCookie = new Cookie("name", member.getName());
+        nameCookie.setPath("/");
+        response.addCookie(nameCookie);
+
+        Cookie idCookie = new Cookie("id", member.getUserId().toString());
+        idCookie.setPath("/");
+        response.addCookie(idCookie);
 
         response.sendRedirect("http://localhost:3000");
     }

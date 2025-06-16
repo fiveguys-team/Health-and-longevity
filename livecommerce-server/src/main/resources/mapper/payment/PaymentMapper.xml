@@ -23,4 +23,35 @@
                      #{paymentStatusCode}
                  )
     </insert>
+
+    <update id="updatePaymentSuccessByOrderId" parameterType="com.example.livecommerce_server.payment.dto.PaymentSuccessUpdateDTO">
+        UPDATE payment_d
+        SET
+            payment_status_code = #{status},
+            paid_at = #{approvedAt},
+            payment_method = #{method},
+            payment_payload = #{payload},
+            payment_key = #{paymentKey}
+        WHERE payments_id = (
+            SELECT payments_id FROM orders_m WHERE order_id = #{orderId}
+        )
+    </update>
+
+    <update id="updatePaymentStatusByOrderId" parameterType="com.example.livecommerce_server.payment.dto.PaymentStatusUpdateDTO">
+        UPDATE payment_d
+        SET payment_status_code = #{status}
+        WHERE payments_id = (
+            SELECT payments_id
+            FROM orders_m
+            WHERE order_id = #{orderId}
+        )
+    </update>
+
+    <update id="updatePaymentRefundByPaymentKey" parameterType="com.example.livecommerce_server.payment.dto.PaymentRefundUpdateDTO">
+        UPDATE payment_d
+        SET
+            payment_status_code = #{status},
+            payment_payload = #{payload}
+        WHERE payment_key = #{paymentKey}
+    </update>
 </mapper>

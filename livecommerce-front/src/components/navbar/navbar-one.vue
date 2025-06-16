@@ -41,7 +41,7 @@
                       </li>
 
                         <li :class="current === '/contact' ? 'active' : ''"><router-link to="/contact">입점신청</router-link></li>
-                        <li :class="current === '/login' ? 'active' : ''" class="lg:hidden"><router-link to="/login">로그인</router-link></li>
+<!--                        <li :class="current === '/login' ? 'active' : ''" class="lg:hidden"><router-link to="/login">로그인</router-link></li>-->
                     </ul>
                 </div>
                 <NavMenuOne :toggle="toggle" @toggle-change="toggle = $event"/>
@@ -68,6 +68,8 @@ const router = useRoute();
 const current = ref(router.path);
 
 const scroll = ref(false)
+const authStore = useAuthStore();
+const role = computed(() => authStore.role);
 
 const handleScroll = () => {
     if (window.scrollY >= 50) {
@@ -81,9 +83,4 @@ onMounted(()=>{
     window.scrollTo(0,0)
     window.addEventListener('scroll', handleScroll)
 })
-
-const authStore = useAuthStore();
-const role = computed(() => authStore.role);
-
-
 </script>

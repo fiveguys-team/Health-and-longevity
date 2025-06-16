@@ -18,6 +18,11 @@ public class OrderPageDTO {
     private String productImage;
     private String categoryName;
 
+    // 🆕 추가 필드
+    private Integer originalPrice;     // 할인 전 가격 (개당)
+    private Integer discountRate;      // 할인률 (예: 10은 10%)
+    private Integer discountAmount;    // 할인 금액 (개당 차감된 금액)
+
 
     // 👇 추가 필드 (계산용)
     private Integer quantity;      // 요청한 수량
