@@ -1,17 +1,22 @@
 <template>
   <div :class="classList">
-    <div v-for="(item, index) in productList" :key="index" class="group">
-      <!-- 상품 이미지 + 링크 -->
+    <div
+        v-for="(item, index) in filteredList"
+        :key="index"
+        class="group"
+    >
+      <!-- ✅ 상품 이미지 + 링크 -->
       <div class="relative overflow-hidden">
         <router-link :to="`/product-details/${item.id}`">
           <img
               class="w-full transform group-hover:scale-110 duration-300"
-              :src="item.image"
+              :src="getImageUrl(item.image)"
+              @error="onImageError"
               alt="shop"
           />
         </router-link>
 
-        <!-- 상품 태그 -->
+        <!-- ✅ 상품 태그 -->
         <div
             v-if="item.tag"
             class="absolute z-10 top-7 left-7 pt-[10px] pb-2 px-3 rounded-[30px] font-primary text-[14px] text-white font-semibold leading-none"
@@ -23,14 +28,16 @@
         >
           {{ item.tag }}
         </div>
-
-
       </div>
 
-      <!-- 상품 정보 -->
+      <!-- ✅ 상품 정보 -->
       <div class="md:px-2 lg:px-4 xl:px-6 lg:pt-6 pt-5 flex gap-4 md:gap-5 flex-col">
-        <h4 class="font-medium leading-none dark:text-white text-lg">{{ item.price }}</h4>
-        <p class="text-sm text-gray-500 dark:text-gray-300">{{ item.vendor }}</p>
+        <h4 class="font-medium leading-none dark:text-white text-lg">
+          {{ item.price.toLocaleString() }}원
+        </h4>
+        <p class="text-sm text-gray-500 dark:text-gray-300">
+          {{ item.vendor }}
+        </p>
 
         <div>
           <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
@@ -39,24 +46,21 @@
             </router-link>
           </h5>
 
-          <div class="flex items-center gap-1">
-            <div v-for="n in 5" :key="n" class="relative w-5 h-5">
-              <!-- 빈 별 -->
+          <!-- ✅ 리뷰 별점 (미구현 상태) -->
+          <div class="flex items-center gap-1 mt-1">
+            <div
+                v-for="n in 5"
+                :key="n"
+                class="relative w-5 h-5"
+            >
               <i class="fa fa-star text-gray-300 absolute left-0 top-0 w-full h-full"></i>
-
-              <!-- 채워진 별 -->
               <i
                   class="fa fa-star text-yellow-400 absolute left-0 top-0 h-full overflow-hidden"
-                  :style="{ width: getStarFill(n, item.averageRating) + '%' }"
+                  style="width: 0%"
               ></i>
             </div>
-
-            <span v-if="item.reviewCount > 0" class="ml-2 text-sm text-gray-500">
-    ({{ item.reviewCount }}개 리뷰)
-  </span>
-            <span v-else class="ml-2 text-sm text-gray-400">(0)</span>
+            <span class="ml-2 text-sm text-gray-400">(0)</span>
           </div>
-
         </div>
       </div>
     </div>
@@ -64,15 +68,24 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, computed } from 'vue'
 
-defineProps({
+const props = defineProps({
   productList: Array,
   classList: String
 })
 
-function getStarFill(starIndex, rating) {
-  const fill = Math.min(Math.max(rating - (starIndex - 1), 0), 1);
-  return fill * 100; // 0 ~ 100%
+const filteredList = computed(() =>
+    props.productList.filter(item => item.id)
+)
+
+function getImageUrl(imageName) {
+  if (!imageName) return '/no-image.png' // 이미지 없으면 대체 이미지
+  return `/uploads/images/${imageName}`
+}
+
+// ✅ 이미지 로딩 실패 시 대체 이미지로 설정
+function onImageError(event) {
+  event.target.src = '/no-image.png'
 }
 </script>

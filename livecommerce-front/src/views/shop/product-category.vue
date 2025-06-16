@@ -4,14 +4,14 @@
 
     <!-- 배경 이미지 + 타이틀 -->
     <div
-        class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70"
+        class="flex items-center gap-4 flex-wrap bg-overlay py-16 sm:py-20 before:bg-title before:bg-opacity-70"
         :style="{ backgroundImage: 'url(' + bg + ')' }"
     >
       <div class="text-center w-full">
-        <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">
+        <h2 class="text-white text-4xl md:text-5xl font-semibold leading-none">
           {{ decodeURIComponent(categoryTitle) }}
         </h2>
-        <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
+        <ul class="flex justify-center gap-2 text-base md:text-lg text-white mt-4">
           <li><router-link to="/">고민별</router-link></li>
           <li>/</li>
           <li class="text-primary">{{ decodeURIComponent(categoryTitle) }}</li>
@@ -20,30 +20,30 @@
     </div>
 
     <!-- 상품 리스트 -->
-    <div class="s-py-100">
+    <div class="pt-20 pb-24 bg-white">
       <div class="container-fluid">
-        <div data-aos="fade-up" data-aos-delay="200">
+        <div class="max-w-[1720px] mx-auto" data-aos="fade-up" data-aos-delay="200">
           <LayoutOne
-              :classList="'max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8'"
+              v-if="productList.length > 0"
+              :classList="'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8'"
               :productList="productList"
           />
 
-          <!-- 페이징 (더미) -->
-          <div class="mt-10 md:mt-12 flex items-center justify-center gap-[10px]">
-            <router-link to="#" class="text-title dark:text-white text-xl">
-              <span class="lnr lnr-arrow-left"></span>
-            </router-link>
-            <router-link
+          <div v-else class="text-center text-gray-400 text-lg mt-20">
+            해당 카테고리의 승인된 상품이 없습니다 😥
+          </div>
+
+          <!-- 페이징 (더미 UI) -->
+          <div class="mt-14 flex items-center justify-center gap-2">
+            <button class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black">&lt;</button>
+            <button
                 v-for="n in 10"
                 :key="n"
-                to="#"
-                class="w-8 sm:w-10 h-8 sm:h-10 bg-title bg-opacity-5 flex items-center justify-center leading-none text-base sm:text-lg font-medium text-title hover:bg-opacity-100 hover:text-white dark:bg-white dark:bg-opacity-5 dark:text-white dark:hover:bg-opacity-100 dark:hover:text-title"
+                class="w-10 h-10 flex items-center justify-center border rounded text-gray-700 hover:bg-gray-200"
             >
               {{ String(n).padStart(2, '0') }}
-            </router-link>
-            <router-link to="#" class="text-title dark:text-white text-xl">
-              <span class="lnr lnr-arrow-right"></span>
-            </router-link>
+            </button>
+            <button class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black">&gt;</button>
           </div>
         </div>
       </div>
@@ -57,23 +57,33 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import axios from '@/utils/axios'
 import Aos from 'aos'
 
-// ✅ 컴포넌트
 import NavbarOne from '@/components/navbar/navbar-one.vue'
 import LayoutOne from '@/components/product/layout-one.vue'
 import FooterOne from '@/components/footer/footer-one.vue'
 import ScrollToTop from '@/components/scroll-to-top.vue'
 
-// ✅ 배경 이미지
 import bg from '@/assets/img/shortcode/breadcumb.jpg'
-
-// ✅ 데이터 import
-import { productList as allProducts, detailReview } from '@/data/data'
 
 const route = useRoute()
 const categoryTitle = computed(() => route.params.category || '전체')
 const productList = ref([])
+
+const categoryMap = {
+  'blood-pressure': '혈압',
+  'eye': '눈',
+  'eye-health': '눈',
+  'joint': '뼈/관절/연결성분',
+  'joint-health': '뼈/관절/연결성분',
+  'digestion': '장건강',
+  'gut-health': '장건강',
+  'memory': '기억력',
+  'immune': '면역력',
+  'fatigue': '피로개선',
+  'supplement': '영양보충'
+}
 
 onMounted(() => {
   Aos.init()
@@ -82,22 +92,30 @@ onMounted(() => {
 
 watch(() => route.params.category, fetchProductList)
 
-function fetchProductList() {
-  const category = route.params.category
-  const filtered = category
-      ? allProducts.filter(p => p.category === category)
-      : allProducts
+async function fetchProductList() {
+  try {
+    const category = route.params.category
+    const korCategory = categoryMap[category]
 
-  productList.value = filtered.map(product => {
-    const reviews = detailReview.filter(r => r.product === product.name)
-    const total = reviews.reduce((sum, r) => sum + r.rating, 0)
-    const avg = reviews.length ? (total / reviews.length).toFixed(1) : '0.0'
-
-    return {
-      ...product,
-      reviewCount: reviews.length,
-      averageRating: avg,
+    if (!korCategory) {
+      productList.value = []
+      return
     }
-  })
+
+    const res = await axios.get('/products', {
+      params: {
+        status: 'APPROVED',
+        category: korCategory
+      }
+    })
+
+    productList.value = res.data.map(product => ({
+      ...product,
+      reviewCount: product.reviewCount || 0,
+      averageRating: product.averageRating || '0.0'
+    }))
+  } catch (err) {
+    console.error('❌ 상품 목록 불러오기 실패', err)
+  }
 }
 </script>

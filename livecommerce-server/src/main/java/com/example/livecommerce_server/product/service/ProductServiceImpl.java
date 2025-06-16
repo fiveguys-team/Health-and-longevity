@@ -4,8 +4,10 @@ package com.example.livecommerce_server.product.service;
 import com.example.livecommerce_server.product.dto.AdminProductDetailDTO;
 import com.example.livecommerce_server.product.dto.ProductDetailDTO;
 import com.example.livecommerce_server.product.dto.ProductDTO;
+import com.example.livecommerce_server.product.dto.ProductDetailUserDTO;
 import com.example.livecommerce_server.product.dto.ProductListDTO;
 import com.example.livecommerce_server.product.dto.ProductRegisterRequestDTO;
+import com.example.livecommerce_server.product.dto.UserProductDTO;
 import com.example.livecommerce_server.product.repository.ProductDetailMapper;
 import com.example.livecommerce_server.product.repository.ProductMapper;
 import java.util.List;
@@ -178,6 +180,19 @@ public class ProductServiceImpl implements ProductService {
 
     public List<ProductListDTO> getProductsByStatus(String status) {
         return productMapper.selectProductsByStatus(status);
+    }
+
+    public List<UserProductDTO> getUserApprovedProducts() {
+        return productMapper.selectUserApprovedProducts();
+    }
+    @Override
+    public List<UserProductDTO> getUserProductsFiltered(String status, String category) {
+        return productMapper.selectUserApprovedProductsFiltered(status, category);
+    }
+
+    @Override
+    public ProductDetailUserDTO getProductDetailForUser(String id) {
+        return productMapper.selectProductDetailUserById(id);
     }
 
 }
