@@ -9,5 +9,6 @@ public interface PaymentService {
     String addTempPaymentAndReturnId();
     PaymentConfirmResponse confirmPayment(PaymentConfirmRequest req) throws JsonProcessingException;
     boolean cancelPayment(PaymentStatusUpdateDTO dto);
+    void modifyStockCountByOrderId(String orderId);
 
 }

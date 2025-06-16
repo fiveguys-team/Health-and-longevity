@@ -2,6 +2,7 @@ package com.example.livecommerce_server.payment.service;
 
 import com.example.livecommerce_server.order.dto.OrderStatusUpdateDTO;
 import com.example.livecommerce_server.order.mapper.OrderMapper;
+import com.example.livecommerce_server.order.service.OrderService;
 import com.example.livecommerce_server.payment.dto.*;
 import com.example.livecommerce_server.payment.mapper.PaymentMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -80,7 +83,25 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
         paymentMapper.updatePaymentSuccessByOrderId(paymentDTO);
 
+        try {
+            if ("DONE".equalsIgnoreCase(result.getStatus())) {
+                modifyStockCountByOrderId(req.getOrderId());
+            }
+        } catch (Exception e) {
+            // 재고 차감 실패 → 결제 취소 시도
+            refundPayment(result.getPaymentKey(), "재고부족"); // 직접 구현 필요
+            throw new IllegalStateException("결제는 완료되었으나 재고 차감 실패로 인해 결제 취소 처리됨", e);
+        }
+
         return result;
+    }
+
+    @Override
+    public void modifyStockCountByOrderId(String orderId) {
+        int affected = orderMapper.updateStockCountByOrderId(orderId);
+        if (affected == 0) {
+            throw new IllegalStateException("재고 부족 또는 재고 차감 실패");
+        }
     }
 
     @Override
@@ -96,6 +117,31 @@ public class PaymentServiceImpl implements PaymentService {
         );
 
         return updatedPayment > 0 && updatedOrder > 0;
+    }
+
+    public void refundPayment(String paymentKey, String reason) {
+        HttpHeaders headers = new HttpHeaders();
+        String secretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
+        String encodedAuth = Base64.getEncoder().encodeToString((secretKey + ":").getBytes());
+        headers.set("Authorization", "Basic " + encodedAuth);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, String> cancelPayload = new HashMap<>();
+        cancelPayload.put("cancelReason", reason != null ? reason : "재고 부족으로 인한 자동 취소");
+
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(cancelPayload, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "https://api.tosspayments.com/v1/payments/" + paymentKey + "/cancel",
+                HttpMethod.POST,
+                entity,
+                String.class
+        );
+
+        // ✅ 콘솔에 응답 로그 출력
+        System.out.println("=== 결제 취소 응답 ===");
+        System.out.println("Status: " + response.getStatusCode());
+        System.out.println("Body: " + response.getBody());
     }
 
     private String nowCompactString() {

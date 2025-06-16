@@ -173,19 +173,26 @@ const productId = computed(() => parseInt(route.params.id, 10))
 const router = useRouter()
 
 async function buyNow() {
-  try{
+  try {
+    console.log('[✅ 호출 시작] productId:', productId.value, 'quantity:', quantity.value)
+
     const response = await axios.get('http://localhost:8080/api/order', {
-      params : {
+      params: {
         productId: productId.value.toString(),
         quantity: quantity.value
       }
-    })
-    store.setOrderItem({...response.data, quantity: quantity.value})
-    console.log('Order stored:', store.orderItem)
-    router.push({name:'order'})
+    });
+
+    console.log('[🎯 API 응답]', response.data);
+
+    store.setOrderItem({ ...response.data, quantity: quantity.value });
+
+    console.log('[📦 저장된 주문정보]', store.orderItem);
+
+    router.push({ name: 'order' });
   } catch (err) {
     alert('API 호출 실패\n' + err);
-    console.log('Order API 호출 실패', err)
+    console.error('[❌ Order API 호출 실패]', err);
   }
 }
 </script>
