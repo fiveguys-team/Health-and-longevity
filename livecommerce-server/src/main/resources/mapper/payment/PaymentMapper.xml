@@ -46,4 +46,12 @@
             WHERE order_id = #{orderId}
         )
     </update>
+
+    <update id="updatePaymentRefundByPaymentKey" parameterType="com.example.livecommerce_server.payment.dto.PaymentRefundUpdateDTO">
+        UPDATE payment_d
+        SET
+            payment_status_code = #{status},
+            payment_payload = #{payload}
+        WHERE payment_key = #{paymentKey}
+    </update>
 </mapper>

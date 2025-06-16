@@ -20,4 +20,8 @@ public interface OrderMapper {
     int insertOrderItems(List<OrderItemInsertDTO>  orderItemInsertDTOs);
 
     int updateOrderStatusByOrderId(OrderStatusUpdateDTO dto);
+
+    int updateStockCountByOrderId(String orderId);
+
+    Integer selectDiscountRateByProductIdIfLiveOn(String productId);
 }
