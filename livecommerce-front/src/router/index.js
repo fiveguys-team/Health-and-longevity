@@ -105,6 +105,15 @@ const routes = [
   { path: '/product-details/:id', component: ProductDetails },
   {path: '/shop/:category', component: ProductCategory},
   { path: '/product/:category', component: ProductCategory },
+  { path: '/vendor/:vendorSlug', component: Vendor },
+  { path: '/vendor-category', component: () => import('@/views/shop/vendor-category.vue')},
+
+  {
+    path: '/vendor/:vendorId/products',
+    name: 'VendorProductList',
+    component: () => import('@/views/shop/vendor-products.vue'),
+    props: true
+  },
 
   //입점업체
   //{ path: '/partner/product/register', component: ProductRegister },
