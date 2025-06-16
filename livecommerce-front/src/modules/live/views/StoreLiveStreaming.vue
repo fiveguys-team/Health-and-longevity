@@ -21,36 +21,18 @@
           <div class="setup-column">
             <div class="form-group">
               <label class="form-label">방송 제목</label>
-              <input
-                  v-model="streamTitle"
-                  class="form-control"
-                  type="text"
-                  placeholder="방송 제목을 입력해주세요"
-                  required
-              />
+              <input v-model="streamTitle" class="form-control" type="text" placeholder="방송 제목을 입력해주세요" required/>
             </div>
 
             <div class="form-group">
               <label class="form-label">공지 사항</label>
-              <textarea
-                  v-model="announcement"
-                  class="form-control"
-                  placeholder="시청자들에게 전달할 공지사항을 입력해주세요"
-                  rows="3"
-                  required
-              ></textarea>
+              <textarea v-model="announcement" class="form-control" placeholder="시청자들에게 전달할 공지사항을 입력해주세요" rows="3" required></textarea>
             </div>
 
             <div class="form-group">
               <label class="form-label">썸네일 이미지</label>
               <div class="thumbnail-upload">
-                <input
-                    @change="handleThumbnailChange"
-                    class="form-control"
-                    type="file"
-                    accept="image/*"
-                    required
-                />
+                <input @change="handleThumbnailChange" class="form-control" type="file" accept="image/*" required/>
                 <div class="thumbnail-preview-container" v-if="thumbnailPreview">
                   <img :src="thumbnailPreview" class="thumbnail-preview" alt="썸네일 미리보기"/>
                   <button class="remove-thumbnail" @click="removeThumbnail">✕</button>
@@ -58,11 +40,10 @@
               </div>
             </div>
 
-
             <div class="form-group">
               <label class="form-label">카테고리 선택</label>
               <select v-model="category" class="form-control discount-select">
-                <option disabled :value="0">카테고리를 선택해주세요</option>
+                <option disabled value="">카테고리를 선택해주세요</option>
                 <option value="혈압">혈압</option>
                 <option value="눈">눈</option>
                 <option value="뼈/관절/연골">뼈/관절/연골</option>
@@ -70,8 +51,6 @@
                 <option value="영양보충">영양보충</option>
               </select>
             </div>
-
-
           </div>
 
 
