@@ -2,7 +2,7 @@
 package com.example.livecommerce_server.product.service;
 
 import com.example.livecommerce_server.product.dto.VendorDTO;
-import com.example.livecommerce_server.product.dto.VendorProductDTO;
+import com.example.livecommerce_server.product.dto.ProductVendorDTO;
 import com.example.livecommerce_server.product.repository.VendorMapper;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public List<VendorProductDTO> getProductsByVendorId(Long vendorId) {
+    public List<ProductVendorDTO> getProductsByVendorId(Long vendorId) {
         return vendorMapper.findProductsByVendorId(vendorId);
     }
 }

@@ -2,7 +2,7 @@
 package com.example.livecommerce_server.product.controller;
 
 import com.example.livecommerce_server.product.dto.VendorDTO;
-import com.example.livecommerce_server.product.dto.VendorProductDTO;
+import com.example.livecommerce_server.product.dto.ProductVendorDTO;
 import com.example.livecommerce_server.product.service.VendorService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -26,7 +26,7 @@ public class VendorController {
 
     // 특정 입점업체가 등록한 상품 목록 조회
     @GetMapping("/{vendorId}/products")
-    public List<VendorProductDTO> getProductsByVendorId(@PathVariable Long vendorId) {
+    public List<ProductVendorDTO> getProductsByVendorId(@PathVariable Long vendorId) {
         return vendorService.getProductsByVendorId(vendorId);
     }
 }

@@ -11,7 +11,7 @@
     WHERE status = 'APPROVED'
   </select>
 
-  <select id="findProductsByVendorId" resultType="com.example.livecommerce_server.product.dto.VendorProductDTO">
+  <select id="findProductsByVendorId" resultType="com.example.livecommerce_server.product.dto.ProductVendorDTO">
     SELECT
     p.product_id AS productId,
     p.name,
