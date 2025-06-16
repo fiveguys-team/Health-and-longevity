@@ -76,27 +76,4 @@ onMounted(async () => {
   }
 })
 
-// const paymentKey = new URLSearchParams(window.location.search).get('paymentKey');
-// const orderId = new URLSearchParams(window.location.search).get('orderId');
-// const amount = new URLSearchParams(window.location.search).get('amount');
-//
-// const secretKey = 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6'; // 테스트 시크릿키
-// const encoded = btoa(`${secretKey}:`); // base64 인코딩
-//
-// fetch('https://api.tosspayments.com/v1/payments/confirm', {
-//   method: 'POST',
-//   headers: {
-//     Authorization: `Basic ${encoded}`,
-//     'Content-Type': 'application/json'
-//   },
-//   body: JSON.stringify({
-//     paymentKey,
-//     orderId,
-//     amount: Number(amount),
-//   })
-// })
-//     .then(res => res.json())
-//     .then(data => console.log('✅ Toss 응답:', data))
-//     .catch(err => console.error('❌ Toss 확인 요청 실패:', err));
-
 </script>

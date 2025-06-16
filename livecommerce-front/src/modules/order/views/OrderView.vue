@@ -259,13 +259,17 @@ import 'aos/dist/aos.css';
 import bg from "@/assets/img/shortcode/breadcumb.jpg";
 import  {prepareOrder} from "@/modules/order/services/orderApi";
 import {cancelPayment} from "@/modules/payment/services/payment";
-
+import {useRouter} from "vue-router";
+import {useAuthStore} from "@/modules/auth/stores/auth";
 
 function generateRandomString() {
   return window.btoa(Math.random().toString()).slice(0, 20);
 }
 
 const orderStore = useOrderStore()
+
+const authStore = useAuthStore();
+const userId = authStore.id;
 
 const orderItem = computed(() => orderStore.orderItem)
 const totalPrice = computed(() => {
@@ -407,6 +411,9 @@ async function renderPaymentWidgets() {
   }
 }
 
+const router = useRouter();
+
+
 async function requestPayment() {
   if (!widgets.value || !ready.value) {
     alert("시스템에 오류가 있습니다 관리자에게 문의하세요.");
@@ -418,9 +425,9 @@ async function requestPayment() {
     return;
   }
 
-
-  if(orderItem.value.stockCount <= 0){
+  if (orderItem.value.stockCount < orderItem.value.quantity) {
     alert('해당 제품의 재고 수량이 부족합니다!');
+    router.push('/');
     return;
   }
 
@@ -428,7 +435,7 @@ async function requestPayment() {
 
   try {
     const payload = {
-      userId: 1, //추후 본인 아이디로 변경필요.
+      userId: userId, //추후 본인 아이디로 변경필요.
       orderItems: [
         {
           productId: orderItem.value.productId,

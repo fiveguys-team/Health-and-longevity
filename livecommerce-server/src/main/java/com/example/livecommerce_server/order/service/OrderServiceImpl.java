@@ -78,17 +78,27 @@ public class OrderServiceImpl implements OrderService {
         Map<String, ProductDTO> productMap = products.stream().
                 collect(Collectors.toMap(ProductDTO::getProductId, p -> p));
 
-        //총 결제 금액 계산
         int totalAmount = 0;
-        for(OrderItemRequestDTO item : orderPrepareRequestDTO.getOrderItems()) {
+        int totalDiscountAmount = 0;
+
+        for (OrderItemRequestDTO item : orderPrepareRequestDTO.getOrderItems()) {
             ProductDTO product = productMap.get(item.getProductId());
             if (product == null) {
                 throw new IllegalArgumentException("상품 정보 없음: " + item.getProductId());
             }
 
-            int price = product.getPrice();
-            int discountedPrice = price; //아직 할인 로직 (X)
-            totalAmount += discountedPrice * item.getQuantity();
+            int originalPrice = product.getPrice();
+            Integer discountRate = getDiscountRateIfLiveOn(product.getProductId()); // 동일 로직 사용
+            int discountAmount = 0;
+            int finalUnitPrice = originalPrice;
+
+            if (discountRate != null && discountRate > 0) {
+                discountAmount = originalPrice * discountRate / 100;
+                finalUnitPrice = originalPrice - discountAmount;
+            }
+
+            totalAmount += finalUnitPrice * item.getQuantity();
+            totalDiscountAmount += discountAmount * item.getQuantity();
         }
 
         //주문 ID 생성과 동시에 주문 임시 테이블 생성
@@ -100,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
                 .paymentId(paymentId) // 결제 전 상태
                 .userId(orderPrepareRequestDTO.getUserId())
                 .orderStatusCode("PEND")
-                .discountAmount(0)
+                .discountAmount(totalDiscountAmount)
                 .orderDate(now)
                 .createdAt(now)
                 .totalAmount(totalAmount)
