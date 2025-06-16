@@ -1,16 +1,13 @@
 package com.example.livecommerce_server.product.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-
-@Getter
-@Setter
-public class ProductListDTO {
+@Data
+public class UserProductDTO {
     private String id;
     private String name;
-    private String category;     // ✅ 추가
-    private String vendor;       // ✅ 기존 company -> vendor로
+    private String category;
+    private String vendor;
     private String image;
     private int price;
     private int stockCount;
