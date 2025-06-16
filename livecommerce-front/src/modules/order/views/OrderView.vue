@@ -196,7 +196,7 @@
                 <div
                     class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
                   <span>총 할인 금액:</span>
-                  <span>{{ (orderItem.discountAmount || 0).toLocaleString() }} 원</span>
+                  <span>{{ ((orderItem.discountAmount || 0) * (orderItem.quantity || 1)).toLocaleString() }} 원</span>
                 </div>
                 <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium">
                   <span>총 주문 금액:</span>
