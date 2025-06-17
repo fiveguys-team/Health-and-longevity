@@ -59,7 +59,7 @@ public class KakaoOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
             member = memberRepository.findByEmail(email).orElse(null);
         }
         // jwt 토큰 생성
-        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(),  member.getUserId().toString(), member.getName());
+        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(), member.getName(), member.getUserId().toString());
 
         // Set secure, HttpOnly token cookie only
         Cookie jwtCookie = new Cookie("token", jwtToken);

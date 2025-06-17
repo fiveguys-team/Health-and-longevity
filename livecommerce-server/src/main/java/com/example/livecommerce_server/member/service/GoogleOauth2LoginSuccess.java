@@ -54,7 +54,7 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
             member = memberRepository.findByEmail(email).orElse(null);
         }
         // jwt 토큰 생성
-        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(),  member.getUserId().toString(), member.getName());
+        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(), member.getName(), member.getUserId().toString());
         Cookie jwtCookie = new Cookie("token", jwtToken);
         jwtCookie.setHttpOnly(true);
 //        jwtCookie.setSecure(true);
