@@ -3,39 +3,52 @@ package com.example.livecommerce_server.common.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
-    private final String secretKey;
-    private final int expiration;
+    @Value("${jwt.secret}")
+    private String secretKey;
+    @Value("${jwt.expiration}")
+    private int expiration;
     private Key SECRET_KEY;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, @Value("${jwt.expiration}") int expiration) {
-        this.secretKey = secretKey;
-        this.expiration = expiration;
-        this.SECRET_KEY = new SecretKeySpec(java.util.Base64.getDecoder().decode(secretKey), SignatureAlgorithm.HS512.getJcaName());
+    @PostConstruct
+    public void init() {
+        this.SECRET_KEY = new SecretKeySpec(
+                java.util.Base64.getDecoder().decode(secretKey),
+                SignatureAlgorithm.HS512.getJcaName()
+        );
     }
 
     public String createToken(String email, String role, String name, String id) {
-        //Claims 는 jwt 토큰의 payload 부분을 의미한다.
-        Claims claims = Jwts.claims().setSubject(id);
-        claims.put("email", email);
-        claims.put("name", name);
-        claims.put("role", role);
         Date now = new Date();
-        String token = Jwts.builder()
-                .setClaims(claims)
+        Map<String, Object> claims = new HashMap<>();
+        if (email != null) claims.put("email", email);
+        if (role != null) claims.put("role", role);
+        if (name != null) claims.put("name", name);
+        return Jwts.builder()
+                .setSubject(id)
+                .addClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + expiration * 60 * 1000L))
-                .signWith(SECRET_KEY)
+                .setExpiration(new Date(now.getTime() + expiration * 60 * 1000L)) // 분 → 밀리초
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
                 .compact();
+    }
 
-        return token;
+    public Claims parseToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
