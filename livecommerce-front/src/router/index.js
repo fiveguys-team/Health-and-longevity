@@ -268,19 +268,33 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
-  if (to.meta.requiresAuth) {
-    if (!authStore.id) return next('/login')
-
-    if (to.meta.roles && !to.meta.roles.includes(authStore.role)) {
-      alert('권한이 없습니다.')
-      return next('/')
+  try {
+    // 사용자 정보가 없으면 서버에서 불러옴
+    if (!authStore.role) {
+      await authStore.initFromServer()
     }
-  }
 
-  next()
+    // 인증이 필요한 페이지 접근 시 체크
+    if (to.meta?.requiresAuth) {
+      if (!authStore.id) {
+        return next('/login')
+      }
+
+      if (to.meta.roles && !to.meta.roles.includes(authStore.role)) {
+        alert('권한이 없습니다.')
+        return next('/error') // 권한 부족 시 error 페이지로 이동
+      }
+    }
+
+    next()
+  } catch (e) {
+    console.warn('initFromServer or auth check failed:', e)
+    // 에러 발생 시 공통 에러 페이지로 이동
+    return next('/error')
+  }
 })
 
 
