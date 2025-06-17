@@ -75,4 +75,21 @@
         WHERE
             ci.cart_id = #{cartId}
     </select>
+
+    <select id="existsCartItemByCartIdAndProductId"
+            parameterType="map"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM cart_item_d
+        WHERE cart_id = #{cartId}
+          AND product_id = #{productId}
+    </select>
+
+    <update id="incrementCartItemQuantity"
+            parameterType="map">
+        UPDATE cart_item_d
+        SET quantity = quantity + #{quantity}
+        WHERE cart_id = #{cartId}
+          AND product_id = #{productId}
+    </update>
 </mapper>
