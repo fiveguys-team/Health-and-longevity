@@ -77,5 +77,24 @@ class LiveStatisticsMapperTest {
 		list.forEach(System.out::println);
 	}
 
+	@Test
+	@DisplayName("총 매출액")
+	void selectTotalRevenue() {
+		int revenue = liveStatisticsMapper.selectTotalRevenue("0bf69ae2-516b-4509-b887-a34b79f0b40a");
+		log.info(String.valueOf(revenue));
+	}
 
+	@Test
+	@DisplayName("주문 건 수")
+	void selectTotalOrders() {
+		int orders = liveStatisticsMapper.selectTotalOrders("0bf69ae2-516b-4509-b887-a34b79f0b40a");
+		log.info(String.valueOf(orders));
+	}
+
+	@Test
+	@DisplayName("구매 전환율")
+	void selectPurchaseRatio() {
+		int ratio = liveStatisticsMapper.selectPurchaseRatio("0bf69ae2-516b-4509-b887-a34b79f0b40a");
+		log.info(String.valueOf(ratio));
+	}
 }
