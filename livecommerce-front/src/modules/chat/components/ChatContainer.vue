@@ -244,13 +244,24 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* 채팅 컨테이너 높이 설정 */
+/* 채팅 전체 컨테이너를 부모 높이에 맞춰 유연하게 설정 */
 .chat-container {
-    height: 600px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-/* 스크롤바 스타일링 */
+/* 채팅 메시지 영역은 유동적으로 늘어나고 스크롤 가능 */
 .chat-messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+
+    /* 스크롤바 스타일 */
     scrollbar-width: thin;
     scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
 }
@@ -268,9 +279,12 @@ onBeforeUnmount(() => {
     border-radius: 3px;
 }
 
-/* 공지사항 섹션 애니메이션 */
+/* 공지사항 애니메이션 */
 .notice-section {
     animation: fadeIn 0.3s ease-in-out;
+    background-color: #ebf8ff;
+    border-bottom: 1px solid #cbd5e0;
+    padding: 0.75rem;
 }
 
 @keyframes fadeIn {
@@ -283,5 +297,18 @@ onBeforeUnmount(() => {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* 입력창 고정 */
+.chat-input {
+    padding: 1rem;
+    border-top: 1px solid #e2e8f0;
+    background-color: white;
+    flex-shrink: 0;
+}
+
+/* 헤더 고정 */
+.chat-header {
+    flex-shrink: 0;
 }
 </style>

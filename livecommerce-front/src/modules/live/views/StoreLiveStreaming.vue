@@ -10,58 +10,52 @@
 -->
 
 <template>
-  <div class="host-container">
+  <div class="min-h-screen bg-gray-50 p-5">
     <!-- 방송 설정 화면 -->
-    <div class="stream-setup" v-if="!session">
-      <div class="setup-container">
-        <h2 class="setup-title">라이브 방송 준비</h2>
+    <div v-if="!session" class="max-w-5xl mx-auto">
+      <div class="bg-white rounded-lg shadow-md p-8">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">라이브 방송 준비</h2>
 
-        <div class="setup-grid">
+        <div class="grid md:grid-cols-2 gap-8">
           <!-- 왼쪽 컬럼: 기본 정보 -->
-          <div class="setup-column">
-            <div class="form-group">
-              <label class="form-label">방송 제목</label>
-              <input
-                  v-model="streamTitle"
-                  class="form-control"
-                  type="text"
-                  placeholder="방송 제목을 입력해주세요"
-                  required
-              />
+          <div class="space-y-6">
+            <!-- 방송 제목 -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">방송 제목</label>
+              <input v-model="streamTitle" type="text" placeholder="방송 제목을 입력해주세요"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                required />
             </div>
 
-            <div class="form-group">
-              <label class="form-label">공지 사항</label>
-              <textarea
-                  v-model="announcement"
-                  class="form-control"
-                  placeholder="시청자들에게 전달할 공지사항을 입력해주세요"
-                  rows="3"
-                  required
-              ></textarea>
+            <!-- 공지사항 -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">공지 사항</label>
+              <textarea v-model="announcement" placeholder="시청자들에게 전달할 공지사항을 입력해주세요" rows="3"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
+                required></textarea>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">썸네일 이미지</label>
-              <div class="thumbnail-upload">
-                <input
-                    @change="handleThumbnailChange"
-                    class="form-control"
-                    type="file"
-                    accept="image/*"
-                    required
-                />
-                <div class="thumbnail-preview-container" v-if="thumbnailPreview">
-                  <img :src="thumbnailPreview" class="thumbnail-preview" alt="썸네일 미리보기"/>
-                  <button class="remove-thumbnail" @click="removeThumbnail">✕</button>
-                </div>
+            <!-- 썸네일 업로드 -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">썸네일 이미지</label>
+              <input @change="handleThumbnailChange" type="file" accept="image/*"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                required />
+              <div v-if="thumbnailPreview" class="relative inline-block mt-4">
+                <img :src="thumbnailPreview" class="max-w-[200px] max-h-[200px] rounded-lg shadow-md object-cover"
+                  alt="썸네일 미리보기" />
+                <button @click="removeThumbnail"
+                  class="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition">
+                  ✕
+                </button>
               </div>
             </div>
 
-
-            <div class="form-group">
-              <label class="form-label">카테고리 선택</label>
-              <select v-model="category" class="form-control discount-select">
+            <!-- 카테고리 선택 -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">카테고리 선택</label>
+              <select v-model="category"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                 <option disabled :value="0">카테고리를 선택해주세요</option>
                 <option value="혈압">혈압</option>
                 <option value="눈">눈</option>
@@ -70,45 +64,43 @@
                 <option value="영양보충">영양보충</option>
               </select>
             </div>
-
-
           </div>
 
-
           <!-- 오른쪽 컬럼: 상품 및 할인 설정 -->
-          <div class="setup-column">
-            <div class="form-group">
-              <label class="form-label">판매 상품 선택 <span class="sub-label">(최대 3개)</span></label>
-              <div class="product-selection">
-                <div class="product-list">
-                  <div
-                      v-for="product in availableProducts"
-                      :key="product.id"
-                      class="product-item-select"
-                      :class="{
-                      'selected': selectedProducts.includes(product),
-                      'disabled': selectedProducts.length >= 3 && !selectedProducts.includes(product)
-                    }"
-                      @click="toggleProduct(product)"
-                  >
-                    <div class="product-info">
-                      <div class="product-name">{{ product.name }}</div>
-                      <div class="product-price">{{ product.price.toLocaleString() }}원</div>
-                    </div>
-                    <div class="selection-indicator">
-                      <span v-if="selectedProducts.includes(product)">✓</span>
-                    </div>
+          <div class="space-y-6">
+            <!-- 상품 선택 -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                판매 상품 선택 <span class="text-sm font-normal text-gray-500">(최대 3개)</span>
+              </label>
+              <div class="border border-gray-300 rounded-lg max-h-80 overflow-y-auto">
+                <div v-for="product in availableProducts" :key="product.id" @click="toggleProduct(product)"
+                  class="flex justify-between items-center p-4 border-b last:border-b-0 cursor-pointer transition-colors"
+                  :class="{
+                    'bg-blue-50': selectedProducts.includes(product),
+                    'opacity-50 cursor-not-allowed': selectedProducts.length >= 3 && !selectedProducts.includes(product),
+                    'hover:bg-gray-50': !selectedProducts.includes(product) && selectedProducts.length < 3
+                  }">
+                  <div>
+                    <div class="font-medium text-gray-800">{{ product.name }}</div>
+                    <div class="text-sm text-gray-600">{{ product.price.toLocaleString() }}원</div>
+                  </div>
+                  <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
+                    :class="selectedProducts.includes(product) ? 'bg-blue-500 border-blue-500' : 'border-gray-300'">
+                    <span v-if="selectedProducts.includes(product)" class="text-white text-sm">✓</span>
                   </div>
                 </div>
               </div>
-              <p v-if="showMaxProductsError" class="error-message">
+              <p v-if="showMaxProductsError" class="text-red-500 text-sm mt-2">
                 최대 3개의 상품만 선택할 수 있습니다.
               </p>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">할인율 설정</label>
-              <select v-model.number="discountRate" class="form-control discount-select">
+            <!-- 할인율 설정 -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">할인율 설정</label>
+              <select v-model.number="discountRate"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                 <option disabled :value="0">할인율을 선택해주세요</option>
                 <option :value="0">할인 미적용</option>
                 <option :value="10">10% 할인</option>
@@ -119,17 +111,17 @@
               </select>
             </div>
 
-            <div v-if="discountedProducts.length" class="discount-preview">
-              <h5>할인 적용 예시</h5>
-              <div class="discount-items">
-                <div v-for="item in discountedProducts" :key="item.id" class="discount-item">
-                  <div class="product-name">{{ item.name }}</div>
-                  <div class="price-info">
-                    <span class="original-price">{{ item.price.toLocaleString() }}원</span>
-                    <span class="arrow">→</span>
-                    <span class="discounted-price">{{
-                        item.discountedPrice.toLocaleString()
-                      }}원</span>
+            <!-- 할인 미리보기 -->
+            <div v-if="discountedProducts.length" class="bg-gray-50 p-4 rounded-lg">
+              <h5 class="font-semibold text-gray-700 mb-3">할인 적용 예시</h5>
+              <div class="space-y-2">
+                <div v-for="item in discountedProducts" :key="item.id"
+                  class="flex justify-between items-center p-3 bg-white rounded">
+                  <div class="font-medium text-gray-800">{{ item.name }}</div>
+                  <div class="flex items-center gap-2 text-sm">
+                    <span class="text-gray-500 line-through">{{ item.price.toLocaleString() }}원</span>
+                    <span class="text-gray-400">→</span>
+                    <span class="text-red-600 font-semibold">{{ item.discountedPrice.toLocaleString() }}원</span>
                   </div>
                 </div>
               </div>
@@ -137,87 +129,90 @@
           </div>
         </div>
 
-        <div class="setup-footer">
-          <button
-              class="btn btn-primary start-button"
-              @click="enterBroadcast"
-              :disabled="!isFormValid"
-          >
+        <!-- 방송 시작 버튼 -->
+        <div class="mt-8 flex justify-center">
+          <button @click="enterBroadcast" :disabled="!isFormValid"
+            class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200"
+            :class="isFormValid ? 'hover:bg-blue-700 hover:shadow-lg' : 'opacity-50 cursor-not-allowed'">
             방송 시작하기
           </button>
         </div>
       </div>
     </div>
 
-    <!-- 방송 준비/송출 화면 -->
+    <!-- 라이브 스트리밍 화면 -->
+    <div v-if="session" class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr,320px] gap-4">
+        <!-- 메인 콘텐츠 영역 -->
+        <div class="flex flex-col gap-3">
+          <!-- 헤더 -->
+          <div class="bg-white rounded-lg shadow-sm px-4 py-3">
+            <h2 class="text-lg font-bold text-gray-800">{{ streamTitle }}</h2>
+            <div class="mt-1">
+              <span class="text-sm text-gray-600">👥 시청자 <span class="font-semibold">{{ viewerCount }}명</span></span>
+            </div>
+          </div>
 
-    <!-- 라이브 스트리밍 전체 화면 -->
-    <div class="stream-session" v-if="session">
-      <div class="stream-content">
-        <div class="main-content">
-          <div class="stream-header">
-            <h2>{{ streamTitle }}</h2>
-            <div class="stream-info">
-              <span class="viewer-count">👥 시청자 {{ viewerCount }}명</span>
+          <!-- 비디오 영역 -->
+          <div class="relative bg-black rounded-lg overflow-hidden shadow-lg" style="aspect-ratio: 16/9;">
+            <div v-if="!publisher" class="absolute inset-0 flex items-center justify-center">
+              <span class="text-white">카메라 연결 중...</span>
             </div>
+            <user-video v-else :stream-manager="publisher" class="absolute inset-0" />
           </div>
-          <div class="video-container">
-            <div v-if="!publisher" class="loading-message">
-              카메라 연결 중...
-            </div>
-            <user-video v-else :stream-manager="publisher"/>
-          </div>
-          <div class="product-info">
-            <div class="product-list">
-              <div v-for="item in discountedProducts" :key="item.id" class="product-item">
-                <h3>{{ item.name }}</h3>
-                <p class="price">{{ item.discountedPrice.toLocaleString() }}원</p>
-                <p class="original-price">(정가 {{ item.price.toLocaleString() }}원)</p>
-                <p class="description">{{ item.description }}</p>
+
+          <!-- 상품 정보 -->
+          <div class="bg-white rounded-lg shadow-sm p-4 max-h-48 overflow-y-auto">
+            <div class="space-y-3">
+              <div v-for="item in discountedProducts" :key="item.id" class="pb-3 border-b last:border-b-0 last:pb-0">
+                <h3 class="text-base font-semibold text-gray-800">{{ item.name }}</h3>
+                <p class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</p>
+                <p class="text-xs text-gray-500">(정가 {{ item.price.toLocaleString() }}원)</p>
+                <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
               </div>
             </div>
           </div>
-          <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
+
+          <!-- 방송 종료 버튼 -->
+          <button @click="endStream"
+            class="self-center px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+            방송 종료
+          </button>
         </div>
-        <div class="chat-container">
-  <!-- 채팅방 ID가 생성된 경우에만 ChatContainer를 렌더링 -->
-  <ChatContainer 
-    v-if="chatRoomId"
-    :room-id="chatRoomId"
-    :initial-announcement="chatAnnouncement"
-  />
-  
-  <!-- 채팅방 생성 중 또는 실패 시 표시 -->
-  <div v-else class="chat-loading">
-    <div class="loading-message">
-      <i class="fas fa-spinner fa-spin"></i>
-      채팅방을 준비하고 있습니다...
-    </div>
-  </div>
-</div>
+
+        <!-- 채팅 영역 -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden" style="height: 600px;">
+          <!-- 채팅방 ID가 생성된 경우에만 ChatContainer를 렌더링 -->
+          <ChatContainer v-if="chatRoomId" :room-id="chatRoomId" :initial-announcement="chatAnnouncement"
+            class="h-full" />
+
+          <!-- 채팅방 생성 중 또는 실패 시 표시 -->
+          <div v-else class="h-full flex items-center justify-center">
+            <div class="text-center text-gray-500">
+              <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
+              <p class="text-sm">채팅방을 준비하고 있습니다...</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-
   </div>
 </template>
 
 <script setup>
-
 // import {useAuthStore} from "@/modules/auth/stores/auth";
 // const auth = useAuthStore()
 
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
-import {ref, onBeforeUnmount, onMounted, computed} from 'vue';
-import {useRoute} from 'vue-router'
+import { ref, onBeforeUnmount, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router'
 import axios from 'axios';
-import {OpenVidu} from 'openvidu-browser';
+import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
 
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+  : 'http://localhost:8080/';
 
-    
 // OpenVidu 관련 상태
 const OV = ref(undefined);
 const session = ref(undefined);
@@ -248,10 +243,10 @@ const chatAnnouncement = ref('');    // 채팅방 공지사항
 
 // 할인율 적용
 const discountedProducts = computed(() =>
-    selectedProducts.value.map(p => ({
-      ...p,
-      discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
-    }))
+  selectedProducts.value.map(p => ({
+    ...p,
+    discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
+  }))
 )
 
 // 최대 상품 선택 초과 에러 상태
@@ -261,8 +256,8 @@ const showMaxProductsError = ref(false);
 const productList = async () => {
   try {
     const response = await axios.get(
-        `${APPLICATION_SERVER_URL}api/sessions/${vendorId}/productList`,
-        {headers: {'Content-Type': 'application/json'}}
+      `${APPLICATION_SERVER_URL}api/sessions/${vendorId}/productList`,
+      { headers: { 'Content-Type': 'application/json' } }
     );
     availableProducts.value = response.data;
     console.log('상품 리스트: ', availableProducts.value);
@@ -298,7 +293,7 @@ function toggleProduct(prod) {
 // 방송 준비 함수 (기존의 startStream 함수를 분리)
 const enterBroadcast = async () => {
   if (!streamTitle.value || selectedProducts.value.length === 0 || selectedProducts.value.length
-      > 3) {
+    > 3) {
     alert('방송 제목을 입력하고 1~3개의 상품을 선택해주세요.');
     return;
   }
@@ -346,28 +341,19 @@ const enterBroadcast = async () => {
   }
 };
 
-// 방송 시작 시 라이브 정보 서버로 전송
-// const notifySeverStreamStarted = async (vendorId) => {
-//   try {
-//     await axios.post(
-//
-//     )
-//   }
-// }
-
 // [서버에 방송 종료 알림 전송]
 // 방송 종료 시 세션 종료 및 서버에 방송 종료 알림 전송 
 const notifyServerStreamEnded = async (sessionId) => {
   // 종료 시간 알림
   try {
     await axios.delete(
-        `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            //'Authorization': `Bearer ${auth.token}`
-          },
+      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          //'Authorization': `Bearer ${auth.token}`
         },
+      },
     );
     console.log('서버에 방송 종료 알림 완료');
   } catch (error) {
@@ -421,7 +407,7 @@ const createChatRoom = async (liveId) => {
       { liveId },
       { headers: { 'Content-Type': 'application/json' } }
     );
-    
+
     console.log('채팅방 생성 성공:', response.data);
     return response.data;
   } catch (error) {
@@ -460,27 +446,27 @@ const createSession = async () => {
       }
     }
   );
-  
+
   console.log("라이브 생성 응답:", response.data);
-  
+
   // 2단계: 반환받은 liveId로 채팅방 생성
   liveId.value = response.data.liveId;  //  중요: 서버에서 반환한 liveId
-  
+
   try {
     // 채팅방 자동 생성 API 호출
     const chatRoomData = await createChatRoom(liveId.value);
-    
+
     // 채팅방 정보 저장 (ChatContainer에 전달할 데이터)
     chatRoomId.value = chatRoomData.roomId;
     chatAnnouncement.value = chatRoomData.announcement || announcement.value;
-    
+
     console.log('채팅방 생성 완료 - roomId:', chatRoomId.value);
   } catch (error) {
     console.error('채팅방 생성 실패:', error);
     // 채팅방 생성 실패해도 방송은 진행 (옵션)
     alert('채팅 기능을 사용할 수 없습니다. 방송은 계속 진행됩니다.');
   }
-  
+
   // 3단계: sessionId 반환 (OpenVidu 연결용)
   return response.data.sessionId;
 };
@@ -490,9 +476,9 @@ const createSession = async () => {
 // 백엔드에서 토큰을 생성하고 반환한다. 
 const createToken = async (sessionId) => {
   const response = await axios.post(
-      APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-      {},
-      {headers: {'Content-Type': 'application/json'}}
+    APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+    {},
+    { headers: { 'Content-Type': 'application/json' } }
   );
   return response.data;
 };
@@ -517,11 +503,11 @@ onBeforeUnmount(() => {
 // 폼 유효성 검사
 const isFormValid = computed(() => {
   return streamTitle.value &&
-      announcement.value &&
-      category.value &&
-      thumbnailFile.value &&
-      selectedProducts.value.length > 0 &&
-      selectedProducts.value.length <= 3;
+    announcement.value &&
+    category.value &&
+    thumbnailFile.value &&
+    selectedProducts.value.length > 0 &&
+    selectedProducts.value.length <= 3;
 });
 
 // 썸네일 제거 함수
@@ -531,428 +517,18 @@ const removeThumbnail = () => {
 };
 </script>
 
-
+<!-- 모든 컴포넌트 스타일을 제거하고 Tailwind 클래스만 사용 -->
 <style scoped>
-.host-container {
-  padding: 20px;
-  max-width: 1600px;
-  margin: 0 auto;
-  background-color: #f8f9fa;
-  min-height: 100vh;
-}
-
-.stream-setup {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
-  min-height: 700px; /* 높이 조정 */
-}
-
-.setup-container {
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  min-height: 650px; /* 높이 조정 */
-}
-
-.setup-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.setup-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  margin-bottom: 30px;
-  min-height: 500px; /* 높이 조정 */
-}
-
-.setup-column {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  min-height: 500px;
-}
-
-.form-group {
-  margin-bottom: 0;
-}
-
-.form-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #333;
-  font-size: 1.1em;
-}
-
-.sub-label {
-  font-size: 0.9em;
-  color: #666;
-  font-weight: normal;
-}
-
-.form-control {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-
-.form-control:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.thumbnail-upload {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.thumbnail-preview-container {
-  position: relative;
-  width: fit-content;
-  margin-top: 15px;
-}
-
-.thumbnail-preview {
-  max-width: 200px;
-  max-height: 400px;
-  border-radius: 12px;
-  object-fit: contain;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.remove-thumbnail {
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #dc3545;
-  color: white;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.remove-thumbnail:hover {
-  background: #c82333;
-  transform: scale(1.05);
-  transition: all 0.2s ease;
-}
-
-.product-selection {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  max-height: 450px; /* 높이 조정 */
-  overflow-y: auto;
-  flex-grow: 1;
-}
-
-.product-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.product-item-select {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.product-item-select:last-child {
-  border-bottom: none;
-}
-
-.product-item-select:hover {
-  background-color: #f8f9fa;
-}
-
-.product-item-select.selected {
-  background-color: #e8f4ff;
-}
-
-.product-item-select.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.product-info {
-  flex: 1;
-}
-
-.product-name {
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.product-price {
-  color: #666;
-  font-size: 0.9em;
-}
-
-.selection-indicator {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #007bff;
-}
-
-.selected .selection-indicator {
-  background-color: #007bff;
-  border-color: #007bff;
-  color: white;
-}
-
-.discount-select {
-  background-color: white;
-}
-
-.discount-preview {
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  margin-top: 20px;
-}
-
-.discount-preview h5 {
-  margin-bottom: 12px;
-  color: #333;
-}
-
-.discount-items {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.discount-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px;
-  background: white;
-  border-radius: 6px;
-}
-
-.price-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.original-price {
-  color: #666;
-  text-decoration: line-through;
-}
-
-.arrow {
-  color: #666;
-}
-
-.discounted-price {
-  color: #dc3545;
-  font-weight: 600;
-}
-
-.setup-footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-}
-
-.start-button {
-  padding: 12px 40px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 8px;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.start-button:hover {
-  background-color: #0056b3;
-}
-
-.start-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.stream-session {
-  width: 100%;
-  height: 100vh;
-  background-color: #f8f9fa;
-}
-
-.stream-content {
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 20px;
-  height: 100%;
-  padding: 20px;
-}
-
-.main-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  min-width: 0;
-}
-
-.chat-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  height: 100%;
-}
-
-.stream-header {
-  margin-bottom: 20px;
-}
-
-.video-container {
-  width: 100%;
-  height: 0;
-  padding-bottom: 56.25%;
-  /* 16:9 비율 */
-  position: relative;
-  background-color: #000;
-  margin: 20px auto;
-  overflow: hidden;
-}
-
-.video-container :deep(.stream-component) {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* UserVideo 컴포넌트가 부모 크기를 채우도록 설정 */
+:deep(.stream-component) {
   width: 100%;
   height: 100%;
 }
 
-.product-info {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  margin: 20px 0;
-}
-
-.loading-message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 1.2em;
-  text-align: center;
-}
-
-.text-muted {
-  color: #6c757d;
-  font-size: 0.875em;
-  margin-top: 5px;
-  display: block;
-}
-
-.product-item {
-  margin-bottom: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.product-item:last-child {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.product-item h3 {
-  margin: 0 0 10px 0;
-  color: #333;
-}
-
-.product-item p {
-  margin: 5px 0;
-  color: #666;
-}
-
-.product-item p:first-of-type {
-  color: #dc3545;
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-select option {
-  padding: 8px;
-}
-
-select option:checked {
-  background-color: #007bff;
-  color: white;
-}
-
-.stream-info {
-  margin: 10px 0;
-  font-size: 1.1em;
-}
-
-.viewer-count {
-  color: #666;
-  font-weight: bold;
-}
-
-.error-message {
-  color: #dc3545;
-  font-size: 0.9em;
-  margin-top: 8px;
-  margin-bottom: 0;
-}
-/* 채팅 로딩 상태 스타일 */
-.chat-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ChatContainer가 부모 높이를 모두 사용하도록 설정 */
+:deep(.chat-container) {
   height: 100%;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.loading-message {
-  text-align: center;
-  color: #666;
-  font-size: 14px;
-}
-
-.loading-message i {
-  margin-right: 8px;
-  font-size: 16px;
+  display: flex;
+  flex-direction: column;
 }
 </style>
