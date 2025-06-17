@@ -89,7 +89,13 @@ const routes = [
 
 
   {path: '/cart',component:CartView},
-  {path: '/product-details/:id',component:ProductDetails},
+  // 상품 상세 페이지 라우트 (중복 제거)
+  {
+    path: '/product-details/:id',
+    name: 'ProductDetails',
+    component: ProductDetails,
+    props: true
+  },
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
@@ -101,8 +107,7 @@ const routes = [
 
   // 상품, 리뷰 view
   { path: '/products', component: ProductCategory },
-  { path: '/product-details/:id', component: ProductDetails },
-  {path: '/shop/:category', component: ProductCategory},
+  { path: '/shop/:category', component: ProductCategory},
   { path: '/product/:category', component: ProductCategory },
   { path: '/vendor/:vendorSlug', component: Vendor },
   { path: '/vendor-category', component: () => import('@/views/shop/vendor-category.vue')},
