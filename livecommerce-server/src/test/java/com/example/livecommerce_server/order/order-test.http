@@ -1,26 +1,26 @@
 ### 주문 프리페어 테스트
-#POST http://localhost:8080/api/order/prepare
-#Content-Type: application/json
-#
-#
-#{
-#  "userId": 1,
-#  "orderItems": [
-#    {
-#      "productId": "1",
-#      "quantity": 2
-#    },
-#    {
-#      "productId": "2",
-#      "quantity": 1
-#    }
-#  ],
-#  "shippingRequest": "문 앞에 두세요",
-#  "postalCode": "06233",
-#  "basicAddress": "서울 강남구 테헤란로 123",
-#  "detailedAddress": "101동 1001호"
-#}
-#
+POST http://localhost:8080/api/order/prepare
+Content-Type: application/json
+
+
+{
+  "userId": 1,
+  "orderItems": [
+    {
+      "productId": "1",
+      "quantity": 2
+    },
+    {
+      "productId": "2",
+      "quantity": 1
+    }
+  ],
+  "shippingRequest": "문 앞에 두세요",
+  "postalCode": "06233",
+  "basicAddress": "서울 강남구 테헤란로 123",
+  "detailedAddress": "101동 1001호"
+}
+
 
 ### 결제 취소 API 테스트
 POST http://localhost:8080/api/payment/cancel
@@ -30,3 +30,31 @@ Content-Type: application/json
   "orderId": "db44b770-0ec4-43f6-a348-a19b3317d80f",
   "status": "CANC"
 }
+
+### 1. 유저 장바구니 조회 or 생성
+GET http://localhost:8080/api/cart/5
+
+### 2. 장바구니 항목 전체 조회
+GET http://localhost:8080/api/cart/items/81fbf4df-a888-4d1a-ab80-221d354f0f3b
+
+### 3. 장바구니 항목 추가
+POST http://localhost:8080/api/cart/items
+Content-Type: application/json
+
+{
+  "cartId": "81fbf4df-a888-4d1a-ab80-221d354f0f3b",
+  "productId": "22222222-aaaa-bbbb-cccc-222222222222",
+  "quantity": 2
+}
+
+### 4. 장바구니 항목 수량 수정
+PUT http://localhost:8080/api/cart/items
+Content-Type: application/json
+
+{
+  "cartItemId": "5be6dd57-63ba-4ede-98d3-a0b4910e2edb",
+  "quantity": 5
+}
+
+### 5. 장바구니 항목 삭제
+DELETE http://localhost:8080/api/cart/items/5be6dd57-63ba-4ede-98d3-a0b4910e2edb

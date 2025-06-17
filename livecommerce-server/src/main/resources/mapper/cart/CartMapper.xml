@@ -17,4 +17,62 @@
         INSERT INTO cart_m (cart_id, created_at, user_id)
         VALUES (#{cartId}, #{createdAt}, #{userId})
     </insert>
+
+    <insert id="insertCartItem" parameterType="com.example.livecommerce_server.cart.dto.CartItemDTO">
+        INSERT INTO cart_item_d (
+            cart_item_id,
+            cart_id,
+            product_id,
+            quantity,
+            created_at
+        ) VALUES (
+                     #{cartItemId},
+                     #{cartId},
+                     #{productId},
+                     #{quantity},
+                     #{createdAt}
+                 )
+    </insert>
+
+    <update id="updateCartItemQuantity" parameterType="com.example.livecommerce_server.cart.dto.CartItemDTO">
+        UPDATE cart_item_d
+        SET quantity = #{quantity}
+        WHERE cart_item_id = #{cartItemId}
+    </update>
+
+    <delete id="deleteCartItemById" parameterType="string">
+        DELETE FROM cart_item_d
+        WHERE cart_item_id = #{cartItemId}
+    </delete>
+
+    <select id="selectCartItemsByCartId"
+            parameterType="string"
+            resultType="com.example.livecommerce_server.cart.dto.CartItemDetailDTO">
+        SELECT
+            ci.cart_item_id,
+            ci.product_id,
+            ci.quantity,
+            p.name AS product_name,
+            p.price,
+            p.stock_count,
+            COALESCE(lp.discountRate, 0) AS discount_rate,
+            CASE
+                WHEN lm.status_cd = 'ON' THEN COALESCE(lp.discountRate, 0)
+                ELSE 0
+                END AS applied_discount_rate,
+            ROUND(p.price * (1 - (CASE
+                                      WHEN lm.status_cd = 'ON' THEN COALESCE(lp.discountRate, 0)
+                                      ELSE 0
+                END) / 100)) AS discounted_price
+        FROM
+            cart_item_d ci
+                JOIN
+            product p ON ci.product_id = p.product_id
+                LEFT JOIN
+            live_product_j lp ON ci.product_id = lp.product_id
+                LEFT JOIN
+            live_m lm ON lp.live_id = lm.live_id
+        WHERE
+            ci.cart_id = #{cartId}
+    </select>
 </mapper>

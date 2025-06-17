@@ -20,96 +20,55 @@
             <table id="cart-table" class="responsive nowrap table-wrapper" style="width:100%">
               <thead class="table-header">
               <tr>
-                <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Product Info</th>
-                <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Price</th>
-                <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Quantity</th>
-                <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Total</th>
-                <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Remove</th>
+                <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">상품 정보</th>
+                <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">가격</th>
+                <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">수량</th>
+                <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">총 금액</th>
+                <th class="whitespace-nowrap text-lg md:text-xl font-semibold leading-none text-title dark:text-white">삭제</th>
               </tr>
               </thead>
               <tbody class="table-body">
-              <tr>
+              <tr v-if="cartItems.length === 0">
+                <td colspan="5" class="text-center py-10 text-lg text-gray-500">
+                  장바구니에 담긴 상품이 없습니다.
+                </td>
+              </tr>
+              <tr v-for="item in cartItems" :key="item.cartItemId">
                 <td class="w-[42%]">
                   <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product">
                     <div class="w-14 sm:w-20 flex-none py-3">
-                      <img :src="cart1" alt="product">
+                      <img :src="getImageUrl(item.productImage)" alt="product" />
                     </div>
                     <div class="flex-1">
-                      <h6 class="leading-none font-medium">Chair</h6>
-                      <h5 class="font-semibold leading-none mt-2"><router-link to="#">Modern Sofa Set</router-link></h5>
+                      <h6 class="leading-none font-medium">{{ item.categoryName }}</h6>
+                      <h5 class="font-semibold leading-none mt-2">
+                        <router-link :to="`/product/${item.productId}`">{{ item.productName }}</router-link>
+                      </h5>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$45</h6>
+                  <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">₩{{ item.price.toLocaleString() }}</h6>
                 </td>
                 <td>
-                  <IncDec/>
+                  <IncDec
+                      :modelValue="item.quantity"
+                      @update:modelValue="(val) => {
+    item.quantity = val  // 화면 상 바인딩 수동 적용
+    updateQuantity(item.cartItemId, val)
+  }"
+                  />
+<!--                  <IncDec :modelValue="item.quantity" @update:modelValue="(val) => updateQuantity(item.cartItemId, val)" />-->
                 </td>
                 <td>
-                  <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$312</h6>
+                  <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">
+                    ₩{{ (item.price * item.quantity).toLocaleString() }}
+                  </h6>
                 </td>
                 <td>
-                  <button class="w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center ml-auto duration-300 text-title dark:text-white">
-                    <svg class="fill-current " width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/>
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td class="w-[42%]">
-                  <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product">
-                    <div class="w-14 sm:w-20 flex-none pb-3">
-                      <img :src="cart2" alt="product">
-                    </div>
-                    <div class="flex-1">
-                      <h6 class="leading-none font-medium">Light/Lamp</h6>
-                      <h5 class="font-semibold leading-none mt-2"><router-link to="#">Classic Chair with Vase</router-link></h5>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$120</h6>
-                </td>
-                <td>
-                  <IncDec/>
-                </td>
-                <td>
-                  <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$780</h6>
-                </td>
-                <td>
-                  <button class="w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center ml-auto duration-300 text-title dark:text-white">
-                    <svg class="fill-current " width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/>
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td class="w-[42%]">
-                  <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product">
-                    <div class="w-14 sm:w-20 flex-none">
-                      <img :src="cart3" alt="product">
-                    </div>
-                    <div class="flex-1">
-                      <h6 class="leading-none font-medium">Interior</h6>
-                      <h5 class="font-semibold leading-none mt-2"><router-link to="#">Luxury Hanging Lamp</router-link></h5>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$90</h6>
-                </td>
-                <td>
-                  <IncDec/>
-                </td>
-                <td>
-                  <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$380</h6>
-                </td>
-                <td>
-                  <button class="w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center ml-auto duration-300 text-title dark:text-white">
-                    <svg class="fill-current " width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <button class="w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center ml-auto duration-300 text-title dark:text-white"
+                          @click="removeItem(item.cartItemId)">
+                    <svg class="fill-current" width="12" height="12" viewBox="0 0 12 12">
                       <path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/>
                     </svg>
                   </button>
@@ -121,15 +80,6 @@
 
           <div>
             <div class="mb-[30px]">
-              <h4 class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white mb-[15px]">
-                Promo Code
-              </h4>
-              <div class="flex xs:flex-row flex-col gap-3">
-                <input class="h-12 md:h-14 bg-snow dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300 placeholder:text-title dark:placeholder:text-white flex-1" type="text" placeholder="Coupon Code">
-                <button class="btn btn-solid" data-text="Apply">
-                  <span>Apply</span>
-                </button>
-              </div>
             </div>
             <div class="bg-[#FAFAFA] dark:bg-dark-secondary pt-[30px] md:pt-[40px] px-[30px] md:px-[40px] pb-[30px] border border-[#17243026] border-opacity-15 rounded-xl">
               <div class="text-right flex justify-end flex-col w-full ml-auto mr-0">
@@ -225,12 +175,8 @@ import IncDec from '@/components/inc-dec.vue'
 import FooterThree from '@/components/footer/footer-three.vue'
 import ScrollToTop from '@/components/scroll-to-top.vue'
 
-import cart1 from '@/assets/img/gallery/cart/cart-01.jpg'
-import cart2 from '@/assets/img/gallery/cart/cart-02.jpg'
-import cart3 from '@/assets/img/gallery/cart/cart-03.jpg'
-
 import Aos from 'aos'
-import {getCartByUserId} from "@/modules/order/services/orderApi";
+import {getCartByUserId, getCartItems, updateCartItemQuantity, deleteCartItem} from "@/modules/order/services/orderApi";
 import {useAuthStore} from "@/modules/auth/stores/auth";
 
 const authStore = useAuthStore();
@@ -238,16 +184,56 @@ const userId = authStore.id;
 
 // ✅ 상태 변수
 const cartData = ref(null)
+const cartItems = ref([])
 
 onMounted(async () => {
   Aos.init()
 
   try {
+    // 1. 유저 ID로 cartId 조회
     const res = await getCartByUserId(userId)
     cartData.value = res.data
-    console.log('장바구니 데이터', cartData.value)
+    const cartId = cartData.value?.cartId
+
+    if (!cartId) {
+      console.warn('장바구니가 존재하지 않습니다.')
+      return
+    }
+
+    // 2. cartId로 장바구니 아이템 조회
+    const itemsRes = await getCartItems(cartId)
+    cartItems.value = itemsRes.data
+    console.log('장바구니 상품목록', cartItems.value)
+
   } catch (e) {
-    console.error('장바구니 로딩 실패:', e)
+    console.error('장바구니 불러오기 실패:', e)
   }
 })
+
+async function updateQuantity(cartItemId, newQuantity) {
+  try {
+    await updateCartItemQuantity({ cartItemId, quantity: newQuantity });
+    console.log(`[✅ 수량 변경] cartItemId: ${cartItemId}, quantity: ${newQuantity}`);
+  } catch (e) {
+    console.error('[❌ 수량 변경 실패]', e);
+    alert('수량 변경 중 문제가 발생했습니다.');
+  }
+}
+
+async function removeItem(cartItemId) {
+  if (!confirm('해당 상품을 장바구니에서 삭제하시겠습니까?')) return;
+
+  try {
+    await deleteCartItem(cartItemId);
+    cartItems.value = cartItems.value.filter(item => item.cartItemId !== cartItemId);
+    console.log(`[🗑️ 삭제 성공] cartItemId: ${cartItemId}`);
+  } catch (e) {
+    console.error('[❌ 삭제 실패]', e);
+    alert('상품 삭제 중 오류가 발생했습니다.');
+  }
+}
+
+function getImageUrl(filename) {
+  return `http://localhost:8080/uploads/images/${filename}`;
+}
 </script>
