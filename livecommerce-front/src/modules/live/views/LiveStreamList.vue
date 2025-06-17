@@ -23,7 +23,7 @@
     </div>
 
     <div class="live-stream-grid">
-      <div v-for="stream in filteredStreams" :key="stream.sessionId" class="live-stream-card"
+      <div v-for="stream in displayedStreams" :key="stream.sessionId" class="live-stream-card"
            @click="goToStream(stream)">
         <div class="live-badge">Live</div>
         <div class="live-stream-content">
@@ -41,11 +41,20 @@
         </div>
       </div>
     </div>
+
+    <!-- 무한 스크롤 로딩 인디케이터 -->
+    <div v-if="loading" class="loading-indicator">
+      <div class="loading-spinner"></div>
+      <span>더 많은 방송을 불러오는 중...</span>
+    </div>
+
+    <!-- 무한 스크롤 트리거 요소 -->
+    <div ref="scrollTrigger" class="scroll-trigger"></div>
   </div>
 </template>
 
 <script setup>
-import {ref, onMounted, computed} from 'vue';
+import {ref, onMounted, computed, watch, nextTick, onBeforeUnmount} from 'vue';
 import {useRouter} from 'vue-router';
 import axios from 'axios';
 import NavbarOne from "@/components/navbar/navbar-one.vue";
@@ -66,6 +75,11 @@ const categories = [
 ];
 
 const streams = ref([]);
+const loading = ref(false);
+const hasMore = ref(true);
+const page = ref(1);
+const pageSize = 9; // 한 번에 로드할 아이템 수
+const scrollTrigger = ref(null);
 
 // 검색어와 카테고리로 필터링하는 computed 속성
 const filteredStreams = computed(() => {
@@ -77,6 +91,52 @@ const filteredStreams = computed(() => {
     return matchesSearch && matchesCategory;
   });
 });
+
+// 현재 페이지까지의 스트림만 표시
+const displayedStreams = computed(() => {
+  return filteredStreams.value.slice(0, page.value * pageSize);
+});
+
+// 더 많은 데이터가 있는지 확인
+const checkHasMore = () => {
+  hasMore.value = filteredStreams.value.length > page.value * pageSize;
+};
+
+// 무한 스크롤 관찰자 설정
+const setupIntersectionObserver = () => {
+  if (!scrollTrigger.value) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && hasMore.value && !loading.value) {
+        loadMore();
+      }
+    },
+    {
+      rootMargin: '100px', // 100px 전에 로드 시작
+      threshold: 0.1
+    }
+  );
+
+  observer.observe(scrollTrigger.value);
+  return observer;
+};
+
+// 더 많은 데이터 로드
+const loadMore = async () => {
+  if (loading.value || !hasMore.value) return;
+
+  loading.value = true;
+  
+  // 실제 API에서는 여기서 페이지네이션 요청을 보냄
+  // 현재는 더미 데이터를 사용하므로 시뮬레이션
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  page.value++;
+  checkHasMore();
+  loading.value = false;
+};
 
 const fetchLiveStreams = async () => {
   try {
@@ -91,33 +151,57 @@ const fetchLiveStreams = async () => {
       streams.value = response.data;
       console.log(streams.value);
     } else {
-      // 테스트용 더미 데이터로 초기화
+      // 테스트용 더미 데이터로 초기화 (더 많은 데이터 추가)
       streams.value = [
-        {id: 1, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
-        {id: 2, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
-        {id: 3, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체3', broadcastTitle: '방송 제목3', category: '뼈,관절,연골'},
-        {id: 4, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
-        {id: 5, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
-        {id: 6, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'}
+        {sessionId: '1', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', title: '방송 제목1', category: '혈압'},
+        {sessionId: '2', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', title: '방송 제목2', category: '눈'},
+        {sessionId: '3', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체3', title: '방송 제목3', category: '뼈/관절/연골'},
+        {sessionId: '4', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', title: '방송 제목4', category: '장건강'},
+        {sessionId: '5', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', title: '방송 제목5', category: '영양보충'},
+        {sessionId: '6', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', title: '방송 제목6', category: '혈압'},
+        {sessionId: '7', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체7', title: '방송 제목7', category: '눈'},
+        {sessionId: '8', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체8', title: '방송 제목8', category: '뼈/관절/연골'},
+        {sessionId: '9', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체9', title: '방송 제목9', category: '장건강'},
+        {sessionId: '10', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체10', title: '방송 제목10', category: '영양보충'},
+        {sessionId: '11', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체11', title: '방송 제목11', category: '혈압'},
+        {sessionId: '12', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체12', title: '방송 제목12', category: '눈'},
+        {sessionId: '13', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체13', title: '방송 제목13', category: '뼈/관절/연골'},
+        {sessionId: '14', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체14', title: '방송 제목14', category: '장건강'},
+        {sessionId: '15', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체15', title: '방송 제목15', category: '영양보충'},
+        {sessionId: '16', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체16', title: '방송 제목16', category: '혈압'},
+        {sessionId: '17', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체17', title: '방송 제목17', category: '눈'},
+        {sessionId: '18', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체18', title: '방송 제목18', category: '뼈/관절/연골'},
+        {sessionId: '19', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체19', title: '방송 제목19', category: '장건강'},
+        {sessionId: '20', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체20', title: '방송 제목20', category: '영양보충'}
       ];
     }
   } catch (error) {
     console.error('라이브 스트림 목록 조회 실패:', error);
     // 에러 시 테스트용 더미 데이터로 초기화
     streams.value = [
-      {id: 1, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', broadcastTitle: '방송 제목1', category: '혈압'},
-      {id: 2, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', broadcastTitle: '방송 제목2', category: '눈'},
-      {
-        id: 3,
-        thumbnail: 'https://via.placeholder.com/400x300',
-        vendorName: '입점업체3',
-        broadcastTitle: '방송 제목3',
-        category: '뼈,관절,연골'
-      },
-      {id: 4, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', broadcastTitle: '방송 제목4', category: '장건강'},
-      {id: 5, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', broadcastTitle: '방송 제목5', category: '영양보충'},
-      {id: 6, thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', broadcastTitle: '방송 제목6', category: '혈압'}
+      {sessionId: '1', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', title: '방송 제목1', category: '혈압'},
+      {sessionId: '2', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', title: '방송 제목2', category: '눈'},
+      {sessionId: '3', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체3', title: '방송 제목3', category: '뼈/관절/연골'},
+      {sessionId: '4', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', title: '방송 제목4', category: '장건강'},
+      {sessionId: '5', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', title: '방송 제목5', category: '영양보충'},
+      {sessionId: '6', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', title: '방송 제목6', category: '혈압'},
+      {sessionId: '7', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체7', title: '방송 제목7', category: '눈'},
+      {sessionId: '8', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체8', title: '방송 제목8', category: '뼈/관절/연골'},
+      {sessionId: '9', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체9', title: '방송 제목9', category: '장건강'},
+      {sessionId: '10', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체10', title: '방송 제목10', category: '영양보충'},
+      {sessionId: '11', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체11', title: '방송 제목11', category: '혈압'},
+      {sessionId: '12', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체12', title: '방송 제목12', category: '눈'},
+      {sessionId: '13', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체13', title: '방송 제목13', category: '뼈/관절/연골'},
+      {sessionId: '14', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체14', title: '방송 제목14', category: '장건강'},
+      {sessionId: '15', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체15', title: '방송 제목15', category: '영양보충'},
+      {sessionId: '16', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체16', title: '방송 제목16', category: '혈압'},
+      {sessionId: '17', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체17', title: '방송 제목17', category: '눈'},
+      {sessionId: '18', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체18', title: '방송 제목18', category: '뼈/관절/연골'},
+      {sessionId: '19', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체19', title: '방송 제목19', category: '장건강'},
+      {sessionId: '20', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체20', title: '방송 제목20', category: '영양보충'}
     ];
+  } finally {
+    checkHasMore();
   }
 };
 
@@ -125,8 +209,27 @@ const goToStream = (stream) => {
   router.push(`/view/${stream.sessionId}`);
 };
 
-onMounted(() => {
-  fetchLiveStreams(); // API 연동 시 주석 해제
+// 검색어나 카테고리가 변경될 때 페이지 초기화
+watch([searchQuery, selectedCategory], () => {
+  page.value = 1;
+  checkHasMore();
+});
+
+let observer = null;
+
+onMounted(async () => {
+  await fetchLiveStreams();
+  
+  // DOM이 렌더링된 후 intersection observer 설정
+  await nextTick();
+  observer = setupIntersectionObserver();
+});
+
+// 컴포넌트 언마운트 시 observer 정리
+onBeforeUnmount(() => {
+  if (observer) {
+    observer.disconnect();
+  }
 });
 </script>
 
@@ -172,6 +275,7 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
+  margin-bottom: 40px;
 }
 
 .live-stream-card {
@@ -237,15 +341,10 @@ onMounted(() => {
 }
 
 .live-vendor-category {
-  //margin: 10px;
-  //text-align: center;
   display: flex;
-  justify-content: center; /* 가로 중앙 정렬 */
+  justify-content: center;
   align-items: center;
 }
-
-
-
 
 .live-stream-footer {
   display: flex;
@@ -286,6 +385,36 @@ onMounted(() => {
 
 .live-category-select:focus {
   border-color: #666;
+}
+
+/* 무한 스크롤 관련 스타일 */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #666;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.scroll-trigger {
+  height: 20px;
+  width: 100%;
 }
 
 @media (max-width: 1024px) {
