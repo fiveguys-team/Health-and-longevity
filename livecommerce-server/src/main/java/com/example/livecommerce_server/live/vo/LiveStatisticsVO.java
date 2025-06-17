@@ -17,7 +17,7 @@ public class LiveStatisticsVO {
     private int totalViewers;
     private int maxConcurrentViewers;
     private int averageWatchDuration;
-    private int totalChats;
+    private int purchaseRatio;
     private int totalOrders;
     private long totalReve;
 } 

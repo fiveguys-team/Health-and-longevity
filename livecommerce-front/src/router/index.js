@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 import { useAuthStore } from "@/modules/auth/stores/auth";
 import IndexOne from '@/views/index/index-one.vue'
 import AboutUs from '@/views/inner-pages/about-us.vue'
@@ -90,7 +90,13 @@ const routes = [
 
 
   {path: '/cart',component:CartView},
-  {path: '/product-details/:id',component:ProductDetails},
+  // 상품 상세 페이지 라우트 (중복 제거)
+  {
+    path: '/product-details/:id',
+    name: 'ProductDetails',
+    component: ProductDetails,
+    props: true
+  },
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
@@ -103,8 +109,7 @@ const routes = [
 
   // 상품, 리뷰 view
   { path: '/products', component: ProductCategory },
-  { path: '/product-details/:id', component: ProductDetails },
-  {path: '/shop/:category', component: ProductCategory},
+  { path: '/shop/:category', component: ProductCategory},
   { path: '/product/:category', component: ProductCategory },
   { path: '/vendor/:vendorSlug', component: Vendor },
   { path: '/vendor-category', component: () => import('@/views/shop/vendor-category.vue')},
@@ -259,7 +264,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL),
   routes,
 });
 
