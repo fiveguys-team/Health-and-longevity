@@ -56,7 +56,7 @@
               <label class="block text-sm font-semibold text-gray-700 mb-2">카테고리 선택</label>
               <select v-model="category"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                <option disabled :value="0">카테고리를 선택해주세요</option>
+                <option disabled value="">카테고리를 선택해주세요</option>
                 <option value="혈압">혈압</option>
                 <option value="눈">눈</option>
                 <option value="뼈/관절/연골">뼈/관절/연골</option>
