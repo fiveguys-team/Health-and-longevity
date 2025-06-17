@@ -53,8 +53,9 @@ import {ref, onMounted} from 'vue';
 import Aos from 'aos';
 import FooterOne from '@/components/footer/footer-one.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
-import axios from 'axios';
-import { useAuthStore } from "@/modules/auth/stores/auth";
+import axiosInstance from "@/api/axios";
+import {useAuthStore} from "@/modules/auth/stores/auth";
+import router from "@/router";
 
 const email = ref("")
 const password = ref("")
@@ -72,9 +73,6 @@ const kakaoServerLogin = () => {
   window.location.href = "http://localhost:8080/oauth2/authorization/kakao"
 }
 
-// memberLogin function using useAuthStore action
-const authStore = useAuthStore();
-
 const memberLogin = async () => {
   try {
     const loginData = {
@@ -82,15 +80,12 @@ const memberLogin = async () => {
       password: password.value
     };
 
-    await axios.post("http://localhost:8080/member/doLogin", loginData, {
-      withCredentials: true
-    });
+    await axiosInstance.post("/member/doLogin", loginData);
 
-    authStore.initFromCookie();
-
-    window.location.href = "/";
-    console.log(authStore.role);
-    console.log(authStore.token);
+    // 로그인 성공 후 사용자 정보 초기화 요청 (쿠키 기반)
+    const authStore = useAuthStore()
+    await authStore.initFromServer()
+    await router.push("/");
   } catch (err) {
     console.error(err);
     alert("로그인에 실패했습니다.");

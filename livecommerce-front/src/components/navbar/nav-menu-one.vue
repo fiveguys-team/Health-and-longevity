@@ -42,13 +42,13 @@
 </template>
 
 <script setup>
-import {ref, defineProps, defineEmits, computed} from 'vue'
+    import {ref, defineProps, defineEmits, computed} from 'vue'
     import SwitcherS from '../switcher-s.vue'
     import { useAuthStore } from "@/modules/auth/stores/auth";
 
     const cartList = ref(false)
     const authStore = useAuthStore();
-    const isLogin = computed(() => !!authStore.token);
+    const isLogin = computed(() => !!authStore.id);
 
     const profileRoute = computed(() => {
       switch (authStore.role) {

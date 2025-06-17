@@ -62,22 +62,14 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useAuthStore } from "@/modules/auth/stores/auth";
-
 import logoDark from '@/assets/img/svg/logo.png'
 import logoLight from '@/assets/img/svg/logo.png'
-
 import NavMenuOne from './nav-menu-one.vue';
 
-
-import { useRoute } from 'vue-router';
-
 const toggle = ref(false);
-
-const router = useRoute();
-const current = ref(router.path);
-
 const scroll = ref(false)
 const authStore = useAuthStore();
+
 const role = computed(() => authStore.role);
 
 const handleScroll = () => {

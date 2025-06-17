@@ -57,7 +57,8 @@
 
     import register from '@/assets/img/bg/register.jpg'
     import Aos from 'aos';
-    import axios from "axios";
+    import axiosInstance from "@/api/axios";
+    import router from "@/router";
 
     const name = ref("")
     const email = ref("")
@@ -69,8 +70,8 @@
         email: email.value,
         password: password.value
       }
-      await axios.post("http://localhost:8080/member/create", registerData)
-      window.location.href = "/"
+      await axiosInstance.post("/member/create", registerData)
+      await router.push("/")
     }
 
     onMounted(()=>{
