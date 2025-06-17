@@ -2,7 +2,7 @@
   <div class="statistics">
     <!-- 헤더: 제목 + 날짜 검색 -->
     <div class="statistics-header">
-      <h1>통계 자료</h1>
+      <h1>라이브 레포트</h1>
       <div class="search-container">
         <input
             v-model="searchDate"
@@ -53,7 +53,7 @@
 
     <!-- 선택된 방송 통계 정보 표시 영역 -->
     <div class="details" v-if="selectedItem">
-      <h2>{{ selectedItem.title }} 통계 자료</h2>
+      <h2>{{ selectedItem.title }} 성과 지표</h2>
       <div class="detail-content">
         <!-- 왼쪽 통계 카드 그룹 -->
         <div class="stats-cards">
@@ -70,8 +70,8 @@
             <div class="small-value">{{ formatDuration(selectedItem.averageWatchDuration) }}</div>
           </div>
           <div class="stats-card-small">
-            <div class="small-title">총 채팅 수</div>
-            <div class="small-value">{{ formatNumber(selectedItem.purchaseRatio) }}개</div>
+            <div class="small-title">구매 전환율</div>
+            <div class="small-value">{{ formatNumber(selectedItem.purchaseRatio) }}%</div>
           </div>
           <div class="stats-card-small">
             <div class="small-title">주문 건 수</div>
@@ -88,8 +88,8 @@
             <h3>AI 분석 자료</h3>
             <p>방송 데이터를 AI로 분석하여 인사이트를 제공합니다.</p>
           </div>
-          <button 
-            class="ai-button" 
+          <button
+            class="ai-button"
             @click="analyzeData"
             :disabled="analyzing"
           >
@@ -177,7 +177,7 @@ const getReportList = async () => {
 // AI 분석
 const analyzeData = async () => {
   if (!selectedItem.value) return
-  
+
   analyzing.value = true
   try {
     // TODO: AI 분석 API 연동
@@ -196,12 +196,15 @@ function selectItem(item) {
 }
 
 const filteredreports = computed(() => {
-  if (!searchDate.value) return reports.value
-  
-  return reports.value.filter(item => {
-    const itemDate = new Date(item.streamDate).toISOString().split('T')[0]
-    return itemDate.includes(searchDate.value)
-  })
+  let filtered = reports.value;
+  if (searchDate.value) {
+    filtered = filtered.filter(item => {
+      const itemDate = new Date(item.streamDate).toISOString().split('T')[0];
+      return itemDate.includes(searchDate.value);
+    });
+  }
+  // 최신순 정렬 (streamDate 내림차순)
+  return filtered.slice().sort((a, b) => new Date(b.streamDate) - new Date(a.streamDate));
 })
 
 // 페이징
