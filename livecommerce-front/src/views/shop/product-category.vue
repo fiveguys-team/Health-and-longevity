@@ -23,27 +23,60 @@
     <div class="pt-20 pb-24 bg-white">
       <div class="container-fluid">
         <div class="max-w-[1720px] mx-auto" data-aos="fade-up" data-aos-delay="200">
+
+          <!-- 정렬 옵션 -->
+          <div class="flex justify-end mb-6">
+            <select
+                v-model="sortOption"
+                class="border px-4 py-2 rounded focus:outline-none focus:ring"
+            >
+              <option value="default">기본 정렬</option>
+              <option value="price-asc">가격 낮은순</option>
+              <option value="price-desc">가격 높은순</option>
+              <option value="rating">인기순</option>
+            </select>
+          </div>
+
+          <!-- 상품 카드 -->
           <LayoutOne
               v-if="productList.length > 0"
-              :classList="'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8'"
-              :productList="productList"
+              :classList="'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8'"
+              :productList="paginatedProductList"
           />
 
           <div v-else class="text-center text-gray-400 text-lg mt-20">
-            해당 카테고리의 승인된 상품이 없습니다 😥
+            해당 카테고리의 상품이 없습니다 😥
           </div>
 
-          <!-- 페이징 (더미 UI) -->
-          <div class="mt-14 flex items-center justify-center gap-2">
-            <button class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black">&lt;</button>
+          <!-- ✅ 페이지네이션 UI -->
+          <div class="mt-14 flex items-center justify-center gap-2" v-if="totalPages >= 1">
             <button
-                v-for="n in 10"
+                :disabled="currentPage === 1"
+                @click="changePage(currentPage - 1)"
+                class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black"
+            >
+              &lt;
+            </button>
+
+            <button
+                v-for="n in totalPages"
                 :key="n"
-                class="w-10 h-10 flex items-center justify-center border rounded text-gray-700 hover:bg-gray-200"
+                @click="changePage(n)"
+                :class="[
+                'w-10 h-10 flex items-center justify-center border rounded',
+                currentPage === n ? 'bg-black text-white' : 'text-gray-700 hover:bg-gray-200'
+              ]"
             >
               {{ String(n).padStart(2, '0') }}
             </button>
-            <button class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black">&gt;</button>
+
+            <button
+                :disabled="currentPage === totalPages"
+                @click="changePage(currentPage + 1)"
+                class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black"
+            >
+              &gt;
+            </button>
           </div>
         </div>
       </div>
@@ -71,6 +104,36 @@ const route = useRoute()
 const categoryTitle = computed(() => route.params.category || '전체')
 const productList = ref([])
 
+const sortOption = ref('default')
+
+const currentPage = ref(1)
+const pageSize = 9
+const totalPages = computed(() => Math.ceil(productList.value.length / pageSize))
+
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
+
+const paginatedProductList = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return sortedProductList.value.slice(start, start + pageSize)
+})
+
+const sortedProductList = computed(() => {
+  switch (sortOption.value) {
+    case 'price-asc':
+      return [...productList.value].sort((a, b) => a.price - b.price)
+    case 'price-desc':
+      return [...productList.value].sort((a, b) => b.price - a.price)
+    case 'rating':
+      return [...productList.value].sort((a, b) => b.averageRating - a.averageRating)
+    default:
+      return productList.value
+  }
+})
+
 const categoryMap = {
   'blood-pressure': '혈압',
   'eye': '눈',
@@ -90,7 +153,10 @@ onMounted(() => {
   fetchProductList()
 })
 
-watch(() => route.params.category, fetchProductList)
+watch(() => route.params.category, () => {
+  currentPage.value = 1
+  fetchProductList()
+})
 
 async function fetchProductList() {
   try {

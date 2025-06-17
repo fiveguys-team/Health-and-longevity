@@ -12,12 +12,28 @@
       </h1>
     </div>
 
+    <!-- 🔍 검색창 (상품 리스트 위) -->
+    <div class="container-fluid max-w-[1720px] mx-auto mt-8 flex justify-end items-center gap-2">
+      <input
+          v-model="searchInput"
+          type="text"
+          placeholder="상품명을 입력하세요"
+          class="px-4 py-2 border rounded focus:outline-none focus:ring w-[240px]"
+      />
+      <button
+          @click="applySearch"
+          class="px-4 py-2 bg-primary text-white rounded hover:bg-opacity-80 transition"
+      >
+        검색
+      </button>
+    </div>
+
     <!-- 🟩 상품 리스트 -->
     <div class="py-20 bg-white">
       <div class="container-fluid max-w-[1720px] mx-auto">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10" data-aos="fade-up">
           <div
-              v-for="product in productList"
+              v-for="product in filteredProducts"
               :key="product.productId"
               class="border p-6 rounded shadow hover:shadow-lg transition group"
           >
@@ -30,20 +46,20 @@
                   alt="shop"
               />
 
-              <!-- ✅ 가격 -->
-              <h4 class="text-lg font-medium text-gray-900 dark:text-white">
-                {{ product.price.toLocaleString() }}원
-              </h4>
+              <!-- ✅ 상품명 -->
+              <h5 class="text-xl font-semibold mt-2 text-primary hover:underline">
+                {{ product.name }}
+              </h5>
 
               <!-- ✅ 업체명 -->
               <p class="text-sm text-gray-500 mt-1">
                 {{ product.vendor }}
               </p>
 
-              <!-- ✅ 상품명 -->
-              <h5 class="text-xl font-semibold mt-2 text-primary hover:underline">
-                {{ product.name }}
-              </h5>
+              <!-- ✅ 가격 -->
+              <h4 class="text-lg font-medium text-gray-900 dark:text-white">
+                {{ product.price.toLocaleString() }}원
+              </h4>
 
               <!-- ✅ 별점 -->
               <div class="flex items-center gap-1 mt-2">
@@ -60,7 +76,7 @@
           </div>
         </div>
 
-        <div v-if="productList.length === 0" class="text-center text-gray-500 mt-10">
+        <div v-if="filteredProducts.length === 0" class="text-center text-gray-500 mt-10">
           등록된 상품이 없습니다.
         </div>
       </div>
@@ -72,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from '@/utils/axios'
 
@@ -123,5 +139,21 @@ function getStarFill(starIndex, rating) {
   if (starIndex === full + 1) return partial
   return 0
 }
+
+
+const searchInput = ref('')
+const searchText = ref('')
+
+const applySearch = () => {
+  searchText.value = searchInput.value
+}
+
+const filteredProducts = computed(() => {
+  const keyword = searchText.value.trim().toLowerCase()
+  if (!keyword) return productList.value
+  return productList.value.filter(product =>
+      product.name?.toLowerCase().includes(keyword)
+  )
+})
 </script>
 
