@@ -94,9 +94,7 @@ class LiveStatisticsMapperTest {
 	@Test
 	@DisplayName("구매 전환율")
 	void selectPurchaseRatio() {
-		Double ratio = liveStatisticsMapper.selectPurchaseRatio("0bf69ae2-516b-4509-b887-a34b79f0b40a");
+		int ratio = liveStatisticsMapper.selectPurchaseRatio("0bf69ae2-516b-4509-b887-a34b79f0b40a");
 		log.info(String.valueOf(ratio));
 	}
-
-
 }

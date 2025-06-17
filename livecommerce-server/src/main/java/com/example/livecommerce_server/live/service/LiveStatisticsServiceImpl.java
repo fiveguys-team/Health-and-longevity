@@ -47,9 +47,9 @@ public class LiveStatisticsServiceImpl implements LiveStatisticsService {
         int totalViewers = liveStatisticsMapper.selectTotalViewers(liveId);
         int maxConcurrentViewers = liveStatisticsMapper.selectMaxConcurrentViewers(liveId);
         int averageWatchDuration = liveStatisticsMapper.selectAverageWatchDuration(liveId);
-        int totalChats = 0;   // 총 채팅 수 
-        int totalOrders = 0;  // 총 주문 수
-        long totalReve = 0L;  // 총 매출액 => 추후 구현 예정
+        long totalReve = liveStatisticsMapper.selectTotalRevenue(liveId);
+        int totalOrders = liveStatisticsMapper.selectTotalOrders(liveId);
+        int purchaseRatio = liveStatisticsMapper.selectPurchaseRatio(liveId);
 
         LiveStatisticsVO dashboard = LiveStatisticsVO.builder()
                 .liveDashboardId(uuid) 
@@ -57,9 +57,9 @@ public class LiveStatisticsServiceImpl implements LiveStatisticsService {
                 .totalViewers(totalViewers)
                 .maxConcurrentViewers(maxConcurrentViewers)
                 .averageWatchDuration(averageWatchDuration)
-                .totalChats(totalChats)
-                .totalOrders(totalOrders)
                 .totalReve(totalReve)
+                .totalOrders(totalOrders)
+                .purchaseRatio(purchaseRatio)
                 .build();
 
         liveStatisticsMapper.insertLiveDashboard(dashboard);
