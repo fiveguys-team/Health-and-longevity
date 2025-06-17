@@ -9,10 +9,9 @@
             <i class="mdi mdi-account-outline text-title dark:text-white text-[24px] sm:text-[28px]"></i>
         </router-link>
 
-        <button class="relative hdr_cart_btn" @click="cartList = !cartList">
-            <!-- <span class="absolute w-[22px] h-[22px] bg-secondary top-[0px] -right-[11px] rounded-full flex items-center justify-center text-xs leading-none text-white">7</span> -->
-            <span class="mdi mdi-shopping-outline text-title dark:text-white text-[24px] sm:text-[28px]"></span>
-        </button>
+      <router-link to="/cart" class="relative hdr_cart_btn">
+        <span class="mdi mdi-shopping-outline text-title dark:text-white text-[24px] sm:text-[28px]"></span>
+      </router-link>
         <div v-if="cartList"
             class="hdr_cart_popup w-80 md:w-96 absolute z-50 top-full right-0 sm:right-10 xl:right-0 bg-white dark:bg-title p-5 md:p-[30px] border border-primary">
             <h4 class="font-medium leading-none mb-4 text-xl md:text-2xl">Cart List</h4>

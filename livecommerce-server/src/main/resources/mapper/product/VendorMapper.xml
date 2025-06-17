@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.livecommerce_server.product.repository.VendorMapper">
+
+  <select id="findAllVendors" resultType="com.example.livecommerce_server.product.dto.VendorDTO">
+    SELECT vendor_id, name
+    FROM vendor_m
+    WHERE status = 'APPROVED'
+  </select>
+
+  <select id="findProductsByVendorId" resultType="com.example.livecommerce_server.product.dto.ProductVendorDTO">
+    SELECT
+    p.product_id AS productId,
+    p.name,
+    p.price,
+    p.stock_count AS stockCount,
+    p.product_image AS productImage,
+    v.name AS vendor
+    FROM product p
+    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    WHERE p.vendor_id = #{vendorId}
+    AND p.status = 'APPROVED'
+  </select>
+
+
+</mapper>

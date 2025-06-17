@@ -1,13 +1,27 @@
 <template>
   <div>
-    <NavbarOne/>
+    <NavbarOne />
 
-    <div class="bg-[#F8F5F0] dark:bg-dark-secondary py-5 md:py-[30px]">
-      <div class="container-fluid">
-        <ul class="flex items-center gap-[10px] text-base md:text-lg leading-none font-normal text-title dark:text-white max-w-[1720px] mx-auto flex-wrap">
-          <li><router-link to="/">Home</router-link></li>
+    <!-- ✅ 상품 경로 (breadcrumb) -->
+    <div
+        class="flex items-center gap-4 flex-wrap bg-overlay py-16 sm:py-20 before:bg-title before:bg-opacity-70"
+        :style="bg ? { backgroundImage: `url(${bg})` } : { backgroundColor: '#333' }"
+    >
+      <div class="text-center w-full">
+        <h2 class="text-white text-4xl md:text-5xl font-semibold leading-none">
+          {{ data?.name || '상품명' }}
+        </h2>
+        <ul class="flex justify-center gap-2 text-base md:text-lg text-white mt-4">
+          <li><router-link to="/shop-v1">고민별</router-link></li>
           <li>/</li>
-          <li><router-link to="/shop-v1">Shop</router-link></li>
+          <li>
+            <router-link
+                :to="`/category/${encodeURIComponent(data?.category || '')}`"
+                class="capitalize"
+            >
+              {{ data?.category || '카테고리' }}
+            </router-link>
+          </li>
           <li>/</li>
           <li class="text-primary">{{ data?.name || '상품명' }}</li>
         </ul>
@@ -22,7 +36,7 @@
               <button class="absolute top-5 left-0 p-2 bg-[#E13939] text-lg leading-none text-white font-medium z-50">-10%</button>
               <div class="product-dtls-slider">
                 <img
-                    :src="!data?.image || data.image === '' ? testImg : data.image"
+                    :src="!data?.productImage || data.productImage === '' ? testImg : getImageUrl(data.productImage)"
                     alt="product"
                     class="w-full"
                     :class="activeImage === 1 ? '' : 'hidden'"
@@ -51,8 +65,8 @@
             </div>
 
             <div class="flex gap-4 items-center mt-[15px]">
-              <span class="text-lg sm:text-xl line-through text-title dark:text-white">$140.99</span>
-              <span class="text-2xl sm:text-3xl text-primary">$85.00</span>
+              <span class="text-lg sm:text-xl line-through text-title dark:text-white">₩140,000</span>
+              <span class="text-2xl sm:text-3xl text-primary">₩{{ data?.price }}</span>
             </div>
 
             <div class="mt-5 md:mt-7 flex items-center gap-4 flex-wrap">
@@ -73,16 +87,10 @@
             <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up">
               <IncDec v-model="quantity" />
               <div class="flex gap-4 mt-4 sm:mt-6">
-                <router-link to="/cart" class="btn btn-outline">장바구니</router-link>
+                     <button class="btn btn-outline" @click="goToCart">
+                       장바구니
+                     </button>
                 <button class="btn btn-outline" @click="buyNow">구매</button>
-                <!--                <router-link :to="{-->
-                <!--                path: '/order',-->
-                <!--                query: {-->
-                <!--                  productId: data?.id,-->
-                <!--                  quantity-->
-                <!--                }-->
-                <!--                }" class="btn btn-outline">-->
-                <!--                  구매</router-link>-->
               </div>
             </div>
           </div>
@@ -90,95 +98,121 @@
       </div>
     </div>
 
+    <!-- ✅ 상세 정보 탭 -->
     <div class="s-py-50">
-      <DetailTab :productName="data?.name || ''"/>
+      <DetailTab :productDetail="data" />
     </div>
 
-    <FooterOne/>
-    <ScrollToTop/>
+    <FooterOne />
+    <ScrollToTop />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
-import {useRoute, useRouter} from 'vue-router'
-import axios from "axios";
-import {useOrderStore} from '@/modules/order/stores/order'
-import NavbarOne from '@/components/navbar/navbar-one.vue';
-import IncDec from '@/components/inc-dec.vue';
-import DetailTab from '@/components/product/detail-tab.vue';
-import FooterOne from '@/components/footer/footer-one.vue';
-import ScrollToTop from '@/components/scroll-to-top.vue';
-import testImg from '@/assets/img/product/testimg.jpg';
-import Aos from 'aos';
-import { productList } from '@/data/data';
-import { detailReview } from '@/data/data';
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
+import NavbarOne from '@/components/navbar/navbar-one.vue'
+import IncDec from '@/components/inc-dec.vue'
+import DetailTab from '@/components/product/detail-tab.vue'
+import FooterOne from '@/components/footer/footer-one.vue'
+import ScrollToTop from '@/components/scroll-to-top.vue'
+import testImg from '@/assets/img/product/testimg.jpg'
+import bg from '@/assets/img/shortcode/breadcumb.jpg' // ✅ 배경 이미지 import
+import Aos from 'aos'
+import { useOrderStore } from '@/modules/order/stores/order'
+import { detailReview } from '@/data/data'
+import {useAuthStore} from "@/modules/auth/stores/auth";
 
-onMounted(() => {
-  Aos.init();
-});
+const route = useRoute()
+const router = useRouter()
+const store = useOrderStore()
 
-// inc-dec 수량 변경 테스트
-const quantity = ref(1);
+const authStore = useAuthStore();
+const userId = authStore.id;
 
-watch(
-    quantity,
-    () => { /* no-op or console.log */ },
-    { flush: 'sync' }
-);
+const data = ref(null)
+const quantity = ref(1)
+const activeImage = ref(1)
 
-const activeImage = ref(1);
-const now = ref(new Date().getTime());
-const targetTime = ref(new Date('Sep 13 2025').getTime());
-const difference = ref(0);
+onMounted(async () => {
+  Aos.init()
+  const productId = route.params.id
 
+  try {
+    const res = await axios.get(`http://localhost:8080/products/${productId}`)
+    data.value = res.data
+  } catch (err) {
+    console.error('상품 정보를 불러오는 데 실패했습니다.', err)
+    alert('상품 정보를 불러올 수 없습니다.')
+  }
+})
 
-const days = computed(() => Math.floor(difference.value / (1000 * 60 * 60 * 24)));
-const hours = computed(() => 23 - new Date(now.value).getHours());
-const minutes = computed(() => 60 - new Date(now.value).getMinutes());
-const seconds = computed(() => 60 - new Date(now.value).getSeconds());
+function getImageUrl(filename) {
+  return `http://localhost:8080/uploads/images/${filename}`
+}
 
-watch(now, () => {
-  difference.value = targetTime.value - now.value;
-});
+// 리뷰 계산
+const filteredReviews = computed(() => {
+  return detailReview.filter(review => review.product === data.value?.name)
+})
+const reviewCount = computed(() => filteredReviews.value.length)
+const averageRating = computed(() => {
+  if (!filteredReviews.value.length) return 0
+  const total = filteredReviews.value.reduce((sum, r) => sum + r.rating, 0)
+  return (total / filteredReviews.value.length).toFixed(1)
+})
+
+// 타이머
+const now = ref(new Date().getTime())
+const targetTime = ref(new Date('Sep 13 2025').getTime())
+const difference = ref(targetTime.value - now.value)
 
 function updateNow() {
-  now.value = new Date().getTime();
+  now.value = new Date().getTime()
+  difference.value = targetTime.value - now.value
 }
-updateNow();
-setInterval(updateNow, 1000);
+setInterval(updateNow, 1000)
 
-const route = useRoute();
-const data = ref(null);
+const days = computed(() => Math.floor(difference.value / (1000 * 60 * 60 * 24)))
+const hours = computed(() => 23 - new Date(now.value).getHours())
+const minutes = computed(() => 60 - new Date(now.value).getMinutes())
+const seconds = computed(() => 60 - new Date(now.value).getSeconds())
 
-onMounted(() => {
-  const productId = parseInt(route.params.id);
-  data.value = productList.find(item => item.id === productId);
-});
+const productId = computed(() => route.params.id)
 
-const filteredReviews = computed(() => {
-  return detailReview.filter(review => review.product === data.value?.name);
-});
+function goToCart() {
+  if (userId === null) {
+    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.')
+    router.push({
+      path: '/login',
+      query: { redirect: route.fullPath }
+    })
+    return
+  }
+  // 로그인 되어 있을 때 실제 장바구니 페이지로
+  router.push({ path: '/cart' })
+}
 
-const reviewCount = computed(() => filteredReviews.value.length);
 
-const averageRating = computed(() => {
-  if (!filteredReviews.value.length) return 0;
-  const total = filteredReviews.value.reduce((sum, r) => sum + r.rating, 0);
-  return (total / filteredReviews.value.length).toFixed(1);
-});
-
-const store = useOrderStore()
-const productId = computed(() => parseInt(route.params.id, 10))
-const router = useRouter()
-
+// 구매 API
 async function buyNow() {
+
+  if (userId === null) {
+    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+    router.push({
+      path: '/login',
+      query: { redirect: route.fullPath }
+    });
+    return;
+  }
+
   try {
     console.log('[✅ 호출 시작] productId:', productId.value, 'quantity:', quantity.value)
 
     const response = await axios.get('http://localhost:8080/api/order', {
       params: {
-        productId: productId.value.toString(),
+        productId: productId.value,
         quantity: quantity.value
       }
     });
