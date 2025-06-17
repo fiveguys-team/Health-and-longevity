@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 import { useAuthStore } from "@/modules/auth/stores/auth";
 import IndexOne from '@/views/index/index-one.vue'
 import AboutUs from '@/views/inner-pages/about-us.vue'
@@ -262,7 +262,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL),
   routes,
 });
 
