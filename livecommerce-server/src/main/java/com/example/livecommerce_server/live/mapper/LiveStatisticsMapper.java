@@ -36,9 +36,12 @@ public interface LiveStatisticsMapper {
     // 라이브 통계 조회
     List<LiveStatisticsDTO> selectLiveStatisticsList(@Param("vendorId") String vendorId);
 
-    // 총 채팅 수
+    // 총 매출액
+    int selectTotalRevenue(@Param("liveId") String liveId);
 
-    // 주문 수
+    // 주문 건 수
+    int selectTotalOrders(@Param("liveId") String liveId);
 
-    // 매출액 추후 개발 예정
+    // 구매 전환율
+    double selectPurchaseRatio(@Param("liveId") String liveId);
 } 
