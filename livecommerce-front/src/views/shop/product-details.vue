@@ -88,7 +88,7 @@
               <IncDec v-model="quantity" />
               <div class="flex gap-4 mt-4 sm:mt-6">
                      <button class="btn btn-outline" @click="goToCart">
-                       장바구니
+                       장바구니 담기
                      </button>
                 <button class="btn btn-outline" @click="buyNow">구매</button>
               </div>
@@ -123,6 +123,7 @@ import Aos from 'aos'
 import { useOrderStore } from '@/modules/order/stores/order'
 import { detailReview } from '@/data/data'
 import {useAuthStore} from "@/modules/auth/stores/auth";
+import { getCartByUserId, addCartItem } from "@/modules/order/services/orderApi";
 
 const route = useRoute()
 const router = useRouter()
@@ -181,17 +182,45 @@ const seconds = computed(() => 60 - new Date(now.value).getSeconds())
 
 const productId = computed(() => route.params.id)
 
-function goToCart() {
-  if (userId === null) {
-    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.')
+async function goToCart() {
+  if (!userId) {
+    alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
     router.push({
       path: '/login',
       query: { redirect: route.fullPath }
-    })
-    return
+    });
+    return;
   }
-  // 로그인 되어 있을 때 실제 장바구니 페이지로
-  router.push({ path: '/cart' })
+
+  try {
+    // 1. 사용자 장바구니 조회 → cartId 확보
+    const cartResponse = await getCartByUserId(userId);
+    const cartId = cartResponse.data?.cartId;
+
+    if (!cartId) {
+      alert('장바구니를 불러올 수 없습니다.');
+      return;
+    }
+
+    // 2. 장바구니 항목 추가
+    const payload = {
+      cartId: cartId,
+      productId: productId.value,
+      quantity: quantity.value
+    };
+
+    const res = await addCartItem(payload);
+    console.log('[✅ 장바구니 추가 성공]', res.data);
+
+    // 3. 장바구니 페이지로 이동
+    const confirmed = window.confirm('🛒 장바구니에 추가되었습니다.\n장바구니로 이동하시겠습니까?');
+    if (confirmed) {
+      router.push({path: '/cart'});
+    }
+  } catch (err) {
+    console.error('[❌ 장바구니 처리 실패]', err);
+    alert('장바구니 추가 중 오류가 발생했습니다.');
+  }
 }
 
 
