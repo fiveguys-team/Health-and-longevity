@@ -30,7 +30,7 @@
               <span class="discount-price">{{ item.discountedPrice.toLocaleString() }}원</span>
               <span class="original-price">{{ item.price.toLocaleString() }}원</span>
             </div>
-            <button class="btn btn-primary">구매하기</button>
+            <button class="" @click="openProductDetails(item.productId)">구매하기</button>
           </div>
         </div>
       </div>
