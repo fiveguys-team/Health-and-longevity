@@ -54,9 +54,8 @@
                   <IncDec
                       :modelValue="item.quantity"
                       @update:modelValue="(val) => {
-    item.quantity = val  // 화면 상 바인딩 수동 적용
-    updateQuantity(item.cartItemId, val)
-  }"
+                      item.quantity = val  // 화면 상 바인딩 수동 적용
+                      updateQuantity(item.cartItemId, val)}"
                   />
 <!--                  <IncDec :modelValue="item.quantity" @update:modelValue="(val) => updateQuantity(item.cartItemId, val)" />-->
                 </td>
@@ -84,76 +83,29 @@
             <div class="bg-[#FAFAFA] dark:bg-dark-secondary pt-[30px] md:pt-[40px] px-[30px] md:px-[40px] pb-[30px] border border-[#17243026] border-opacity-15 rounded-xl">
               <div class="text-right flex justify-end flex-col w-full ml-auto mr-0">
                 <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium">
-                  <span>Sub Total:</span>
-                  <span>$870</span>
+                  <span>총 상품 금액:</span>
+                  <span>₩{{ subtotal.toLocaleString() }}</span>
                 </div>
                 <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <span>Coupon Discount:</span>
-                  <span>-$20</span>
+                  <span>총 할인 금액 :</span>
+                  <span>-₩{{ discount.toLocaleString() }}</span>
                 </div>
                 <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <span>VAT:</span>
-                  <span> $5</span>
-                </div>
-
-              </div>
-              <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
-                <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <div>
-                    <label class="flex items-center gap-[10px] categoryies-iteem">
-                      <input class="appearance-none hidden" type="radio" name="item-type">
-                      <span class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
-                                                <svg class="duration-300 opacity-0" width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect width="10" height="10" rx="5" fill="#BB976D"/>
-                                                </svg>
-                                            </span>
-                      <span class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none">Free Shipping:</span>
-                    </label>
-                  </div>
-                  <span> $0</span>
+                  <span>배송비:</span>
+                  <span>₩{{ shippingFee.toLocaleString() }}</span>
                 </div>
                 <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <div>
-                    <label class="flex items-center gap-[10px] categoryies-iteem">
-                      <input class="appearance-none hidden" type="radio" name="item-type">
-                      <span class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
-                                                <svg class="duration-300 opacity-0" width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect width="10" height="10" rx="5" fill="#BB976D"/>
-                                                </svg>
-                                            </span>
-                      <span class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none"> Fast Shipping:</span>
-                    </label>
-                  </div>
-                  <span>$10</span>
-                </div>
-                <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                  <div>
-                    <label class="flex items-center gap-[10px] categoryies-iteem">
-                      <input class="appearance-none hidden" type="radio" name="item-type">
-                      <span class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
-                                                <svg class="duration-300 opacity-0" width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect width="10" height="10" rx="5" fill="#BB976D"/>
-                                                </svg>
-                                            </span>
-                      <span class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none"> Local Pickup:</span>
-                    </label>
-                  </div>
-                  <span>$15</span>
-                </div>
-              </div>
-              <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
-                <div class="flex justify-between flex-wrap font-semibold leading-none text-2xl">
-                  <span>Total:</span>
-                  <span>&nbsp;$850</span>
+                  <span>결제 금액:</span>
+                  <span>₩{{ total.toLocaleString() }}</span>
                 </div>
               </div>
             </div>
             <div class="sm:mt-[10px] py-5 flex items-end gap-3 flex-wrap justify-end">
-              <router-link to="/shop-v1" class="btn btn-sm btn-outline !text-title hover:!text-white before:!z-[-1] dark:!text-white dark:hover:!text-title">
-                Continue Shopping
+              <router-link to="/" class="btn btn-sm btn-outline !text-title hover:!text-white before:!z-[-1] dark:!text-white dark:hover:!text-title">
+                계속 쇼핑하기
               </router-link>
               <router-link to="/checkout" class="btn btn-sm btn-theme-solid !text-white hover:!text-primary before:!z-[-1]">
-                Checkout
+                결제하기
               </router-link>
             </div>
           </div>
@@ -168,7 +120,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import {computed, onMounted, ref} from 'vue'
 
 import NavbarOne from '@/components/navbar/navbar-one.vue'
 import IncDec from '@/components/inc-dec.vue'
@@ -185,6 +137,29 @@ const userId = authStore.id;
 // ✅ 상태 변수
 const cartData = ref(null)
 const cartItems = ref([])
+
+const subtotal = computed(() =>
+    cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
+)
+
+const discount = computed(() =>
+    cartItems.value.reduce((sum, item) => {
+      const rate = item.appliedDiscountRate ?? 0  // ✅ camelCase + null safety
+      return sum + item.price * (rate / 100) * item.quantity
+    }, 0)
+)
+
+const total = computed(() =>
+    totalBeforeShipping.value + shippingFee.value
+)
+
+const shippingFee = computed(() =>
+    totalBeforeShipping.value >= 50000 ? 0 : 3000
+)
+
+const totalBeforeShipping = computed(() =>
+    subtotal.value - discount.value
+)
 
 onMounted(async () => {
   Aos.init()
@@ -203,7 +178,9 @@ onMounted(async () => {
     // 2. cartId로 장바구니 아이템 조회
     const itemsRes = await getCartItems(cartId)
     cartItems.value = itemsRes.data
-    console.log('장바구니 상품목록', cartItems.value)
+    // console.log('장바구니 상품목록', cartItems.value)
+    // console.log('[DEBUG] cartItems raw:', cartItems.value)
+    // console.log('[DEBUG] 첫 상품:', JSON.stringify(cartItems.value[0], null, 2))
 
   } catch (e) {
     console.error('장바구니 불러오기 실패:', e)

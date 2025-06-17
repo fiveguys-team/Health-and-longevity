@@ -7,10 +7,9 @@
             <i class="mdi mdi-account-outline text-title dark:text-white text-[24px] sm:text-[28px]"></i>
         </router-link>
 
-        <button class="relative hdr_cart_btn" @click="cartList = !cartList">
-            <!-- <span class="absolute w-[22px] h-[22px] bg-secondary top-[0px] -right-[11px] rounded-full flex items-center justify-center text-xs leading-none text-white">7</span> -->
-            <span class="mdi mdi-shopping-outline text-title dark:text-white text-[24px] sm:text-[28px]"></span>
-        </button>
+      <button class="relative hdr_cart_btn" @click="goToCart">
+        <span class="mdi mdi-shopping-outline text-title dark:text-white text-[24px] sm:text-[28px]"></span>
+      </button>
         <div v-if="cartList" class="hdr_cart_popup w-80 md:w-96 absolute z-50 top-full right-0 sm:right-10 xl:right-0 bg-white dark:bg-title p-5 md:p-[30px] border border-primary">
             <h4 class="font-medium leading-none mb-4 text-xl md:text-2xl">Cart List</h4>
             <div>
@@ -49,6 +48,10 @@
     const cartList = ref(false)
     const authStore = useAuthStore();
     const isLogin = computed(() => !!authStore.id);
+    import { useRouter, useRoute } from 'vue-router'
+
+    const router = useRouter();
+    const route = useRoute()
 
     const profileRoute = computed(() => {
       switch (authStore.role) {
@@ -73,5 +76,19 @@
 
     function handleToggle() {
         emit('toggle-change', !props.toggle); // Correctly use `toggle` prop here
+    }
+
+
+    async function goToCart() {
+      if (!isLogin.value) {
+        alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+        router.push({
+          path: '/login',
+          query: { redirect: route.fullPath }
+        });
+        return;
+      }
+
+      router.push('/cart');
     }
 </script>

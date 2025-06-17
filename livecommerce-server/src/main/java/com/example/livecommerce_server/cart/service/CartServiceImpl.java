@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -32,13 +33,31 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addCartItem(CartItemDTO cartItemDTO) {
-        if (cartItemDTO.getCartItemId() == null || cartItemDTO.getCartItemId().isEmpty()) {
-            cartItemDTO.setCartItemId(UUID.randomUUID().toString());
+        Map<String, Object> param = Map.of(
+                "cartId", cartItemDTO.getCartId(),
+                "productId", cartItemDTO.getProductId()
+        );
+
+        int count = cartMapper.existsCartItemByCartIdAndProductId(param);
+
+        if (count > 0) {
+            // 수량만 증가
+            param = Map.of(
+                    "cartId", cartItemDTO.getCartId(),
+                    "productId", cartItemDTO.getProductId(),
+                    "quantity", cartItemDTO.getQuantity()
+            );
+            cartMapper.incrementCartItemQuantity(param);
+        } else {
+            // 새로 추가
+            if (cartItemDTO.getCartItemId() == null || cartItemDTO.getCartItemId().isEmpty()) {
+                cartItemDTO.setCartItemId(UUID.randomUUID().toString());
+            }
+            if (cartItemDTO.getCreatedAt() == null) {
+                cartItemDTO.setCreatedAt(nowCompactString()); // 문자열 형태면 String 반환 함수
+            }
+            cartMapper.insertCartItem(cartItemDTO);
         }
-        if (cartItemDTO.getCreatedAt() == null) {
-            cartItemDTO.setCreatedAt(nowCompactString());
-        }
-        cartMapper.insertCartItem(cartItemDTO);
     }
 
     @Override
