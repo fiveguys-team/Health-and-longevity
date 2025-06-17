@@ -33,42 +33,36 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String openId = oAuth2User.getAttribute("sub");
         String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
         // 회원가입 여부 확인
-//        Member member = memberRepository.findBySocialId(openId).orElse(null);
         Member member = memberRepository.findByEmail(email).orElse(null);
         if (member == null) {
             member = Member.builder()
                     .socialId(openId)
                     .email(email)
+                    .name(name)
                     .socialType(SocialType.GOOGLE)
                     .role(Role.USER)
                     .build();
             memberRepository.create(member);
+            member = memberRepository.findByEmail(email).orElse(null);
         } else {
             member.setSocialId(openId);
+            member.setName(name);
             member.setSocialType(SocialType.GOOGLE);
             memberRepository.update(member);
+            member = memberRepository.findByEmail(email).orElse(null);
         }
         // jwt 토큰 생성
-        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(),  member.getUserId().toString(), member.getName());
-        // 클라이언트 redirect 방식으로 token 전달
-//        response.sendRedirect("http://localhost:3000?token=" + jwtToken);
+        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(), member.getName(), member.getUserId().toString());
         Cookie jwtCookie = new Cookie("token", jwtToken);
+        jwtCookie.setHttpOnly(true);
+//        jwtCookie.setSecure(true);
         jwtCookie.setPath("/"); // 모든 경로에서 쿠키 사용가능
+        jwtCookie.setMaxAge(60 * 60);
         response.addCookie(jwtCookie);
 
-        Cookie roleCookie = new Cookie("role", member.getRole().toString());
-        roleCookie.setPath("/");
-        response.addCookie(roleCookie);
-
-        Cookie nameCookie = new Cookie("name", member.getName());
-        nameCookie.setPath("/");
-        response.addCookie(nameCookie);
-
-        Cookie idCookie = new Cookie("id", member.getUserId().toString());
-        idCookie.setPath("/");
-        response.addCookie(idCookie);
-
-        response.sendRedirect("http://localhost:3000");
+        // 클라이언트 redirect 방식으로 token 전달
+        response.sendRedirect("http://localhost:3000/oauth-success");
     }
 }

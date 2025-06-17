@@ -63,6 +63,7 @@ import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
 import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
 import test from "@/modules/live/views/testView.vue";
+import OAuthSuccess from "@/modules/auth/views/OAuthSuccess.vue";
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -99,6 +100,7 @@ const routes = [
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
+  {path: '/oauth-success', component:OAuthSuccess},
 
   { path: "/admin-dashboard", component: adminDashboard,
     meta: {requiresAuth: true, roles: ['ADMIN']}
@@ -270,7 +272,7 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
 
   if (to.meta.requiresAuth) {
-    if (!authStore.token) return next('/login')
+    if (!authStore.id) return next('/login')
 
     if (to.meta.roles && !to.meta.roles.includes(authStore.role)) {
       alert('권한이 없습니다.')

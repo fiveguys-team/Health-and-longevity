@@ -4,22 +4,18 @@ import com.example.livecommerce_server.common.auth.JwtTokenProvider;
 import com.example.livecommerce_server.member.domain.Member;
 import com.example.livecommerce_server.member.dto.*;
 import com.example.livecommerce_server.member.service.MemberService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/member")
@@ -47,33 +43,35 @@ public class MemberController {
         String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(), member.getName(), member.getUserId().toString());
 
         Cookie tokenCookie = new Cookie("token", jwtToken);
-//        tokenCookie.setHttpOnly(false);
+        tokenCookie.setHttpOnly(true);
+//        tokenCookie.setSecure(true);
         tokenCookie.setPath("/");
-        tokenCookie.setMaxAge(60 * 60); // 1시간
+        tokenCookie.setMaxAge(60 * 60);
 
-        // 쿠키로 역할 저장 (선택 사항)
-        Cookie roleCookie = new Cookie("role", member.getRole().name());
-//        roleCookie.setHttpOnly(true);
-        roleCookie.setPath("/");
-        roleCookie.setMaxAge(60 * 60);
-
-        String encodedName = URLEncoder.encode(member.getName(), StandardCharsets.UTF_8);
-        Cookie nameCookie = new Cookie("name", encodedName);
-//        nameCookie.setHttpOnly(true);
-        nameCookie.setPath("/");
-        nameCookie.setMaxAge(60 * 60);
-
-        Cookie idCookie = new Cookie("id", member.getUserId().toString());
-//        idCookie.setHttpOnly(true);
-        idCookie.setPath("/");
-        idCookie.setMaxAge(60 * 60);
-
-        // 응답에 쿠키 추가
         response.addCookie(tokenCookie);
-        response.addCookie(roleCookie);
-        response.addCookie(nameCookie);
-        response.addCookie(idCookie);
 
         return ResponseEntity.ok(Map.of("success", true));
     }
+
+    @GetMapping("/info")
+    public ResponseEntity<?> getMe(HttpServletRequest request) {
+        String token = Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
+                .filter(c -> c.getName().equals("token"))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("토큰이 존재하지 않습니다."));
+
+        Claims claims = jwtTokenProvider.parseToken(token);
+
+        // Map.of(...)는 value가 null이면 NPE를 발생시킨다.
+        // HashMap을 사용해 null‑safe 하게 응답 바디를 구성한다.
+        java.util.Map<String, Object> body = new HashMap<>();
+        body.put("email", claims.get("email"));
+        body.put("name", claims.get("name"));
+        body.put("role", claims.get("role"));
+        body.put("id", claims.getSubject());
+
+        return ResponseEntity.ok(body);
+    }
 }
+
