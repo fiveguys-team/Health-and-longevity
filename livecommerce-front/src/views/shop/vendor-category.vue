@@ -2,6 +2,7 @@
   <div>
     <NavbarOne />
 
+
     <!-- 🟦 배경 이미지 + 타이틀 -->
     <div
         class="flex items-center gap-4 flex-wrap bg-overlay py-16 sm:py-20 before:bg-title before:bg-opacity-70"
@@ -17,17 +18,32 @@
       </div>
     </div>
 
+    <!-- 🔍 검색창 (배경 아래, 오른쪽 정렬) -->
+    <div class="container-fluid max-w-6xl mx-auto mt-8 flex justify-end items-center gap-2">
+      <input
+          v-model="searchInput"
+          type="text"
+          placeholder="업체명을 입력하세요"
+          class="px-4 py-2 border rounded focus:outline-none focus:ring w-[240px]"
+      />
+      <button
+          @click="applySearch"
+          class="px-4 py-2 bg-primary text-white rounded hover:bg-opacity-80 transition"
+      >
+        검색
+      </button>
+    </div>
+
     <!-- 🟩 업체 목록 -->
     <div class="pt-20 pb-24 bg-white">
-      <div class="container-fluid">
+      <div class="max-w-[1720px] mx-auto px-4">
         <div
-            class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10"
-            data-aos="fade-up"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10" data-aos="fade-up"
         >
           <div
-              v-for="vendor in vendorList"
+              v-for="vendor in filteredVendors"
               :key="vendor.vendorId"
-              class="bg-white border rounded-xl shadow-md hover:shadow-xl hover:scale-105 transform transition duration-300 p-6"
+              class="bg-white border rounded-lg shadow hover:shadow-md hover:scale-105 transform transition duration-200 p-4"
           >
             <router-link :to="`/vendor/${vendor.vendorId}/products`">
               <img
@@ -50,7 +66,7 @@
 
         <!-- ⚠️ 등록된 업체가 없는 경우 -->
         <div
-            v-if="vendorList.length === 0"
+            v-if="filteredVendors.length === 0"
             class="text-center text-gray-500 mt-10"
         >
           등록된 업체가 없습니다.
@@ -64,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from '@/utils/axios'
 import NavbarOne from '@/components/navbar/navbar-one.vue'
 import FooterOne from '@/components/footer/footer-one.vue'
@@ -85,4 +101,20 @@ async function fetchVendors() {
     console.error('❌ 업체 목록 불러오기 실패', err)
   }
 }
+
+const searchInput = ref('')
+const searchText = ref('') // 🔍 상태
+
+const applySearch = () => {
+  searchText.value = searchInput.value
+}
+
+const filteredVendors = computed(() => {
+  const keyword = searchText.value.trim().toLowerCase()
+  if (!keyword) return vendorList.value
+  return vendorList.value.filter(v =>
+      v.name?.toLowerCase().includes(keyword)
+  )
+})
+
 </script>

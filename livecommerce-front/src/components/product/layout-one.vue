@@ -3,7 +3,7 @@
     <div
         v-for="(item, index) in filteredList"
         :key="index"
-        class="group"
+        class="group bg-white border rounded-xl shadow-md hover:shadow-xl hover:scale-105 transform transition duration-300 p-6"
     >
       <!-- ✅ 상품 이미지 + 링크 -->
       <div class="relative overflow-hidden">
@@ -32,19 +32,24 @@
 
       <!-- ✅ 상품 정보 -->
       <div class="md:px-2 lg:px-4 xl:px-6 lg:pt-6 pt-5 flex gap-4 md:gap-5 flex-col">
-        <h4 class="font-medium leading-none dark:text-white text-lg">
-          {{ item.price.toLocaleString() }}원
-        </h4>
+
+        <h2 class="text-2xl font-semibold dark:text-white leading-snug">
+          <router-link :to="`/product-details/${item.id}`" class="text-underline">
+            {{ item.name }}
+          </router-link>
+        </h2>
+
         <p class="text-sm text-gray-500 dark:text-gray-300">
           {{ item.vendor }}
         </p>
 
+        <h5 class="font-medium leading-none dark:text-white text-lg">
+          {{ item.price.toLocaleString() }}원
+        </h5>
+
         <div>
-          <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
-            <router-link :to="`/product-details/${item.id}`" class="text-underline">
-              {{ item.name }}
-            </router-link>
-          </h5>
+
+
 
           <!-- ✅ 리뷰 별점 (미구현 상태) -->
           <div class="flex items-center gap-1 mt-1">
