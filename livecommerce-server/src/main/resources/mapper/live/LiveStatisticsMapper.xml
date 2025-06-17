@@ -88,7 +88,7 @@
 
 <!--	구매 전환율-->
 	<select id="selectPurchaseRatio" resultType="Double" parameterType="string">
-		SELECT ROUND((COUNT(DISTINCT o.user_id) / COUNT(DISTINCT lvl.user_id)) * 100, 2) as conversion_rate
+		SELECT IFNULL(ROUND((COUNT(DISTINCT o.user_id) / COUNT(DISTINCT lvl.user_id)) * 100, 2), 0)ㄹ as conversion_rate
 		FROM LIVE_M l, LIVE_VIEWER_LOG lvl, ORDERS_M o
 		WHERE  l.live_id = #{liveId} and  l.live_id = lvl.live_id
 		  and o.order_date between l.start_at and l.end_cd
