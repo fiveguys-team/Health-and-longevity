@@ -49,7 +49,7 @@
 <script setup>
 import NavbarOne from '@/components/navbar/navbar-one.vue';
 import loginImg from '@/assets/img/bg/login.jpg'
-import {ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import Aos from 'aos';
 import FooterOne from '@/components/footer/footer-one.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
@@ -66,11 +66,11 @@ onMounted(() => {
 })
 
 const googleServerLogin = () => {
-  window.location.href = "http://localhost:8080/oauth2/authorization/google"
+    window.location.href = "http://localhost:8080/oauth2/authorization/google"
 }
 
 const kakaoServerLogin = () => {
-  window.location.href = "http://localhost:8080/oauth2/authorization/kakao"
+    window.location.href = "http://localhost:8080/oauth2/authorization/kakao"
 }
 
 const memberLogin = async () => {

@@ -49,7 +49,7 @@
     SELECT
       p.product_id AS id,
       p.name AS name,
-      v.name AS company,
+      v.name AS vendor,
       p.status AS status
     FROM product p
            JOIN vendor_m v ON p.vendor_id = v.vendor_id
@@ -57,14 +57,21 @@
 
   <select id="selectProductsByStatus" resultType="ProductListDTO">
     SELECT
-      p.product_id AS id,
-      p.name AS name,
-      v.name AS company,
-      p.status AS status
+    p.product_id AS id,
+    p.name AS name,
+    p.price AS price,
+    p.stock_count AS stockCount,
+    p.status AS status,
+    p.product_image AS image,
+    c.name AS category,
+    v.name AS vendor
     FROM product p
-           JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    JOIN category c ON p.category_id = c.category_id
+    JOIN vendor_m v ON p.vendor_id = v.vendor_id
     WHERE p.status = #{status}
   </select>
+
+
 
   <select id="findAdminProductDetail" parameterType="string"
     resultType="com.example.livecommerce_server.product.dto.AdminProductDetailDTO">
@@ -120,20 +127,34 @@
     WHERE d.cert_no = #{certNo}
   </select>
 
-  <!-- 벤더 상품 전체 조회 -->
   <select id="findProductsByVendorId" resultType="com.example.livecommerce_server.product.dto.ProductDTO">
-    SELECT product_id AS productId, name, price, stock_count AS stockCount, status
-    FROM product
-    WHERE vendor_id = #{vendorId}
+    SELECT
+    p.product_id AS productId,
+    p.name,
+    p.price,
+    p.stock_count AS stockCount,
+    p.status,
+    v.name AS vendor               <!-- ✅ 추가 -->
+    FROM product p
+    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    WHERE p.vendor_id = #{vendorId}
   </select>
 
-  <!-- 벤더 상품 상태별 조회 -->
+
   <select id="findProductsByVendorIdAndStatus" resultType="com.example.livecommerce_server.product.dto.ProductDTO">
-    SELECT product_id AS productId, name, price, stock_count AS stockCount, status
-    FROM product
-    WHERE vendor_id = #{vendorId}
-      AND status = #{status}
+    SELECT
+    p.product_id AS productId,
+    p.name,
+    p.price,
+    p.stock_count AS stockCount,
+    p.status,
+    v.name AS vendor               <!-- ✅ 추가 -->
+    FROM product p
+    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    WHERE p.vendor_id = #{vendorId}
+    AND p.status = #{status}
   </select>
+
 
   <select id="findProductsByProductId" parameterType="list" resultType="ProductDTO">
     SELECT
@@ -151,5 +172,76 @@
       #{id}
     </foreach>
   </select>
+
+
+  <!-- 유저용 승인된 상품 목록 조회 -->
+  <select id="selectUserApprovedProducts" resultType="com.example.livecommerce_server.product.dto.UserProductDTO">
+    SELECT
+      p.product_id AS id,
+      p.name AS name,
+      c.name AS category,
+      v.name AS vendor,
+      p.product_image AS image,
+      p.price AS price,
+      p.stock_count AS stockCount,
+      p.status AS status
+    FROM product p
+           JOIN category c ON p.category_id = c.category_id
+           JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    WHERE p.status = 'APPROVED'
+  </select>
+
+  <select id="selectUserApprovedProductsFiltered"
+    resultType="com.example.livecommerce_server.product.dto.UserProductDTO">
+    SELECT
+    p.product_id AS id,
+    p.name AS name,
+    c.name AS category,
+    v.name AS vendor,
+    p.product_image AS image,
+    p.price AS price,
+    p.stock_count AS stockCount,
+    p.status AS status
+    FROM product p
+    JOIN category c ON p.category_id = c.category_id
+    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    WHERE p.status = #{status}
+    <if test="category != null and category != ''">
+      AND c.name = #{category}
+    </if>
+  </select>
+
+
+  <!-- 상품 상세 조회 -->
+  <select id="selectProductDetailUserById" resultType="com.example.livecommerce_server.product.dto.ProductDetailUserDTO">
+    SELECT
+    p.product_id AS id,
+    p.name,
+    c.name AS category,
+    p.price,
+    p.stock_count,
+    p.product_image,
+    pd.cert_no,
+    pd.expiry_date,
+    pd.approval_date,
+    pd.how_to_take,
+    pd.main_function,
+    pd.precautions,
+    pd.storage_method,
+    pd.standard,
+    pd.ingredients,
+    pd.product_name,
+    v.name AS vendor
+    FROM product p
+    JOIN product_detail pd ON p.product_id = pd.product_id
+    JOIN vendor_m v ON p.vendor_id = v.vendor_id  <!-- ✅ 여기! -->
+    JOIN category c ON p.category_id = c.category_id
+    WHERE p.product_id = #{id}
+  </select>
+
+
+
+
+
 
 </mapper>

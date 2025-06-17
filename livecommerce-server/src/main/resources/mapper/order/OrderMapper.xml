@@ -64,4 +64,29 @@
             )
         </foreach>
     </insert>
+
+    <update id="updateOrderStatusByOrderId" parameterType="com.example.livecommerce_server.order.dto.OrderStatusUpdateDTO">
+        UPDATE orders_m
+        SET order_status_code = #{status}
+        WHERE order_id = #{orderId}
+    </update>
+
+    <update id="updateStockCountByOrderId" parameterType="string">
+        UPDATE product p
+            JOIN order_item_d oid ON p.product_id = oid.product_id
+            JOIN orders_m o ON o.order_id = oid.order_id
+            SET p.stock_count = p.stock_count - oid.quantity
+        WHERE o.order_id = #{orderId}
+          AND o.order_status_code = 'DONE'
+          AND p.stock_count >= oid.quantity
+    </update>
+
+    <select id="selectDiscountRateByProductIdIfLiveOn" parameterType="string" resultType="int">
+        SELECT lp.discountRate
+        FROM live_product_j lp
+                 JOIN live_m lm ON lp.live_id = lm.live_id
+        WHERE lp.product_id = #{productId}
+          AND lm.status_cd = 'ON'
+    </select>
+
 </mapper>

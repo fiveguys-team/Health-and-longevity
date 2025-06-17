@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LiveDTO {
-    //private String customSessionId;
-    private String sessionId;
+    private String liveId;      // 라이브 방송 고유 ID
+    private String sessionId;   // OpenVidu 세션 ID
     private String title;
     private String announcement;
     //private MultipartFile thumbnail;

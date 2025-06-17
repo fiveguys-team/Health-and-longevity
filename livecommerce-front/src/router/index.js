@@ -26,6 +26,9 @@ import CheckoutPage from '@/views/shop/checkout-page.vue'
 import ContactPage from '@/views/inner-pages/contact-page.vue'
 import ProductCategory from '@/views/shop/product-category.vue'
 
+//테스트용 vue
+
+
 // 대시보드 views
 import adminDashboard from '@/views/dashboard/adminDashboard.vue'
 //import storeDashboard from '@/views/dashboard/storeDashboard.vue'
@@ -59,7 +62,7 @@ import CartView from "@/modules/order/views/CartView.vue"
 import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
 import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
-import ShopCart from "@/views/shop/shop-cart.vue";
+import test from "@/modules/live/views/testView.vue";
 import OAuthSuccess from "@/modules/auth/views/OAuthSuccess.vue";
 
 const routes = [
@@ -86,7 +89,7 @@ const routes = [
   {path: '/shop-v1',component:ShopV1},
 
 
-  {path: '/cart',component:ShopCart},
+  {path: '/cart',component:CartView},
   {path: '/product-details/:id',component:ProductDetails},
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
@@ -103,6 +106,15 @@ const routes = [
   { path: '/product-details/:id', component: ProductDetails },
   {path: '/shop/:category', component: ProductCategory},
   { path: '/product/:category', component: ProductCategory },
+  { path: '/vendor/:vendorSlug', component: Vendor },
+  { path: '/vendor-category', component: () => import('@/views/shop/vendor-category.vue')},
+
+  {
+    path: '/vendor/:vendorId/products',
+    name: 'VendorProductList',
+    component: () => import('@/views/shop/vendor-products.vue'),
+    props: true
+  },
 
   //입점업체
   //{ path: '/partner/product/register', component: ProductRegister },
@@ -114,9 +126,8 @@ const routes = [
 
 
 
-
   // modules/도메인/views/ 하위 test용 view
-  {path: '/live-streaming',component: LiveStreaming},
+  {path: '/live-streaming',component: test},
   {path: '/live-chart', component: LiveChart},
   {path: '/live-register', component: LiveRegister},
   {path: '/live-report', component: LiveReport},
@@ -193,7 +204,7 @@ const routes = [
     meta: { requiresAuth: true, roles: ['VENDOR'] },
     children: [
       {
-        path: "live/reportList",
+        path: "live/reportList/:vendorId",
         name: "reportList",
         component: () => import("@/modules/live/components/LiveReport.vue"),
       },

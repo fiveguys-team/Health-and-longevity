@@ -72,118 +72,131 @@
             </div>
 
 
-
           </div>
 
 
-
-        <!-- 오른쪽 컬럼: 상품 및 할인 설정 -->
-        <div class="setup-column">
-          <div class="form-group">
-            <label class="form-label">판매 상품 선택 <span class="sub-label">(최대 3개)</span></label>
-            <div class="product-selection">
-              <div class="product-list">
-                <div
-                    v-for="product in availableProducts"
-                    :key="product.id"
-                    class="product-item-select"
-                    :class="{ 
+          <!-- 오른쪽 컬럼: 상품 및 할인 설정 -->
+          <div class="setup-column">
+            <div class="form-group">
+              <label class="form-label">판매 상품 선택 <span class="sub-label">(최대 3개)</span></label>
+              <div class="product-selection">
+                <div class="product-list">
+                  <div
+                      v-for="product in availableProducts"
+                      :key="product.id"
+                      class="product-item-select"
+                      :class="{
                       'selected': selectedProducts.includes(product),
                       'disabled': selectedProducts.length >= 3 && !selectedProducts.includes(product)
                     }"
-                    @click="toggleProduct(product)"
-                >
-                  <div class="product-info">
-                    <div class="product-name">{{ product.name }}</div>
-                    <div class="product-price">{{ product.price.toLocaleString() }}원</div>
+                      @click="toggleProduct(product)"
+                  >
+                    <div class="product-info">
+                      <div class="product-name">{{ product.name }}</div>
+                      <div class="product-price">{{ product.price.toLocaleString() }}원</div>
+                    </div>
+                    <div class="selection-indicator">
+                      <span v-if="selectedProducts.includes(product)">✓</span>
+                    </div>
                   </div>
-                  <div class="selection-indicator">
-                    <span v-if="selectedProducts.includes(product)">✓</span>
+                </div>
+              </div>
+              <p v-if="showMaxProductsError" class="error-message">
+                최대 3개의 상품만 선택할 수 있습니다.
+              </p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">할인율 설정</label>
+              <select v-model.number="discountRate" class="form-control discount-select">
+                <option disabled :value="0">할인율을 선택해주세요</option>
+                <option :value="0">할인 미적용</option>
+                <option :value="10">10% 할인</option>
+                <option :value="15">15% 할인</option>
+                <option :value="20">20% 할인</option>
+                <option :value="25">25% 할인</option>
+                <option :value="30">30% 할인</option>
+              </select>
+            </div>
+
+            <div v-if="discountedProducts.length" class="discount-preview">
+              <h5>할인 적용 예시</h5>
+              <div class="discount-items">
+                <div v-for="item in discountedProducts" :key="item.id" class="discount-item">
+                  <div class="product-name">{{ item.name }}</div>
+                  <div class="price-info">
+                    <span class="original-price">{{ item.price.toLocaleString() }}원</span>
+                    <span class="arrow">→</span>
+                    <span class="discounted-price">{{
+                        item.discountedPrice.toLocaleString()
+                      }}원</span>
                   </div>
                 </div>
               </div>
             </div>
-            <p v-if="showMaxProductsError" class="error-message">
-              최대 3개의 상품만 선택할 수 있습니다.
-            </p>
           </div>
+        </div>
 
-          <div class="form-group">
-            <label class="form-label">할인율 설정</label>
-            <select v-model.number="discountRate" class="form-control discount-select">
-              <option disabled :value="0">할인율을 선택해주세요</option>
-              <option :value="0">할인 미적용</option>
-              <option :value="10">10% 할인</option>
-              <option :value="15">15% 할인</option>
-              <option :value="20">20% 할인</option>
-              <option :value="25">25% 할인</option>
-              <option :value="30">30% 할인</option>
-            </select>
+        <div class="setup-footer">
+          <button
+              class="btn btn-primary start-button"
+              @click="enterBroadcast"
+              :disabled="!isFormValid"
+          >
+            방송 시작하기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 방송 준비/송출 화면 -->
+
+    <!-- 라이브 스트리밍 전체 화면 -->
+    <div class="stream-session" v-if="session">
+      <div class="stream-content">
+        <div class="main-content">
+          <div class="stream-header">
+            <h2>{{ streamTitle }}</h2>
+            <div class="stream-info">
+              <span class="viewer-count">👥 시청자 {{ viewerCount }}명</span>
+            </div>
           </div>
-
-          <div v-if="discountedProducts.length" class="discount-preview">
-            <h5>할인 적용 예시</h5>
-            <div class="discount-items">
-              <div v-for="item in discountedProducts" :key="item.id" class="discount-item">
-                <div class="product-name">{{ item.name }}</div>
-                <div class="price-info">
-                  <span class="original-price">{{ item.price.toLocaleString() }}원</span>
-                  <span class="arrow">→</span>
-                  <span class="discounted-price">{{ item.discountedPrice.toLocaleString() }}원</span>
-                </div>
+          <div class="video-container">
+            <div v-if="!publisher" class="loading-message">
+              카메라 연결 중...
+            </div>
+            <user-video v-else :stream-manager="publisher"/>
+          </div>
+          <div class="product-info">
+            <div class="product-list">
+              <div v-for="item in discountedProducts" :key="item.id" class="product-item">
+                <h3>{{ item.name }}</h3>
+                <p class="price">{{ item.discountedPrice.toLocaleString() }}원</p>
+                <p class="original-price">(정가 {{ item.price.toLocaleString() }}원)</p>
+                <p class="description">{{ item.description }}</p>
               </div>
             </div>
           </div>
+          <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
         </div>
-      </div>
-
-      <div class="setup-footer">
-        <button
-            class="btn btn-primary start-button"
-            @click="enterBroadcast"
-            :disabled="!isFormValid"
-        >
-          방송 시작하기
-        </button>
-      </div>
+        <div class="chat-container">
+  <!-- 채팅방 ID가 생성된 경우에만 ChatContainer를 렌더링 -->
+  <ChatContainer 
+    v-if="chatRoomId"
+    :room-id="chatRoomId"
+    :initial-announcement="chatAnnouncement"
+  />
+  
+  <!-- 채팅방 생성 중 또는 실패 시 표시 -->
+  <div v-else class="chat-loading">
+    <div class="loading-message">
+      <i class="fas fa-spinner fa-spin"></i>
+      채팅방을 준비하고 있습니다...
     </div>
   </div>
-
-  <!-- 방송 준비/송출 화면 -->
-
-  <!-- 라이브 스트리밍 전체 화면 -->
-  <div class="stream-session" v-if="session">
-    <div class="stream-content">
-      <div class="main-content">
-        <div class="stream-header">
-          <h2>{{ streamTitle }}</h2>
-          <div class="stream-info">
-            <span class="viewer-count">👥 시청자 {{ viewerCount }}명</span>
-          </div>
-        </div>
-        <div class="video-container">
-          <div v-if="!publisher" class="loading-message">
-            카메라 연결 중...
-          </div>
-          <user-video v-else :stream-manager="publisher"/>
-        </div>
-        <div class="product-info">
-          <div class="product-list">
-            <div v-for="item in discountedProducts" :key="item.id" class="product-item">
-              <h3>{{ item.name }}</h3>
-              <p class="price">{{ item.discountedPrice.toLocaleString() }}원</p>
-              <p class="original-price">(정가 {{ item.price.toLocaleString() }}원)</p>
-              <p class="description">{{ item.description }}</p>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-danger end-stream-button" @click="endStream">방송 종료</button>
-      </div>
-      <div class="chat-container">
-        <ChatContainer/>
+</div>
       </div>
     </div>
-  </div>
 
 
   </div>
@@ -191,9 +204,8 @@
 
 <script setup>
 
-import {useAuthStore} from "@/modules/auth/stores/auth";
-
-const auth = useAuthStore()
+// import {useAuthStore} from "@/modules/auth/stores/auth";
+// const auth = useAuthStore()
 
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import {ref, onBeforeUnmount, onMounted, computed} from 'vue';
@@ -205,6 +217,7 @@ import UserVideo from '@/modules/live/components/UserVideo.vue';
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
     : 'http://localhost:8080/';
 
+    
 // OpenVidu 관련 상태
 const OV = ref(undefined);
 const session = ref(undefined);
@@ -223,10 +236,12 @@ const selectedProducts = ref([]); // 선택된 상품들
 const discountRate = ref(0); // 할인율
 const viewerCount = ref(0); // 시청자 수 상태 관리
 const startTime = ref('');
-const endTime = ref('');
 const category = ref('');
 
-
+// 1. 채팅방 정보를 저장할 ref 추가
+const liveId = ref(null);
+const chatRoomId = ref(null);        // 생성된 채팅방 ID
+const chatAnnouncement = ref('');    // 채팅방 공지사항
 
 // 방송 상태 관리
 // const isLive = ref(false);
@@ -303,7 +318,10 @@ const enterBroadcast = async () => {
         type: 'host',
         title: streamTitle.value,
         thumbnail: thumbnailFile.value,
-        products: discountedProducts.value
+        products: discountedProducts.value,
+        liveId: liveId.value,              // 이제 접근 가능
+        chatRoomId: chatRoomId.value,       // 이미 ref로 되어 있음
+        announcement: chatAnnouncement.value
       }
     });
 
@@ -340,7 +358,6 @@ const enterBroadcast = async () => {
 // [서버에 방송 종료 알림 전송]
 // 방송 종료 시 세션 종료 및 서버에 방송 종료 알림 전송 
 const notifyServerStreamEnded = async (sessionId) => {
-  endTime.value = new Date().toISOString();
   // 종료 시간 알림
   try {
     await axios.delete(
@@ -348,9 +365,8 @@ const notifyServerStreamEnded = async (sessionId) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth.token}`
+            //'Authorization': `Bearer ${auth.token}`
           },
-          //params: {endTime: endTime.value}
         },
     );
     console.log('서버에 방송 종료 알림 완료');
@@ -391,14 +407,38 @@ const getToken = async () => {
   return await createToken(sessionId);
 };
 
+// 2. 채팅방 생성 API 호출 함수 추가
+/**
+ * 라이브 시작 시 채팅방을 자동으로 생성합니다.
+ * 
+ * @param {string} liveId - 생성된 라이브 ID
+ * @returns {Promise<Object>} 채팅방 정보 (roomId, announcement)
+ */
+const createChatRoom = async (liveId) => {
+  try {
+    const response = await axios.post(
+      `${APPLICATION_SERVER_URL}api/chat/room/auto-create`,
+      { liveId },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    
+    console.log('채팅방 생성 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('채팅방 생성 실패:', error);
+    throw error;
+  }
+};
+
 // [세션 생성 후 세션ID를 반환]
 // customSessionId를 통해 세션 생성 API를 호출하면 
 // 백엔드에서 세션 객체를 생성하고 세션ID를 반환한다. 
+// 4. createSession 함수 수정 - liveId 받아서 채팅방 생성
 const createSession = async () => {
   // FormData 객체 생성
   const formData = new FormData();
 
-  // 기본 세션 정보
+  // 기본 세션 정보 설정
   formData.append('title', streamTitle.value);
   formData.append('announcement', announcement.value);
   if (thumbnailFile.value) {
@@ -410,16 +450,38 @@ const createSession = async () => {
   formData.append('vendorId', vendorId);
   formData.append('category', category.value);
 
+  // 1단계: 라이브 세션 생성
   const response = await axios.post(
-      APPLICATION_SERVER_URL + 'api/sessions',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
+    APPLICATION_SERVER_URL + 'api/sessions',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       }
+    }
   );
-  console.log("여기" + response.data.sessionId);
+  
+  console.log("라이브 생성 응답:", response.data);
+  
+  // 2단계: 반환받은 liveId로 채팅방 생성
+  liveId.value = response.data.liveId;  //  중요: 서버에서 반환한 liveId
+  
+  try {
+    // 채팅방 자동 생성 API 호출
+    const chatRoomData = await createChatRoom(liveId.value);
+    
+    // 채팅방 정보 저장 (ChatContainer에 전달할 데이터)
+    chatRoomId.value = chatRoomData.roomId;
+    chatAnnouncement.value = chatRoomData.announcement || announcement.value;
+    
+    console.log('채팅방 생성 완료 - roomId:', chatRoomId.value);
+  } catch (error) {
+    console.error('채팅방 생성 실패:', error);
+    // 채팅방 생성 실패해도 방송은 진행 (옵션)
+    alert('채팅 기능을 사용할 수 없습니다. 방송은 계속 진행됩니다.');
+  }
+  
+  // 3단계: sessionId 반환 (OpenVidu 연결용)
   return response.data.sessionId;
 };
 
@@ -871,5 +933,26 @@ select option:checked {
   font-size: 0.9em;
   margin-top: 8px;
   margin-bottom: 0;
+}
+/* 채팅 로딩 상태 스타일 */
+.chat-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.loading-message {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.loading-message i {
+  margin-right: 8px;
+  font-size: 16px;
 }
 </style>
