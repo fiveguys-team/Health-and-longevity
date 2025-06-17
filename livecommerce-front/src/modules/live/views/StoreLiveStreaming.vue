@@ -205,7 +205,7 @@
 
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import { ref, onBeforeUnmount, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
@@ -218,6 +218,7 @@ const OV = ref(undefined);
 const session = ref(undefined);
 const publisher = ref(undefined);
 
+const router = useRouter();
 const route = useRoute();
 const vendorId = route.params.vendorId;
 
@@ -385,6 +386,8 @@ const endStream = async () => {
     session.value = undefined;
     publisher.value = undefined;
     OV.value = undefined;
+    // 방송 종료 후 레포트 view로 이동
+    await router.push(`/vendor/live/reportList/${vendorId}`);
   }
 };
 
