@@ -23,8 +23,8 @@
 
 <!--	라이브 방송 통계 대시보드 저장-->
     <insert id="insertLiveDashboard" parameterType="LiveStatisticsVO">
-        INSERT INTO LIVE_DASHBOARD_D (liveDashboard_id, live_id ,total_viewers ,max_concurrent_viewers ,average_watch_duration ,total_chats, total_orders, total_reve)
-        VALUES (#{liveDashboardId}, #{liveId}, #{totalViewers}, #{maxConcurrentViewers}, #{averageWatchDuration}, #{totalChats}, #{totalOrders}, #{totalReve})
+        INSERT INTO LIVE_DASHBOARD_D (liveDashboard_id, live_id ,total_viewers ,max_concurrent_viewers ,average_watch_duration ,purchase_ratio, total_orders, total_reve)
+        VALUES (#{liveDashboardId}, #{liveId}, #{totalViewers}, #{maxConcurrentViewers}, #{averageWatchDuration}, #{purchaseRatio}, #{totalOrders}, #{totalReve})
     </insert>
 
 <!--	총 시청자 수 조회-->
@@ -62,7 +62,7 @@
 
 <!--	입점업체의 통계 리스트 조회-->
 	<select id="selectLiveStatisticsList" resultType="LiveStatisticsDTO" parameterType="string">
-		SELECT liveDashboard_id, D.live_id, M.title, M.start_at as streamDate, total_viewers, max_concurrent_viewers, average_watch_duration, total_chats, total_orders, total_reve
+		SELECT liveDashboard_id, D.live_id, M.title, M.start_at as streamDate, total_viewers, max_concurrent_viewers, average_watch_duration, purchase_ratio, total_orders, total_reve
 		FROM LIVE_DASHBOARD_D D, LIVE_M M WHERE D.live_id = M.live_id AND M.vendor_id = #{vendorId}
 	</select>
 
@@ -87,8 +87,8 @@
 	</select>
 
 <!--	구매 전환율-->
-	<select id="selectPurchaseRatio" resultType="Double" parameterType="string">
-		SELECT IFNULL(ROUND((COUNT(DISTINCT o.user_id) / COUNT(DISTINCT lvl.user_id)) * 100, 2), 0)ㄹ as conversion_rate
+	<select id="selectPurchaseRatio" resultType="Integer" parameterType="string">
+		SELECT IFNULL(ROUND((COUNT(DISTINCT o.user_id) / COUNT(DISTINCT lvl.user_id)) * 100, 2), 0) as conversion_rate
 		FROM LIVE_M l, LIVE_VIEWER_LOG lvl, ORDERS_M o
 		WHERE  l.live_id = #{liveId} and  l.live_id = lvl.live_id
 		  and o.order_date between l.start_at and l.end_cd
