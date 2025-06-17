@@ -1,4 +1,3 @@
-// vue.config.js
 const path = require("path");
 const { defineConfig } = require("@vue/cli-service");
 
@@ -8,12 +7,29 @@ module.exports = defineConfig({
     config.resolve.alias.set("@", path.resolve(__dirname, "src"));
   },
   devServer: {
-    port: 3000, // Vue 개발 서버 포트
+    port: 3000,
     proxy: {
-      '/product': {
-        target: 'http://localhost:8080', // Spring 서버 주소
+      '^/admin': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '^/products': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '^/product': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '^/uploads': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '^/vendors': {
+        target: 'http://localhost:8080',
         changeOrigin: true,
       }
     }
+
   },
 });

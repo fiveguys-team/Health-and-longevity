@@ -1,6 +1,8 @@
 package com.example.livecommerce_server.chat.service;
 
 
+import com.example.livecommerce_server.chat.dto.ChatRoomReqDto;
+
 /**
  * 채팅 관련 비즈니스 로직을 처리하는 서비스 인터페이스
  * 이 인터페이스는 채팅방 생성, 메시지 조회, 신고 처리 등
@@ -9,7 +11,7 @@ package com.example.livecommerce_server.chat.service;
 public interface ChatService {
 
 
-    Long createGroupRoom(String liveId);
+    ChatRoomReqDto createGroupRoom(String liveId);
 
     /**
      * 채팅방 참여자 수 증가

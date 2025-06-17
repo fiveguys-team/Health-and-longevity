@@ -1,5 +1,6 @@
 package com.example.livecommerce_server.order.service;
 
+import com.example.livecommerce_server.common.config.CustomUserDetails;
 import com.example.livecommerce_server.order.dto.*;
 import com.example.livecommerce_server.order.mapper.OrderMapper;
 import com.example.livecommerce_server.payment.mapper.PaymentMapper;
@@ -8,6 +9,8 @@ import com.example.livecommerce_server.product.dto.ProductDTO;
 import com.example.livecommerce_server.product.repository.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,9 +34,24 @@ public class OrderServiceImpl implements OrderService {
         OrderPageDTO dto = Optional.ofNullable(orderMapper.findOrderPageByProductId(productId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다"));
 
-        int totalAmount = dto.getPrice() * quantity;
+        int originalPrice = dto.getPrice(); // 할인 전 원래 가격
+        Integer discountRate = getDiscountRateIfLiveOn(productId); // null일 수 있음
+        int discountAmount = 0;
+        int finalUnitPrice = originalPrice;
+
+        if (discountRate != null && discountRate > 0) {
+            discountAmount = originalPrice * discountRate / 100;
+            finalUnitPrice = originalPrice - discountAmount;
+        }
+
+        int totalAmount = finalUnitPrice * quantity;
         int shippingFee = totalAmount >= 50000 ? 0 : 3000;
         int finalAmount = totalAmount + shippingFee;
+
+        dto.setOriginalPrice(originalPrice);
+        dto.setDiscountRate(discountRate);
+        dto.setDiscountAmount(discountAmount);
+        dto.setPrice(finalUnitPrice);  // 할인 적용된 개당 가격
 
         dto.setQuantity(quantity);
         dto.setTotalAmount(totalAmount);
@@ -60,17 +78,27 @@ public class OrderServiceImpl implements OrderService {
         Map<String, ProductDTO> productMap = products.stream().
                 collect(Collectors.toMap(ProductDTO::getProductId, p -> p));
 
-        //총 결제 금액 계산
         int totalAmount = 0;
-        for(OrderItemRequestDTO item : orderPrepareRequestDTO.getOrderItems()) {
+        int totalDiscountAmount = 0;
+
+        for (OrderItemRequestDTO item : orderPrepareRequestDTO.getOrderItems()) {
             ProductDTO product = productMap.get(item.getProductId());
             if (product == null) {
                 throw new IllegalArgumentException("상품 정보 없음: " + item.getProductId());
             }
 
-            int price = product.getPrice();
-            int discountedPrice = price; //아직 할인 로직 (X)
-            totalAmount += discountedPrice * item.getQuantity();
+            int originalPrice = product.getPrice();
+            Integer discountRate = getDiscountRateIfLiveOn(product.getProductId()); // 동일 로직 사용
+            int discountAmount = 0;
+            int finalUnitPrice = originalPrice;
+
+            if (discountRate != null && discountRate > 0) {
+                discountAmount = originalPrice * discountRate / 100;
+                finalUnitPrice = originalPrice - discountAmount;
+            }
+
+            totalAmount += finalUnitPrice * item.getQuantity();
+            totalDiscountAmount += discountAmount * item.getQuantity();
         }
 
         //주문 ID 생성과 동시에 주문 임시 테이블 생성
@@ -82,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
                 .paymentId(paymentId) // 결제 전 상태
                 .userId(orderPrepareRequestDTO.getUserId())
                 .orderStatusCode("PEND")
-                .discountAmount(0)
+                .discountAmount(totalDiscountAmount)
                 .orderDate(now)
                 .createdAt(now)
                 .totalAmount(totalAmount)
@@ -107,7 +135,11 @@ public class OrderServiceImpl implements OrderService {
 
 
         String orderName = generateOrderName(products);
-        String customerName = "홍길동"; // 시큐리티로 자기 이름.
+        String customerName = "테스트커스터머";
+
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+//        String customerName = customUserDetails.getName();// 시큐리티로 자기 이름.
 
         // 리스폰스 데이터
         return OrderPrepareResponseDTO.builder()
@@ -117,6 +149,12 @@ public class OrderServiceImpl implements OrderService {
                 .customerName(customerName)
                 .build();
     }
+
+    @Override
+    public Integer getDiscountRateIfLiveOn(String productId) {
+        return orderMapper.selectDiscountRateByProductIdIfLiveOn(productId);
+    }
+
 
     private String nowCompactString() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));

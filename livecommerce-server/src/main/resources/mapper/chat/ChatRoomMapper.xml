@@ -25,4 +25,10 @@
         AND participants_cnt + #{count} >= 0
     </update>
 
+    <select id="selectAnnouncementByLiveId" resultType="string">
+        SELECT announcement
+        FROM LIVE_M
+        WHERE live_id = #{liveId}
+    </select>
+
 </mapper>

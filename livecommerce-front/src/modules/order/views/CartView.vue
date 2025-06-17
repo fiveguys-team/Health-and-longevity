@@ -6,7 +6,7 @@
       <div class="text-center w-full">
         <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">Cart</h2>
         <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
-          <li><router-link to="/">Home</router-link></li>
+          <li><router-link to="/">홈</router-link></li>
           <li>/</li>
           <li class="text-primary">Cart</li>
         </ul>
@@ -218,21 +218,36 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue'
 
-import NavbarOne from '@/components/navbar/navbar-one.vue';
-import IncDec from '@/components/inc-dec.vue';
-import FooterThree from '@/components/footer/footer-three.vue';
-import ScrollToTop from '@/components/scroll-to-top.vue';
+import NavbarOne from '@/components/navbar/navbar-one.vue'
+import IncDec from '@/components/inc-dec.vue'
+import FooterThree from '@/components/footer/footer-three.vue'
+import ScrollToTop from '@/components/scroll-to-top.vue'
 
-import bg from '@/assets/img/shortcode/breadcumb.jpg'
 import cart1 from '@/assets/img/gallery/cart/cart-01.jpg'
 import cart2 from '@/assets/img/gallery/cart/cart-02.jpg'
 import cart3 from '@/assets/img/gallery/cart/cart-03.jpg'
 
-import Aos from 'aos';
+import Aos from 'aos'
+import {getCartByUserId} from "@/modules/order/services/orderApi";
+import {useAuthStore} from "@/modules/auth/stores/auth";
 
-onMounted(()=>{
+const authStore = useAuthStore();
+const userId = authStore.id;
+
+// ✅ 상태 변수
+const cartData = ref(null)
+
+onMounted(async () => {
   Aos.init()
+
+  try {
+    const res = await getCartByUserId(userId)
+    cartData.value = res.data
+    console.log('장바구니 데이터', cartData.value)
+  } catch (e) {
+    console.error('장바구니 로딩 실패:', e)
+  }
 })
 </script>

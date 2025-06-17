@@ -36,9 +36,17 @@
       </div>
 
       <!-- Right: Chat Area -->
-      <div class="chat-area">
-        <chat-container/>
-      </div>
+<div class="chat-area">
+  <chat-container 
+    v-if="chatRoomId"
+    :room-id="chatRoomId"
+    :initial-announcement="streamData.announcement"
+  />
+  <!-- 채팅방 로딩 중 표시 -->
+  <div v-else class="chat-loading">
+    <p>채팅방 연결 중...</p>
+  </div>
+</div>
     </div>
 
     <!-- Loading/Error Message -->
@@ -78,6 +86,9 @@ const startTime = ref(Date.now());
 const now = ref(Date.now());
 let timerId;
 let viewerCountInterval;
+
+// OpenVidu 관련 상태 관리 아래에 추가
+const chatRoomId = ref(null);  // 채팅방 ID 저장용
 
 // 사용자 ID 관리
 const getUserId = () => {
@@ -140,6 +151,11 @@ const handleStreamCreated = async ({stream}) => {
     const connectionData = JSON.parse(stream.connection.data || '{}');
     if (connectionData.clientData?.type === 'host') {
       streamData.value = connectionData.clientData;
+      // ✅ 채팅방 ID 저장
+      if (connectionData.clientData.chatRoomId) {
+        chatRoomId.value = connectionData.clientData.chatRoomId;
+        console.log('채팅방 ID 수신:', chatRoomId.value);
+      }
     }
   } catch (error) {
     console.error('스트림 구독 중 오류 발생:', error);
@@ -355,6 +371,7 @@ const cleanupSession = () => {
     OV.value = undefined;
     streamData.value = {};
     viewerCount.value = 0;
+    chatRoomId.value = null; // 추가
   }
 };
 
