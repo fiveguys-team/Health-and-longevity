@@ -19,11 +19,17 @@ export const useAuthStore = defineStore('auth', () => {
     })
 
     // actions
-    const logout = () => {
+    const logout = async () => {
         role.value = null
         name.value = null
         id.value = null
         email.value = null
+
+        try {
+            await axiosInstance.post('/member/logout')
+        } catch (e) {
+            console.warn('서버 로그아웃 실패:', e)
+        }
     }
 
     const initFromServer = async () => {

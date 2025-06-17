@@ -53,6 +53,19 @@ public class MemberController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie tokenCookie = new Cookie("token", null);
+        tokenCookie.setPath("/");
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setMaxAge(0); // 즉시 만료
+
+        // 다른 쿠키들도 필요하면 여기에 추가
+        response.addCookie(tokenCookie);
+
+        return ResponseEntity.ok().body("로그아웃 완료");
+    }
+
     @GetMapping("/info")
     public ResponseEntity<?> getMe(HttpServletRequest request) {
         String token = Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
