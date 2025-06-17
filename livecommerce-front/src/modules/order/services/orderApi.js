@@ -31,3 +31,61 @@ export async function getCartByUserId(userId) {
         }
     });
 }
+
+/**
+ * 장바구니 항목 목록 조회 API 호출
+ * @param {string} cartId - 장바구니 ID
+ * @returns {Promise} - Axios 응답 프로미스
+ */
+export async function getCartItems(cartId) {
+    return axios.get(`${API_BASE_URL}/cart/items/${cartId}`, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
+
+/**
+ * 장바구니 항목 추가 API 호출
+ * @param {Object} payload - 추가할 장바구니 항목 정보
+ * @param {string} payload.cartId - 장바구니 ID
+ * @param {string} payload.productId - 상품 ID
+ * @param {number} payload.quantity - 담을 수량
+ * @returns {Promise} - Axios 응답 프로미스
+ */
+export async function addCartItem(payload) {
+    return axios.post(`${API_BASE_URL}/cart/items`, payload, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
+
+/**
+ * 장바구니 항목 수량 수정 API 호출
+ * @param {Object} payload - 수정할 항목 정보
+ * @param {string} payload.cartItemId - 장바구니 항목 ID
+ * @param {number} payload.quantity - 변경할 수량
+ * @returns {Promise} - Axios 응답 프로미스
+ */
+export async function updateCartItemQuantity(payload) {
+    return axios.put(`${API_BASE_URL}/cart/items`, payload, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
+
+/**
+ * 장바구니 항목 삭제 API 호출
+ * @param {string} cartItemId - 삭제할 장바구니 항목 ID
+ * @returns {Promise} - Axios 응답 프로미스
+ */
+export async function deleteCartItem(cartItemId) {
+    return axios.delete(`${API_BASE_URL}/cart/items/${cartItemId}`, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
+

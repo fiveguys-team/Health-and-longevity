@@ -1,7 +1,11 @@
 package com.example.livecommerce_server.cart.mapper;
 
 import com.example.livecommerce_server.cart.dto.CartDTO;
+import com.example.livecommerce_server.cart.dto.CartItemDTO;
+import com.example.livecommerce_server.cart.dto.CartItemDetailDTO;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface CartMapper {
@@ -17,4 +21,29 @@ public interface CartMapper {
      * @param cartDTO CartDTO 객체 (cartId, userId 필수)
      */
     void insertCart(CartDTO cartDTO);
+
+    /**
+     * 장바구니에 상품 추가
+     * @param cartItemDTO 장바구니 항목 DTO
+     */
+    void insertCartItem(CartItemDTO cartItemDTO);
+
+    /**
+     * 장바구니 항목 수량 수정
+     * @param cartItemDTO 장바구니 항목 DTO
+     */
+    void updateCartItemQuantity(CartItemDTO cartItemDTO);
+
+    /**
+     * 장바구니 항목 삭제
+     * @param cartItemId 삭제할 항목 ID
+     */
+    void deleteCartItemById(String cartItemId);
+
+    /**
+     * 장바구니 ID로 장바구니 항목들 조회 (할인/재고/가격 계산 포함)
+     * @param cartId 장바구니 ID
+     * @return 장바구니 상세 항목 리스트
+     */
+    List<CartItemDetailDTO> selectCartItemsByCartId(String cartId);
 }
