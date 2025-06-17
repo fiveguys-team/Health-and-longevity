@@ -71,7 +71,7 @@
           </div>
           <div class="stats-card-small">
             <div class="small-title">총 채팅 수</div>
-            <div class="small-value">{{ formatNumber(selectedItem.totalChats) }}개</div>
+            <div class="small-value">{{ formatNumber(selectedItem.purchaseRatio) }}개</div>
           </div>
           <div class="stats-card-small">
             <div class="small-title">주문 건 수</div>
