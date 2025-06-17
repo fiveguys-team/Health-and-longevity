@@ -43,5 +43,5 @@ public interface LiveStatisticsMapper {
     int selectTotalOrders(@Param("liveId") String liveId);
 
     // 구매 전환율
-    double selectPurchaseRatio(@Param("liveId") String liveId);
+    int selectPurchaseRatio(@Param("liveId") String liveId);
 } 
