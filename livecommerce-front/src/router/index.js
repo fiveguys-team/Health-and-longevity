@@ -64,6 +64,7 @@ import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryVi
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
 import test from "@/modules/live/views/testView.vue";
 import OAuthSuccess from "@/modules/auth/views/OAuthSuccess.vue";
+import CheckoutCartView from "@/modules/order/views/CheckoutCartView.vue";
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -165,6 +166,7 @@ const routes = [
   {path: '/partner/order-history',component: PartnerOrderHistoryView},
   {path: '/partner/return-request',component: PartnerReturnRequestView},
   {path: '/cart',component: CartView},
+  {path: '/cart-checkout',component: CheckoutCartView},
   {path: '/payment-success',component: PaymentSuccessView},
   {path: '/payment-failure',component: PaymentFailureView},
   {path: '/product-test',component: ProductTest},
