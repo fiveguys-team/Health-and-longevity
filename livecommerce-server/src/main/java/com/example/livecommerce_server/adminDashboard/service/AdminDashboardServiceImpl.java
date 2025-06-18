@@ -2,6 +2,7 @@ package com.example.livecommerce_server.adminDashboard.service;
 
 import com.example.livecommerce_server.adminDashboard.dto.AnnualRevenueDTO;
 import com.example.livecommerce_server.adminDashboard.dto.MonthOrdersDTO;
+import com.example.livecommerce_server.adminDashboard.dto.MonthlyRevenueDTO;
 import com.example.livecommerce_server.adminDashboard.mapper.AdminDashboardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,23 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 		}
 		return AnnualRevenueDTO.builder()
 				.totalRevenue(yearRevenue)
+				.revenueChangeRate(revenueRate)
+				.build();
+	}
+
+	@Override
+	public MonthlyRevenueDTO findMonthRevenue() {
+		int monthRevenue = adminDashboardMapper.selectCurrentMonthRevenue();
+		int previousRevenue = adminDashboardMapper.selectPreviousMonthRevenue();
+		log.info(String.valueOf(monthRevenue));
+		log.info(String.valueOf(previousRevenue));
+
+		int revenueRate = 0;
+		if(previousRevenue!=0) {
+			revenueRate = (monthRevenue - previousRevenue) / previousRevenue * 100;
+		}
+		return MonthlyRevenueDTO.builder()
+				.totalRevenue(monthRevenue)
 				.revenueChangeRate(revenueRate)
 				.build();
 	}

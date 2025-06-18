@@ -2,6 +2,7 @@ package com.example.livecommerce_server.adminDashboard.controller;
 
 import com.example.livecommerce_server.adminDashboard.dto.AnnualRevenueDTO;
 import com.example.livecommerce_server.adminDashboard.dto.MonthOrdersDTO;
+import com.example.livecommerce_server.adminDashboard.dto.MonthlyRevenueDTO;
 import com.example.livecommerce_server.adminDashboard.service.AdminDashboardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,16 +35,33 @@ public class AdminDashboardController {
 		return new ResponseEntity<>(monthOrders, HttpStatus.OK);
 	}
 
+	/**
+	 * 관리자 대시보드의 활성 입점업체 수를 반환합니다.
+	 *
+	 * @return 입점업체 수
+	 */
 	@GetMapping("/api/admin/vendors/count")
 	public ResponseEntity<?> getVendorCount() {
 		int vendorCount = adminDashboardService.findVendorCount();
 		return new ResponseEntity<>(vendorCount, HttpStatus.OK);
 	}
 
+	/**
+	 * 관리자 대시보드의 연간 누적 매출액과 변화율을 반환합니다.
+	 *
+	 * @return 연간 누적 매출액
+	 */
 	@GetMapping("/api/admin/revenues/annual")
 	public ResponseEntity<AnnualRevenueDTO> getAnnualRevenue() {
 		log.info("매출액 호출");
 		AnnualRevenueDTO annualRevenue = adminDashboardService.findAnnualRevenue();
 		return new ResponseEntity<>(annualRevenue, HttpStatus.OK);
+	}
+
+	@GetMapping("/api/admin/revenues/month")
+	public ResponseEntity<MonthlyRevenueDTO> getMonthlyRevenue() {
+		log.info("이번 달 매출!");
+		MonthlyRevenueDTO monthlyRevenueDTO = adminDashboardService.findMonthRevenue();
+		return new ResponseEntity<>(monthlyRevenueDTO, HttpStatus.OK);
 	}
 }
