@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.livecommerce_server.adminDashboard.mapper.AdminDashboardMapper">
+
+<!--	이번달 누적 주문수-->
+	<select id="selectMonthOrders" resultType="Integer">
+		SELECT count(order_id) FROM ORDERS_M
+		WHERE left(order_date, 8)
+		BETWEEN CONCAT(DATE_FORMAT(CURRENT_DATE, '%Y%m'), '01')
+		AND DATE_FORMAT(CURRENT_DATE, '%Y%m%d')
+	</select>
+
+<!--	저반달 누적 주문수 ( m-1 / 1 ~ m-1 / d 일)-->
+	<select id="selectPreviousMonthOrders" resultType="Integer">
+		SELECT count(order_id) FROM ORDERS_M
+		WHERE LEFT(order_date, 8)
+			BETWEEN CONCAT(DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y%m'), '01')
+		  AND DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y%m%d')
+	</select>
+
+
+<!--	입점업체 수 -->
+	<select id=""
+
+
+
+</mapper>
