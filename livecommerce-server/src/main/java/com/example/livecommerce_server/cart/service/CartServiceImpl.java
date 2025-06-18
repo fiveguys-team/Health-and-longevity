@@ -71,6 +71,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public void removeCartItems(List<String> cartItemIds) {
+        cartMapper.deleteCartItemsByIds(cartItemIds);
+    }
+
+    @Override
     public List<CartItemDetailDTO> findCartItemsByCartId(String cartId) {
         return cartMapper.selectCartItemsByCartId(cartId);
     }

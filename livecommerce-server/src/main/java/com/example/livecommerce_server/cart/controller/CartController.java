@@ -66,4 +66,15 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 장바구니 항목 여러 개 삭제
+     * DELETE /api/cart/items
+     */
+    @DeleteMapping("/items")
+    public ResponseEntity<Void> removeCartItems(@RequestBody List<String> cartItemIds) {
+        cartService.removeCartItems(cartItemIds);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

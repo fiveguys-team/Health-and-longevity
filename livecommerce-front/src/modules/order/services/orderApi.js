@@ -89,3 +89,17 @@ export async function deleteCartItem(cartItemId) {
     });
 }
 
+/**
+ * 장바구니 다중 항목 삭제 API 호출
+ * @param {string[]} cartItemIds - 삭제할 장바구니 항목 ID 배열
+ * @returns {Promise} - Axios 응답 프로미스
+ */
+export async function deleteCartItems(cartItemIds) {
+    return axios.delete(`${API_BASE_URL}/cart/items`, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: cartItemIds,  // DELETE 메서드에서 body를 넘길 때는 data 필드에 담아야 함
+    });
+}
+

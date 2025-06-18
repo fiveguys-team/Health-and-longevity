@@ -41,6 +41,12 @@ public interface CartMapper {
     void deleteCartItemById(String cartItemId);
 
     /**
+     * 여러 장바구니 항목 삭제
+     * @param cartItemIds 삭제할 항목 ID 목록
+     */
+    void deleteCartItemsByIds(List<String> cartItemIds);
+
+    /**
      * 장바구니 ID로 장바구니 항목들 조회 (할인/재고/가격 계산 포함)
      * @param cartId 장바구니 ID
      * @return 장바구니 상세 항목 리스트
