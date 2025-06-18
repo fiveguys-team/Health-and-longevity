@@ -33,19 +33,29 @@
         <div class="max-w-[1720px] mx-auto flex justify-between gap-10 flex-col lg:flex-row">
           <div class="w-full lg:w-[58%]">
             <div class="relative product-dtls-wrapper">
-              <button
-                  v-if="data?.discountRate"
-                  class="absolute top-5 left-0 p-2 bg-[#E13939] text-lg leading-none text-white font-medium z-50"
-              >
-                -{{ data.discountRate }}%
-              </button>
-              <div class="product-dtls-slider">
+              <div class="relative">
+                <div
+                    v-if="data?.discountRate > 0"
+                    class="absolute top-4 right-4 bg-green-600 text-white text-base font-bold px-3 py-1 rounded z-50 shadow-lg"
+                >
+                  할인중
+                </div>
+
                 <img
                     :src="getImageUrl(data?.productImage)"
                     alt="product"
                     class="w-full"
                     @error="onImageError"
                 />
+                <!-- ✅ 품절일 경우 오버레이 강조 -->
+                <div
+                    v-if="data?.stockCount === 0"
+                    class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
+                >
+                  <span class="text-white text-4xl font-extrabold animate-pulse tracking-wider">
+                    품절
+                  </span>
+                </div>
               </div>
             </div>
           </div>

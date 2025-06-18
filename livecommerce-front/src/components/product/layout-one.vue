@@ -1,96 +1,86 @@
 <template>
   <div :class="classList">
     <div
-        v-for="(item, index) in filteredList"
-        :key="index"
-        class="group bg-white border rounded-xl shadow-md hover:shadow-xl hover:scale-105 transform transition duration-300 p-6"
+        v-for="item in filteredList"
+        :key="item.id"
+        class="relative border p-6 rounded shadow hover:shadow-lg transition group"
     >
-      <!-- ✅ 상품 이미지 + 링크 -->
-      <div class="relative overflow-hidden">
-        <router-link :to="`/product-details/${item.id}`">
+
+
+      <router-link :to="`/product-details/${item.id}`" class="block">
+        <!-- ✅ 이미지 + 오버레이 -->
+        <div class="relative w-full h-[220px] mb-4 rounded overflow-hidden">
+
+          <!-- ✅ 할인 뱃지 -->
+          <div
+              v-if="item.discountRate > 0"
+              class="absolute top-4 right-4 bg-green-600 text-white text-sm font-bold px-3 py-1 rounded z-40 shadow"
+          >
+            할인중
+          </div>
+
           <img
-              class="w-full transform group-hover:scale-110 duration-300"
+              class="w-full h-full object-cover transform group-hover:scale-105 duration-300"
               :src="getImageUrl(item.image)"
               @error="onImageError"
               alt="shop"
           />
-        </router-link>
 
-        <!-- ✅ 품절 배지 -->
-        <span
-            v-if="item.stockCount === 0"
-            class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded z-10"
-        >
-          품절
-        </span>
-
-        <!-- ✅ 할인 뱃지 -->
-        <span
-            v-if="item.discountRate && item.discountRate > 0"
-            class="absolute top-2 right-2 bg-yellow-400 text-black text-xs px-2 py-1 rounded z-10"
-        >
-          -{{ item.discountRate }}%
-        </span>
-
-        <!-- ✅ 상품 태그 -->
-        <div
-            v-if="item.tag"
-            class="absolute z-10 top-7 left-7 pt-[10px] pb-2 px-3 rounded-[30px] font-primary text-[14px] text-white font-semibold leading-none"
-            :class="{
-            'bg-[#1CB28E]': item.tag === 'Hot Sale',
-            'bg-[#9739E1]': item.tag === 'NEW',
-            'bg-[#E13939]': item.tag === '10% OFF'
-          }"
-        >
-          {{ item.tag }}
+          <!-- ✅ 품절 오버레이 -->
+          <div
+              v-if="Number(item.stockCount) === 0"
+              class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-30"
+          >
+            <span class="text-white text-3xl font-extrabold animate-pulse tracking-widest">
+              품절
+            </span>
+          </div>
         </div>
-      </div>
 
-      <!-- ✅ 상품 정보 -->
-      <div class="md:px-2 lg:px-4 xl:px-6 lg:pt-6 pt-5 flex gap-4 md:gap-5 flex-col">
-        <h2 class="text-2xl font-semibold dark:text-white leading-snug">
-          <router-link :to="`/product-details/${item.id}`" class="text-underline">
-            {{ item.name }}
-          </router-link>
-        </h2>
+        <!-- ✅ 상품명 -->
+        <h5 class="text-xl font-semibold mt-2 text-primary hover:underline">
+          {{ item.name }}
+        </h5>
 
-        <p class="text-sm text-gray-500 dark:text-gray-300">
+        <!-- ✅ 업체명 -->
+        <p class="text-sm text-gray-500 mt-1">
           {{ item.vendor }}
         </p>
 
-        <!-- ✅ 가격 표시 영역 -->
-        <div class="flex gap-2 items-baseline mt-2">
-          <span
-              v-if="item.discountRate && item.discountedPrice"
-              class="text-sm text-gray-400 line-through"
+        <!-- ✅ 가격 -->
+        <div class="mt-3">
+          <h4
+              v-if="item.discountRate > 0"
+              class="text-lg font-bold text-red-600"
+          >
+            {{ item.discountedPrice.toLocaleString() }}원
+            <span class="ml-2 text-sm text-gray-400 line-through">
+              {{ item.price.toLocaleString() }}원
+            </span>
+            <span class="ml-2 text-sm text-green-500">
+              ({{ item.discountRate }}% ↓)
+            </span>
+          </h4>
+          <h4
+              v-else
+              class="text-lg font-medium text-gray-900"
           >
             {{ item.price.toLocaleString() }}원
-          </span>
-          <span class="font-medium text-lg text-black">
-            {{
-              item.discountRate && item.discountedPrice
-                  ? item.discountedPrice.toLocaleString()
-                  : item.price.toLocaleString()
-            }}원
-          </span>
+          </h4>
         </div>
 
-        <!-- ✅ 리뷰 별점 (미구현 상태) -->
-        <div class="flex items-center gap-1 mt-1">
-          <div
-              v-for="n in 5"
-              :key="n"
-              class="relative w-5 h-5"
-          >
+        <!-- ✅ 별점 -->
+        <div class="flex items-center gap-1 mt-2">
+          <div v-for="n in 5" :key="n" class="relative w-5 h-5">
             <i class="fa fa-star text-gray-300 absolute left-0 top-0 w-full h-full"></i>
             <i
                 class="fa fa-star text-yellow-400 absolute left-0 top-0 h-full overflow-hidden"
-                style="width: 0%"
+                :style="{ width: getStarFill(n, item.averageRating) + '%' }"
             ></i>
           </div>
-          <span class="ml-2 text-sm text-gray-400">(0)</span>
+          <span class="ml-2 text-sm text-gray-400">({{ item.reviewCount || 0 }})</span>
         </div>
-      </div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -104,15 +94,27 @@ const props = defineProps({
 })
 
 const filteredList = computed(() =>
-    props.productList.filter(item => item.id)
+    props.productList
+    .filter(item => item.id)
+    .map(item => ({
+      ...item,
+      stockCount: Number(item.stockCount)
+    }))
 )
 
 function getImageUrl(imageName) {
-  if (!imageName) return '/no-image.png' // 이미지 없으면 대체 이미지
-  return `/uploads/images/${imageName}`
+  return imageName ? `/uploads/images/${imageName}` : '/no-image.png'
 }
 
 function onImageError(event) {
   event.target.src = '/no-image.png'
+}
+
+function getStarFill(starIndex, rating) {
+  const full = Math.floor(rating || 0)
+  const partial = Math.round(((rating || 0) - full) * 100)
+  if (starIndex <= full) return 100
+  if (starIndex === full + 1) return partial
+  return 0
 }
 </script>

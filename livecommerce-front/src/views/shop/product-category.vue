@@ -128,7 +128,10 @@ const changePage = (page) => {
 const paginatedProductList = computed(() => {
   const start = (currentPage.value - 1) * pageSize
   const end = start + pageSize
-  return sortedProductList.value.slice(start, end)
+  return sortedProductList.value.slice(start, end).map(product => ({
+    ...product,
+    stockCount: Number(product.stockCount)
+  }))
 })
 
 const sortedProductList = computed(() => {
@@ -179,14 +182,18 @@ async function fetchProductList() {
 
     productList.value = res.data.map(product => ({
       ...product,
+      stockCount: Number(product.stockCount), // ✅ 이거 추가!
       reviewCount: product.reviewCount || 0,
-      averageRating: product.averageRating || 0
+      averageRating: product.averageRating || 0,
+      discountedPrice: Number(product.discountedPrice ?? product.price),
+      discountRate: Number(product.discountRate ?? 0)
     }))
     totalCount.value = productList.value.length // 전체 상품 수
 
   } catch (err) {
     console.error('❌ 상품 목록 불러오기 실패', err)
   }
+  console.log('📦 최종 상품 리스트', productList.value)
 }
 
 
