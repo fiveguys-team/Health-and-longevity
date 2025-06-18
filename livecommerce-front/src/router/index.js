@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 import { useAuthStore } from "@/modules/auth/stores/auth";
 import IndexOne from '@/views/index/index-one.vue'
 import AboutUs from '@/views/inner-pages/about-us.vue'
@@ -63,6 +63,7 @@ import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
 import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
 import test from "@/modules/live/views/testView.vue";
+import OAuthSuccess from "@/modules/auth/views/OAuthSuccess.vue";
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -89,10 +90,17 @@ const routes = [
 
 
   {path: '/cart',component:CartView},
-  {path: '/product-details/:id',component:ProductDetails},
+  // 상품 상세 페이지 라우트 (중복 제거)
+  {
+    path: '/product-details/:id',
+    name: 'ProductDetails',
+    component: ProductDetails,
+    props: true
+  },
   {path: '/checkout',component:CheckoutPage},
   {path: '/contact',component:ContactPage},
   {path: '/product-category',component:ProductCategory},
+  {path: '/oauth-success', component:OAuthSuccess},
 
   { path: "/admin-dashboard", component: adminDashboard,
     meta: {requiresAuth: true, roles: ['ADMIN']}
@@ -101,8 +109,7 @@ const routes = [
 
   // 상품, 리뷰 view
   { path: '/products', component: ProductCategory },
-  { path: '/product-details/:id', component: ProductDetails },
-  {path: '/shop/:category', component: ProductCategory},
+  { path: '/shop/:category', component: ProductCategory},
   { path: '/product/:category', component: ProductCategory },
   { path: '/vendor/:vendorSlug', component: Vendor },
   { path: '/vendor-category', component: () => import('@/views/shop/vendor-category.vue')},
@@ -257,23 +264,37 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL),
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
-  if (to.meta.requiresAuth) {
-    if (!authStore.token) return next('/login')
-
-    if (to.meta.roles && !to.meta.roles.includes(authStore.role)) {
-      alert('권한이 없습니다.')
-      return next('/')
+  try {
+    // 사용자 정보가 없으면 서버에서 불러옴
+    if (!authStore.role) {
+      await authStore.initFromServer()
     }
-  }
 
-  next()
+    // 인증이 필요한 페이지 접근 시 체크
+    if (to.meta?.requiresAuth) {
+      if (!authStore.id) {
+        return next('/login')
+      }
+
+      if (to.meta.roles && !to.meta.roles.includes(authStore.role)) {
+        alert('권한이 없습니다.')
+        return next('/error') // 권한 부족 시 error 페이지로 이동
+      }
+    }
+
+    next()
+  } catch (e) {
+    console.warn('initFromServer or auth check failed:', e)
+    // 에러 발생 시 공통 에러 페이지로 이동
+    return next('/error')
+  }
 })
 
 

@@ -269,7 +269,7 @@ function generateRandomString() {
 const orderStore = useOrderStore()
 
 const authStore = useAuthStore();
-const userId = authStore.id;
+const userId = authStore.id
 
 const orderItem = computed(() => orderStore.orderItem)
 const totalPrice = computed(() => {
@@ -448,6 +448,8 @@ async function requestPayment() {
       detailedAddress: form.detailAddress
     };
 
+
+    console.log("🚀 userId payload에 담긴 값:", payload.userId);
 
     const res = await prepareOrder(payload);
     const { orderName, customerName } = res.data;

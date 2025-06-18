@@ -1,8 +1,6 @@
 package com.example.livecommerce_server.member.service;
 
 import com.example.livecommerce_server.member.domain.Member;
-import com.example.livecommerce_server.member.domain.Role;
-import com.example.livecommerce_server.member.domain.SocialType;
 import com.example.livecommerce_server.member.dto.MemberCreateDto;
 import com.example.livecommerce_server.member.dto.MemberLoginDto;
 import com.example.livecommerce_server.member.repository.MemberRepository;

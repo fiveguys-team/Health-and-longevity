@@ -136,7 +136,7 @@ CREATE TABLE `LIVE_DASHBOARD_D` (
                                     `liveDashboard_id` CHAR(36) NOT NULL,
                                     `live_id`          CHAR(36) NOT NULL,
                                     `total_viewers`    INTEGER NULL,
-                                    `total_chats`      INTEGER NULL,
+                                    `purchase_ratio`      INTEGER NULL,
                                     `total_orders`     INTEGER NULL,
                                     `total_reve`       BIGINT  NULL,
                                     `purchase_rate`    INTEGER NULL

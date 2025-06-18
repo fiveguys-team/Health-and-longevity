@@ -1,22 +1,10 @@
 import axios from 'axios';
-import {useAuthStore} from "@/modules/auth/stores/auth";
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:8080', // 또는 import.meta.env.VITE_API_BASE_URL
     withCredentials: true,            // 쿠키 포함해서 보내려면 이거 꼭 필요
 });
 
-// 요청 시 accessToken 자동 삽입
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = useAuthStore().token;
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
 
 // 응답 에러 처리 (401 등)
 axiosInstance.interceptors.response.use(

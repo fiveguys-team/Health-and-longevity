@@ -30,7 +30,7 @@
               <span class="discount-price">{{ item.discountedPrice.toLocaleString() }}원</span>
               <span class="original-price">{{ item.price.toLocaleString() }}원</span>
             </div>
-            <button class="btn btn-primary">구매하기</button>
+            <button class="" @click="openProductDetails(item.productId)">구매하기</button>
           </div>
         </div>
       </div>
@@ -414,6 +414,18 @@ const displayElapsed = computed(() => {
   const s = String(diff % 60).padStart(2, '0');
   return `${h}:${m}:${s}`;
 });
+
+function openProductDetails(id) {
+  // 라우터로 URL을 생성하고, window.open 으로 새 창(또는 새 탭) 띄우기
+  const routeData = router.resolve({
+    name: 'ProductDetails',
+    params: { id }
+  })
+
+  // 이 경우 routeData.href → "/product-details/abc123" 와 같은 형태
+  const fullUrl = window.location.origin + routeData.href
+  window.open(fullUrl, '_blank')
+}
 </script>
 
 <style scoped>

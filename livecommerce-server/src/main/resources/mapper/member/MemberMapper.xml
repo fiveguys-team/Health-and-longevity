@@ -17,6 +17,6 @@
     </select>
 
     <update id="update" parameterType="com.example.livecommerce_server.member.domain.Member">
-        update USER_M set social_id = #{socialId}, social_type = #{socialType} where email = #{email}
+        update USER_M set social_id = #{socialId}, social_type = #{socialType}, name = #{name} where email = #{email}
     </update>
 </mapper>

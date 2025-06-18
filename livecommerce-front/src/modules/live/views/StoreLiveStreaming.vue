@@ -56,7 +56,7 @@
               <label class="block text-sm font-semibold text-gray-700 mb-2">카테고리 선택</label>
               <select v-model="category"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                <option disabled :value="0">카테고리를 선택해주세요</option>
+                <option disabled value="">카테고리를 선택해주세요</option>
                 <option value="혈압">혈압</option>
                 <option value="눈">눈</option>
                 <option value="뼈/관절/연골">뼈/관절/연골</option>
@@ -205,7 +205,7 @@
 
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import { ref, onBeforeUnmount, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
@@ -218,6 +218,7 @@ const OV = ref(undefined);
 const session = ref(undefined);
 const publisher = ref(undefined);
 
+const router = useRouter();
 const route = useRoute();
 const vendorId = route.params.vendorId;
 
@@ -385,6 +386,8 @@ const endStream = async () => {
     session.value = undefined;
     publisher.value = undefined;
     OV.value = undefined;
+    // 방송 종료 후 레포트 view로 이동
+    await router.push(`/vendor/live/reportList/${vendorId}`);
   }
 };
 
@@ -396,7 +399,7 @@ const getToken = async () => {
 // 2. 채팅방 생성 API 호출 함수 추가
 /**
  * 라이브 시작 시 채팅방을 자동으로 생성합니다.
- * 
+ *
  * @param {string} liveId - 생성된 라이브 ID
  * @returns {Promise<Object>} 채팅방 정보 (roomId, announcement)
  */
