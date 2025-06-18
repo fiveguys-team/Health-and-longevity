@@ -127,17 +127,23 @@
     WHERE d.cert_no = #{certNo}
   </select>
 
-  <select id="findProductsByVendorId" resultType="com.example.livecommerce_server.product.dto.ProductDTO">
+  <select id="findProductsByVendorId" resultType="com.example.livecommerce_server.product.dto.ProductVendorDTO">
     SELECT
-    p.product_id AS productId,
-    p.name,
-    p.price,
-    p.stock_count AS stockCount,
-    p.status,
-    v.name AS vendor
+      p.product_id AS productId,
+      p.name,
+      p.price,
+      p.stock_count AS stockCount,
+      p.product_image AS productImage,
+      v.name AS vendor,
+
+      -- ✅ 할인 관련 필드 추가
+      p.discount_rate AS discountRate,
+      p.price * (100 - IFNULL(p.discount_rate, 0)) / 100 AS discountedPrice
+
     FROM product p
-    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+           JOIN vendor_m v ON p.vendor_id = v.vendor_id
     WHERE p.vendor_id = #{vendorId}
+      AND p.status = 'APPROVED'
   </select>
 
 
