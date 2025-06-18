@@ -61,8 +61,11 @@ public class ProductController {
 
     // 4. 특정 상품 상세 정보 조회 (상품 ID 기준)
     @GetMapping("/detail/{productId}")
-    public ResponseEntity<ProductDetailUserDTO> getProductDetail(@PathVariable String productId) {
+    public ResponseEntity<?> getProductDetail(@PathVariable String productId) {
         ProductDetailUserDTO dto = productService.getProductDetailForUser(productId);
+        if (dto == null) {
+            return ResponseEntity.status(404).body("해당 상품을 찾을 수 없습니다."); // 혹은 notFound().build();
+        }
         return ResponseEntity.ok(dto);
     }
 

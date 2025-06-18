@@ -142,7 +142,7 @@
 
     <!-- ✅ 상세 정보 탭 -->
     <div class="s-py-50">
-      <DetailTab :productDetail="data" />
+      <DetailTab v-if="data && data.id" :productDetail="data" />
     </div>
 
     <FooterOne />
@@ -179,20 +179,21 @@ const quantity = ref(1)
 onMounted(async () => {
   Aos.init()
   const productId = route.params.id
-  const res = await axios.get(`http://localhost:8080/product/detail/${productId}`)
-  data.value = res.data
-  console.log('[🔥 실제 응답]', data.value)
 
   try {
     const res = await axios.get(`http://localhost:8080/product/detail/${productId}`)
+
+    if (typeof res.data !== 'object' || !res.data.id) {
+      console.warn('⚠️ 올바르지 않은 데이터 응답:', res.data)
+      data.value = null
+      return
+    }
+
     data.value = res.data
     console.log('[🔥 실제 응답]', data.value)
-    console.log('[📌 discountRate]', data.value.discountRate) // ✅ 0 또는 할인값 나와야 함
-    console.log('[📌 discountedPrice]', data.value.discountedPrice) // ✅ 정수로 가격 나와야 함
-    console.log('[📦 전체 데이터 구조]', JSON.stringify(data.value, null, 2));
 
   } catch (err) {
-    console.error('상품 정보를 불러오는 데 실패했습니다.', err)
+    console.error('❌ 상품 정보를 불러오는 데 실패했습니다.', err)
     alert('상품 정보를 불러올 수 없습니다.')
   }
 })
