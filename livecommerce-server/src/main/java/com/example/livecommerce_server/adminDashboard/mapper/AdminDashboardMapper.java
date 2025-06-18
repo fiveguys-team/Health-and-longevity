@@ -14,4 +14,10 @@ public interface AdminDashboardMapper {
 
 //	입점업체 수
 	int selectVendorCount();
+
+	// 금년 누적 매출
+	int selectTotalRevenue();
+
+	// 작년 누적 매출
+	int selectPreviousRevenue();
 }
