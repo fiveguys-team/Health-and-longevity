@@ -113,13 +113,16 @@ onMounted(async () => {
     })
     paymentInfo.value = data
     sessionStorage.setItem('paymentInfo', JSON.stringify(data))
+
+    // ✅ 승인 완료 후 URL만 정리 (쿼리 제거)
+    window.history.replaceState({}, document.title, window.location.origin + '/#/payment-success')
   } catch (e) {
     console.error('❌ Toss 결제 승인 오류:', e)
     router.replace('/')
   }
 })
 
-window.history.replaceState({}, document.title, window.location.origin + '/#/payment-success')
+// window.history.replaceState({}, document.title, window.location.origin + '/#/payment-success')
 </script>
 
 
