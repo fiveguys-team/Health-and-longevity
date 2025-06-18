@@ -3,34 +3,41 @@ package com.example.livecommerce_server.chat.service;
 
 import com.example.livecommerce_server.chat.dto.ChatRoomReqDto;
 
+
 /**
  * 채팅 관련 비즈니스 로직을 처리하는 서비스 인터페이스
- * 이 인터페이스는 채팅방 생성, 메시지 조회, 신고 처리 등
- * 채팅 기능의 주요 로직을 정의합니다.
+ * 🔄 세션 기반으로 변경됨
  */
-public interface ChatService {
 
+
+import com.example.livecommerce_server.chat.dto.ChatRoomReqDto;
+
+public interface ChatService {
 
     ChatRoomReqDto createGroupRoom(String liveId);
 
     /**
-     * 채팅방 참여자 수 증가
+     * 🆕 세션 추적 기반 참여자 수 증가
      *
      * @param roomId 채팅방 ID
-     * @return 업데이트 성공 여부
+     * @param userId 사용자 ID
+     * @param sessionId 세션 ID
+     * @return 증가 후 참여자 수 (실제 사용자 수, -1: 실패)
      */
-    int increaseParticipantCount(Long roomId);
+    int increaseParticipantCount(Long roomId, Long userId, String sessionId);
 
     /**
-     * 채팅방 참여자 수 감소
+     * 🆕 세션 추적 기반 참여자 수 감소
      *
      * @param roomId 채팅방 ID
-     * @return 업데이트 성공 여부
+     * @param userId 사용자 ID
+     * @param sessionId 세션 ID
+     * @return 감소 후 참여자 수 (실제 사용자 수)
      */
-    int decreaseParticipantCount(Long roomId);
+    int decreaseParticipantCount(Long roomId, Long userId, String sessionId);
 
     /**
-     * 채팅방 참여자 수 조회
+     * 채팅방 참여자 수 조회 (실제 사용자 수)
      *
      * @param roomId 채팅방 ID
      * @return 현재 참여자 수
