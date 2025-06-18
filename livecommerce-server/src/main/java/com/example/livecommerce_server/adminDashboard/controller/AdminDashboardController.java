@@ -35,4 +35,10 @@ public class AdminDashboardController {
 		MonthOrdersDTO monthOrders = adminDashboardService.findMonthOrders();
 		return new ResponseEntity<>(monthOrders, HttpStatus.OK);
 	}
+
+	@GetMapping("/api/admin/vendors/count")
+	public ResponseEntity<?> getVendorCount() {
+		int vendorCount = adminDashboardService.findVendorCount();
+		return new ResponseEntity<>(vendorCount, HttpStatus.OK);
+	}
 }

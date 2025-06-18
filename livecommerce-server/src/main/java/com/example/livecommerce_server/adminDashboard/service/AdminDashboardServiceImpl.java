@@ -30,5 +30,10 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 				.build();
 	}
 
+	@Override
+	public int findVendorCount() {
+		return adminDashboardMapper.selectVendorCount();
+	}
+
 
 }
