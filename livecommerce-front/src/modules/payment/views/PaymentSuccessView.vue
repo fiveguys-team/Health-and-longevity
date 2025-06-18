@@ -118,6 +118,8 @@ onMounted(async () => {
     router.replace('/')
   }
 })
+
+window.history.replaceState({}, document.title, window.location.origin + '/#/payment-success')
 </script>
 
 
