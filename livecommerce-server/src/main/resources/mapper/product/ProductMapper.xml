@@ -127,17 +127,23 @@
     WHERE d.cert_no = #{certNo}
   </select>
 
-  <select id="findProductsByVendorId" resultType="com.example.livecommerce_server.product.dto.ProductDTO">
+  <select id="findProductsByVendorId" resultType="com.example.livecommerce_server.product.dto.ProductVendorDTO">
     SELECT
-    p.product_id AS productId,
-    p.name,
-    p.price,
-    p.stock_count AS stockCount,
-    p.status,
-    v.name AS vendor               <!-- ✅ 추가 -->
+      p.product_id AS productId,
+      p.name,
+      p.price,
+      p.stock_count AS stockCount,
+      p.product_image AS productImage,
+      v.name AS vendor,
+
+      -- ✅ 할인 관련 필드 추가
+      p.discount_rate AS discountRate,
+      p.price * (100 - IFNULL(p.discount_rate, 0)) / 100 AS discountedPrice
+
     FROM product p
-    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+           JOIN vendor_m v ON p.vendor_id = v.vendor_id
     WHERE p.vendor_id = #{vendorId}
+      AND p.status = 'APPROVED'
   </select>
 
 
@@ -148,7 +154,7 @@
     p.price,
     p.stock_count AS stockCount,
     p.status,
-    v.name AS vendor               <!-- ✅ 추가 -->
+    v.name AS vendor
     FROM product p
     JOIN vendor_m v ON p.vendor_id = v.vendor_id
     WHERE p.vendor_id = #{vendorId}
@@ -175,7 +181,7 @@
 
 
   <!-- 유저용 승인된 상품 목록 조회 -->
-  <select id="selectUserApprovedProducts" resultType="com.example.livecommerce_server.product.dto.UserProductDTO">
+  <select id="selectUserApprovedProducts" resultType="com.example.livecommerce_server.product.dto.UserProductListDTO">
     SELECT
       p.product_id AS id,
       p.name AS name,
@@ -192,19 +198,40 @@
   </select>
 
   <select id="selectUserApprovedProductsFiltered"
-    resultType="com.example.livecommerce_server.product.dto.UserProductDTO">
+    resultType="com.example.livecommerce_server.product.dto.UserProductListDTO">
     SELECT
     p.product_id AS id,
-    p.name AS name,
+    p.name,
     c.name AS category,
     v.name AS vendor,
     p.product_image AS image,
-    p.price AS price,
+    p.price,
     p.stock_count AS stockCount,
-    p.status AS status
+    p.status,
+
+    -- ✅ 할인 조건: live가 ON이고 시작했으며 종료되지 않은 경우만 할인 적용
+    CASE
+    WHEN l.status_cd = 'ON'
+    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+    AND (l.end_cd IS NULL OR l.end_cd = '')
+    THEN COALESCE(lp.discountRate, 0)
+    ELSE 0
+    END AS discountRate,
+
+    CASE
+    WHEN l.status_cd = 'ON'
+    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+    AND (l.end_cd IS NULL OR l.end_cd = '')
+    THEN FLOOR(p.price * (100 - lp.discountRate) / 100)
+    ELSE p.price
+    END AS discountedPrice
+
     FROM product p
     JOIN category c ON p.category_id = c.category_id
     JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
+    LEFT JOIN live_m l ON lp.live_id = l.live_id
+
     WHERE p.status = #{status}
     <if test="category != null and category != ''">
       AND c.name = #{category}
@@ -212,31 +239,136 @@
   </select>
 
 
+
   <!-- 상품 상세 조회 -->
-  <select id="selectProductDetailUserById" resultType="com.example.livecommerce_server.product.dto.ProductDetailUserDTO">
+  <!-- ✅ resultMap 정의 -->
+  <resultMap id="ProductDetailUserResultMap" type="com.example.livecommerce_server.product.dto.ProductDetailUserDTO">
+    <result property="id" column="id"/>
+    <result property="name" column="name"/>
+    <result property="vendor" column="vendor"/>
+    <result property="price" column="price"/>
+    <result property="stockCount" column="stock_count"/>
+    <result property="productImage" column="product_image"/>
+    <result property="category" column="category"/>
+
+    <result property="certNo" column="cert_no"/>
+    <result property="expiryDate" column="expiry_date"/>
+    <result property="approvalDate" column="approval_date"/>
+    <result property="howToTake" column="how_to_take"/>
+    <result property="mainFunction" column="main_function"/>
+    <result property="precautions" column="precautions"/>
+    <result property="storageMethod" column="storage_method"/>
+    <result property="standard" column="standard"/>
+    <result property="ingredients" column="ingredients"/>
+    <result property="productName" column="product_name"/>
+
+    <result property="discountRate" column="discount_rate"/>
+    <result property="discountedPrice" column="discounted_price"/>
+  </resultMap>
+
+  <!-- ✅ 상품 상세 조회 쿼리 -->
+  <select id="selectProductDetailUserById" resultMap="ProductDetailUserResultMap">
     SELECT
-    p.product_id AS id,
-    p.name,
-    c.name AS category,
-    p.price,
-    p.stock_count,
-    p.product_image,
-    pd.cert_no,
-    pd.expiry_date,
-    pd.approval_date,
-    pd.how_to_take,
-    pd.main_function,
-    pd.precautions,
-    pd.storage_method,
-    pd.standard,
-    pd.ingredients,
-    pd.product_name,
-    v.name AS vendor
+      p.product_id        AS id,
+      p.name              AS name,
+      v.name              AS vendor,
+      p.price             AS price,
+      p.stock_count       AS stock_count,
+      p.product_image     AS product_image,
+      c.name              AS category,
+
+      pd.cert_no          AS cert_no,
+      pd.expiry_date      AS expiry_date,
+      pd.approval_date    AS approval_date,
+      pd.how_to_take      AS how_to_take,
+      pd.main_function    AS main_function,
+      pd.precautions      AS precautions,
+      pd.storage_method   AS storage_method,
+      pd.standard         AS standard,
+      pd.ingredients      AS ingredients,
+      pd.product_name     AS product_name,
+
+      -- ✅ 할인율 조건부 계산
+      CASE
+        WHEN l.status_cd = 'ON'
+          AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+        AND (l.end_cd IS NULL OR l.end_cd = '')
+          THEN COALESCE(lp.discountRate, 0)
+        ELSE 0
+        END AS discount_rate,
+
+      -- ✅ 할인가 조건부 계산
+      CASE
+        WHEN l.status_cd = 'ON'
+          AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+        AND (l.end_cd IS NULL OR l.end_cd = '')
+          THEN FLOOR(p.price * (100 - lp.discountRate) / 100)
+        ELSE p.price
+        END AS discounted_price
+
     FROM product p
-    JOIN product_detail pd ON p.product_id = pd.product_id
-    JOIN vendor_m v ON p.vendor_id = v.vendor_id  <!-- ✅ 여기! -->
-    JOIN category c ON p.category_id = c.category_id
+           JOIN product_detail pd ON p.product_id = pd.product_id
+           JOIN vendor_m v ON p.vendor_id = v.vendor_id
+           JOIN category c ON p.category_id = c.category_id
+           LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
+           LEFT JOIN live_m l ON lp.live_id = l.live_id
     WHERE p.product_id = #{id}
+  </select>
+
+
+
+
+
+  <select id="findProductsByCategoryAndStatus" resultType="com.example.livecommerce_server.product.dto.ProductDTO">
+    SELECT
+    p.product_id AS productId,
+    p.name,
+    p.price,
+    p.stock_count AS stockCount,
+    p.product_image AS productImage,
+    v.name AS vendor,
+    (SELECT COUNT(*) FROM review r WHERE r.product_id = p.product_id) AS reviewCount,
+    (SELECT COALESCE(ROUND(AVG(r.rating), 1), 0.0) FROM review r WHERE r.product_id = p.product_id) AS averageRating
+    FROM product p
+    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    JOIN category c ON p.category_id = c.category_id
+    WHERE p.status = #{status}
+    <if test="category != null and category != ''">
+      AND c.name = #{category}
+    </if>
+    ORDER BY p.name
+    LIMIT #{size} OFFSET #{offset}
+  </select>
+
+
+  <select id="countProductsByCategoryAndStatus" resultType="int">
+    SELECT COUNT(*)
+    FROM product p
+    JOIN category c ON p.category_id = c.category_id
+    WHERE p.status = #{status}
+    <if test="category != null and category != ''">
+      AND c.name = #{category}
+    </if>
+  </select>
+
+
+  <select id="findAllDiscountedProducts" resultType="com.example.livecommerce_server.product.dto.DiscountedProductDTO">
+    SELECT
+      p.product_id,
+      p.name,
+      p.price,
+      lp.discountRate,
+      FLOOR(p.price * (100 - lp.discountRate) / 100) AS discountedPrice,
+      p.product_image,
+      p.stock_count,
+      v.name AS vendor
+    FROM product p
+           JOIN vendor_m v ON p.vendor_id = v.vendor_id
+           LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
+           LEFT JOIN live_m l ON lp.live_id = l.live_id AND l.status_cd = 'ON'
+    WHERE p.status = 'APPROVED'
+      AND <![CDATA[STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW()]]>
+      AND (l.end_cd IS NULL OR l.end_cd = '')
   </select>
 
 
