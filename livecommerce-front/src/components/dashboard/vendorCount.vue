@@ -1,13 +1,32 @@
 <script setup>
 
+import axios from "axios";
+import {onMounted, ref} from "vue";
+
+const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
+    : 'http://localhost:8080/';
+
+const vendors = ref('');
+
+const vendorCount = async () => {
+  try {
+    const response = await axios.get(`${APPLICATION_SERVER_URL}api/admin/vendors/count`);
+    vendors.value = response.data;
+  } catch (error) {
+    console.error('이번달 주문 로드 실패:', error);
+  }
+};
+
+onMounted( ()=> {
+  vendorCount();
+});
 </script>
 
 <template>
   <div class="flex items-center justify-between">
     <div>
       <p class="text-sm font-medium text-gray-600">활성 입점업체</p>
-      <p class="text-2xl font-bold text-gray-900">24개</p>
-      <p class="text-sm text-green-600 mt-1">↗ +2개 이번 주 신규</p>
+      <p class="text-2xl font-bold text-gray-900">{{ vendors }} 개</p>
     </div>
     <div class="p-3 bg-purple-100 rounded-full">
       <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
