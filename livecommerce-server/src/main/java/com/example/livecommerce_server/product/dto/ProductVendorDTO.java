@@ -13,4 +13,7 @@ public class ProductVendorDTO {
     private int stockCount;
     private String productImage;
     private String vendor;
+
+    private Integer discountRate;     // ex: 20 (%)
+    private Integer discountedPrice;  // 할인가
 }
