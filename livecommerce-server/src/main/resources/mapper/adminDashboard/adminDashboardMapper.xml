@@ -22,7 +22,9 @@
 
 
 <!--	입점업체 수 -->
-	<select id=""
+	<select id="selectVendorCount" resultType="Integer">
+		SELECT count(distinct vendor_id) FROM VENDOR_m
+	</select>
 
 
 

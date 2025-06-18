@@ -11,4 +11,7 @@ public interface AdminDashboardMapper {
 
 //	저번달 주문수
 	int selectPreviousMonthOrders();
+
+//	입점업체 수
+	int selectVendorCount();
 }
