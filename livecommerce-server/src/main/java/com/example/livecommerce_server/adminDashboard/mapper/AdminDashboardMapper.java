@@ -6,13 +6,13 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface AdminDashboardMapper {
 
-//	이번달 주문수
+	// 이번달 주문수
 	int selectMonthOrders();
 
-//	저번달 주문수
+	// 저번달 주문수
 	int selectPreviousMonthOrders();
 
-//	입점업체 수
+	// 입점업체 수
 	int selectVendorCount();
 
 	// 금년 누적 매출
@@ -20,4 +20,11 @@ public interface AdminDashboardMapper {
 
 	// 작년 누적 매출
 	int selectPreviousRevenue();
+
+	// 이번달 누적 매출
+	int selectCurrentMonthRevenue();
+
+	// 저번달 누적 매출
+	int selectPreviousMonthRevenue();
+
 }
