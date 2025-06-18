@@ -100,7 +100,37 @@ const authStore = useAuthStore();
 // 현재 로그인한 사용자 ID (반응형)
 const currentUserId = computed(() => authStore.id);
 
-// 메시지 수신 처리 - 내 메시지인지 구분 추가
+// 🆕 최근 메시지 처리 함수 (입장 시 받는 이전 메시지들)
+const handleRecentMessages = (response) => {
+    try {
+        const message = JSON.parse(response.body);
+
+        console.log('최근 메시지 수신:', message);
+
+        // 최근 메시지는 앞쪽에 추가 (시간순으로 오래된 것부터)
+        messages.value.unshift({
+            id: message.messageId || `recent_${Date.now()}_${Math.random()}`,
+            username: message.userName || `사용자${message.userId}`,
+            displayName: message.userName || `사용자${message.userId}`,
+            content: message.content,
+            time: message.createdAt || new Date().toISOString(),
+            isMyMessage: String(message.userId) === String(currentUserId.value),
+            userId: message.userId
+        });
+
+        // 스크롤을 맨 아래로 (최신 메시지가 보이도록)
+        nextTick(() => {
+            if (messageContainer.value) {
+                messageContainer.value.scrollTop = messageContainer.value.scrollHeight;
+            }
+        });
+
+    } catch (error) {
+        console.error('최근 메시지 처리 중 오류:', error);
+    }
+};
+
+// 메시지 수신 처리 - 내 메시지인지 구분 추가 (새로운 실시간 메시지)
 const handleMessage = (receivedMessage) => {
     console.log('서버에서 받은 메시지 전체:', receivedMessage);
     console.log('현재 사용자 ID:', currentUserId.value);
@@ -108,8 +138,9 @@ const handleMessage = (receivedMessage) => {
 
     const isMyMessage = String(receivedMessage.userId) === String(currentUserId.value);
 
+    // 새 메시지는 뒤쪽에 추가 (실시간)
     messages.value.push({
-        id: Date.now(),
+        id: receivedMessage.messageId || Date.now(),
         username: receivedMessage.userName || `사용자${receivedMessage.userId}`,
         displayName: receivedMessage.userName || `사용자${receivedMessage.userId}`,
         content: receivedMessage.content,
@@ -188,8 +219,24 @@ const subscribeToParticipants = (roomId) => {
                 (message) => {
                     participantCount.value = parseInt(message.body, 10);
                 },
-                { roomId: roomId.toString() }
+                {
+                    roomId: roomId.toString(),
+                    userId: authStore.id.toString()  // ✅ userId 헤더 추가
+                }
             );
+        }
+    }, 500);
+};
+
+// 🆕 최근 메시지 구독 함수
+const subscribeToRecentMessages = () => {
+    setTimeout(() => {
+        if (websocketService.stompClient && websocketService.stompClient.connected) {
+            console.log('최근 메시지 구독 시작');
+
+            websocketService.stompClient.subscribe(`/user/${authStore.id}/queue/recent-messages`, handleRecentMessages);
+
+            console.log('최근 메시지 구독 완료');
         }
     }, 500);
 };
@@ -205,6 +252,7 @@ watch(() => props.roomId, (newRoomId, oldRoomId) => {
         setTimeout(() => {
             websocketService.connect(newRoomId, handleMessage, handleWarning);
             subscribeToParticipants(newRoomId);
+            subscribeToRecentMessages(); // 🆕 최근 메시지 구독 추가
         }, 100);
     }
 });
@@ -220,6 +268,9 @@ onMounted(() => {
     // 실시간 참여자 수 구독
     subscribeToParticipants(props.roomId);
 
+    // 🆕 최근 메시지 구독
+    subscribeToRecentMessages();
+
     // 사용자 변경 감지
     watch(() => authStore.id, (newId, oldId) => {
         if (newId !== oldId && oldId !== null) {
@@ -231,6 +282,7 @@ onMounted(() => {
                 setTimeout(() => {
                     websocketService.connect(props.roomId, handleMessage, handleWarning);
                     subscribeToParticipants(props.roomId);
+                    subscribeToRecentMessages(); // 🆕 최근 메시지 구독 추가
                 }, 100);
             }
         }
