@@ -269,51 +269,53 @@
   <!-- ✅ 상품 상세 조회 쿼리 -->
   <select id="selectProductDetailUserById" resultMap="ProductDetailUserResultMap">
     SELECT
-      p.product_id        AS id,
-      p.name              AS name,
-      v.name              AS vendor,
-      p.price             AS price,
-      p.stock_count       AS stock_count,
-      p.product_image     AS product_image,
-      c.name              AS category,
+    p.product_id        AS id,
+    p.name              AS name,
+    v.name              AS vendor,
+    p.price             AS price,
+    p.stock_count       AS stock_count,
+    p.product_image     AS product_image,
+    c.name              AS category,
 
-      pd.cert_no          AS cert_no,
-      pd.expiry_date      AS expiry_date,
-      pd.approval_date    AS approval_date,
-      pd.how_to_take      AS how_to_take,
-      pd.main_function    AS main_function,
-      pd.precautions      AS precautions,
-      pd.storage_method   AS storage_method,
-      pd.standard         AS standard,
-      pd.ingredients      AS ingredients,
-      pd.product_name     AS product_name,
+    pd.cert_no          AS cert_no,
+    pd.expiry_date      AS expiry_date,
+    pd.approval_date    AS approval_date,
+    pd.how_to_take      AS how_to_take,
+    pd.main_function    AS main_function,
+    pd.precautions      AS precautions,
+    pd.storage_method   AS storage_method,
+    pd.standard         AS standard,
+    pd.ingredients      AS ingredients,
+    pd.product_name     AS product_name,
 
-      -- ✅ 할인율 조건부 계산
-      CASE
-        WHEN l.status_cd = 'ON'
-          AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
-        AND (l.end_cd IS NULL OR l.end_cd = '')
-          THEN COALESCE(lp.discountRate, 0)
-        ELSE 0
-        END AS discount_rate,
+    -- ✅ 할인율 조건부 계산
+    CASE
+    WHEN l.status_cd = 'ON'
+    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+    AND (l.end_cd IS NULL OR l.end_cd = '')
+    THEN COALESCE(lp.discountRate, 0)
+    ELSE 0
+    END AS discount_rate,
 
-      -- ✅ 할인가 조건부 계산
-      CASE
-        WHEN l.status_cd = 'ON'
-          AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
-        AND (l.end_cd IS NULL OR l.end_cd = '')
-          THEN FLOOR(p.price * (100 - lp.discountRate) / 100)
-        ELSE p.price
-        END AS discounted_price
+    -- ✅ 할인가 조건부 계산
+    CASE
+    WHEN l.status_cd = 'ON'
+    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+    AND (l.end_cd IS NULL OR l.end_cd = '')
+    THEN FLOOR(p.price * (100 - lp.discountRate) / 100)
+    ELSE p.price
+    END AS discounted_price
 
     FROM product p
-           JOIN product_detail pd ON p.product_id = pd.product_id
-           JOIN vendor_m v ON p.vendor_id = v.vendor_id
-           JOIN category c ON p.category_id = c.category_id
-           LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
-           LEFT JOIN live_m l ON lp.live_id = l.live_id
+    JOIN product_detail pd ON p.product_id = pd.product_id
+    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    JOIN category c ON p.category_id = c.category_id
+    LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
+    LEFT JOIN live_m l ON lp.live_id = l.live_id  <!-- ✅ 수정 포인트: 조건 제거 -->
+
     WHERE p.product_id = #{id}
   </select>
+
 
 
 
