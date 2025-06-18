@@ -33,13 +33,18 @@
         <div class="max-w-[1720px] mx-auto flex justify-between gap-10 flex-col lg:flex-row">
           <div class="w-full lg:w-[58%]">
             <div class="relative product-dtls-wrapper">
-              <button class="absolute top-5 left-0 p-2 bg-[#E13939] text-lg leading-none text-white font-medium z-50">-10%</button>
+              <button
+                  v-if="data?.discountRate"
+                  class="absolute top-5 left-0 p-2 bg-[#E13939] text-lg leading-none text-white font-medium z-50"
+              >
+                -{{ data.discountRate }}%
+              </button>
               <div class="product-dtls-slider">
                 <img
-                    :src="!data?.productImage || data.productImage === '' ? testImg : getImageUrl(data.productImage)"
+                    :src="getImageUrl(data?.productImage)"
                     alt="product"
                     class="w-full"
-                    :class="activeImage === 1 ? '' : 'hidden'"
+                    @error="onImageError"
                 />
               </div>
             </div>
@@ -65,34 +70,61 @@
             </div>
 
             <div class="flex gap-4 items-center mt-[15px]">
-              <span class="text-lg sm:text-xl line-through text-title dark:text-white">₩140,000</span>
-              <span class="text-2xl sm:text-3xl text-primary">₩{{ data?.price }}</span>
+              <template v-if="typeof data?.discountRate === 'number' && data.discountRate > 0">
+                <!-- 원래 가격 -->
+                <span class="text-lg sm:text-xl line-through text-title dark:text-white">
+      ₩{{ data?.price != null ? data.price.toLocaleString() : '' }}
+    </span>
+                <!-- 할인된 가격 -->
+                <span class="text-2xl sm:text-3xl text-primary">
+      ₩{{ data?.discountedPrice != null ? data.discountedPrice.toLocaleString() : '' }}
+    </span>
+                <!-- 할인 배지 -->
+                <span class="ml-2 px-2 py-1 text-sm bg-[#E13939] text-white rounded-md">
+      -{{ data.discountRate }}%
+    </span>
+              </template>
+
+              <template v-else>
+                <!-- 할인 없을 경우 그냥 현재 가격만 -->
+                <span class="text-2xl sm:text-3xl text-primary">
+      ₩{{ data?.price != null ? data.price.toLocaleString() : '' }}
+    </span>
+              </template>
             </div>
 
+
+            <!-- 🔽 기존 얼마 남지 않았어요 + 품절 텍스트 부분 수정 -->
             <div class="mt-5 md:mt-7 flex items-center gap-4 flex-wrap">
-              <h4 class="text-xl md:text-[22px] font-semibold">얼마 남지 않았어요!</h4>
-              <div class="overflow-auto">
-                <div class="py-2 px-3 bg-[#FAF2F2] rounded-[51px] flex items-end gap-[6px] w-[360px]">
-                  <h6 class="text-lg font-medium text-[#E13939]">할인 마감 :</h6>
-                  <div class="countdown-clock flex gap-[10px] items-center">
-                    <div class="clock-days">{{ days }}</div>D
-                    <div class="clock-hours">{{ hours }}</div>H
-                    <div class="clock-minutes">{{ minutes }}</div>M
-                    <div class="clock-seconds">{{ seconds }}</div>S
-                  </div>
-                </div>
-              </div>
+              <template v-if="data?.stockCount === 0">
+                <p class="text-red-600 font-semibold flex items-center gap-2">
+                  <span>🔒</span> 현재 품절된 상품입니다.
+                </p>
+              </template>
+              <template v-else>
+                <h4 class="text-xl md:text-[22px] font-semibold">얼마 남지 않았어요!</h4>
+              </template>
             </div>
 
-            <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up">
-              <IncDec v-model="quantity" />
-              <div class="flex gap-4 mt-4 sm:mt-6">
-                     <button class="btn btn-outline" @click="goToCart">
-                       장바구니 담기
-                     </button>
-                <button class="btn btn-outline" @click="buyNow">구매</button>
-              </div>
+            <!-- ✅ 수량 선택 + 버튼 모두 숨김 처리 -->
+            <div
+                class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk"
+                data-aos="fade-up"
+            >
+              <template v-if="data?.stockCount > 0">
+                <IncDec v-model="quantity" :max="data.stockCount" />
+
+                <div class="flex gap-4 mt-4 sm:mt-6">
+                  <button class="btn btn-outline" @click="goToCart">
+                    장바구니 담기
+                  </button>
+                  <button class="btn btn-outline" @click="buyNow">
+                    구매
+                  </button>
+                </div>
+              </template>
             </div>
+
           </div>
         </div>
       </div>
@@ -117,7 +149,6 @@ import IncDec from '@/components/inc-dec.vue'
 import DetailTab from '@/components/product/detail-tab.vue'
 import FooterOne from '@/components/footer/footer-one.vue'
 import ScrollToTop from '@/components/scroll-to-top.vue'
-import testImg from '@/assets/img/product/testimg.jpg'
 import bg from '@/assets/img/shortcode/breadcumb.jpg' // ✅ 배경 이미지 import
 import Aos from 'aos'
 import { useOrderStore } from '@/modules/order/stores/order'
@@ -134,15 +165,22 @@ const userId = authStore.id;
 
 const data = ref(null)
 const quantity = ref(1)
-const activeImage = ref(1)
 
 onMounted(async () => {
   Aos.init()
   const productId = route.params.id
+  const res = await axios.get(`http://localhost:8080/product/detail/${productId}`)
+  data.value = res.data
+  console.log('[🔥 실제 응답]', data.value)
 
   try {
-    const res = await axios.get(`http://localhost:8080/products/${productId}`)
+    const res = await axios.get(`http://localhost:8080/product/detail/${productId}`)
     data.value = res.data
+    console.log('[🔥 실제 응답]', data.value)
+    console.log('[📌 discountRate]', data.value.discountRate) // ✅ 0 또는 할인값 나와야 함
+    console.log('[📌 discountedPrice]', data.value.discountedPrice) // ✅ 정수로 가격 나와야 함
+    console.log('[📦 전체 데이터 구조]', JSON.stringify(data.value, null, 2));
+
   } catch (err) {
     console.error('상품 정보를 불러오는 데 실패했습니다.', err)
     alert('상품 정보를 불러올 수 없습니다.')
@@ -150,7 +188,13 @@ onMounted(async () => {
 })
 
 function getImageUrl(filename) {
-  return `http://localhost:8080/uploads/images/${filename}`
+  if (!filename || filename === '') {
+    return '/no-image.png'; // public 폴더 기준 경로
+  }
+  return `http://localhost:8080/uploads/images/${filename}`;
+}
+function onImageError(event) {
+  event.target.src = '/no-image.png';
 }
 
 // 리뷰 계산
@@ -175,10 +219,7 @@ function updateNow() {
 }
 setInterval(updateNow, 1000)
 
-const days = computed(() => Math.floor(difference.value / (1000 * 60 * 60 * 24)))
-const hours = computed(() => 23 - new Date(now.value).getHours())
-const minutes = computed(() => 60 - new Date(now.value).getMinutes())
-const seconds = computed(() => 60 - new Date(now.value).getSeconds())
+
 
 const productId = computed(() => route.params.id)
 
