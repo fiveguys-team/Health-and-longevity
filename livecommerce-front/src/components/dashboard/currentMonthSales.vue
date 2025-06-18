@@ -1,10 +1,57 @@
+<script setup>
+import axios from "axios";
+import {onMounted, ref, computed} from "vue";
+
+const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
+    : 'http://localhost:8080/';
+
+const revenue = ref({});
+
+// 매출 변화율에 따른 화살표와 색상 계산
+const changeIndicator = computed(() => {
+  const rate = revenue.value.revenueChangeRate;
+  if (rate > 0) {
+    return {
+      arrow: '↗',
+      color: 'text-green-600'
+    };
+  } else if (rate < 0) {
+    return {
+      arrow: '↘',
+      color: 'text-red-600'
+    };
+  } else {
+    return {
+      arrow: '→',
+      color: 'text-gray-600'
+    };
+  }
+});
+
+const currentMonthRevenue = async () => {
+  try {
+    const response = await axios.get(`${APPLICATION_SERVER_URL}api/admin/revenues/month`);
+    revenue.value = response.data;
+  } catch (error) {
+    console.error('이번 달 매출 로드 실패:', error);
+  }
+};
+
+onMounted( ()=> {
+  currentMonthRevenue();
+});
+
+</script>
+
 <template>
   <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
     <div class="flex items-center justify-between">
       <div>
         <p class="text-sm font-medium text-gray-600">이번 달 매출</p>
-        <p class="text-2xl font-bold text-gray-900">₩127,450,000</p>
-        <p class="text-sm text-green-600 mt-1">↗ +12.5% 지난달 대비</p>
+        <p class="text-2xl font-bold text-gray-900">{{revenue.totalRevenue}}</p>
+        <p class="text-sm mt-1" :class="changeIndicator.color">
+          {{changeIndicator.arrow}} {{revenue.revenueChangeRate}}% 지난달 대비
+        </p>
       </div>
       <div class="p-3 bg-blue-100 rounded-full">
         <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14,14 +61,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-
-
-
-</script>
-
-
 
 <style scoped>
 

@@ -58,6 +58,11 @@ public class AdminDashboardController {
 		return new ResponseEntity<>(annualRevenue, HttpStatus.OK);
 	}
 
+	/**
+	 * 관리자 대시보드의 이번 달 매출액과 변환율을 반환합니다.
+	 *
+	 * @return 이번달 매출액
+	 */
 	@GetMapping("/api/admin/revenues/month")
 	public ResponseEntity<MonthlyRevenueDTO> getMonthlyRevenue() {
 		log.info("이번 달 매출!");
