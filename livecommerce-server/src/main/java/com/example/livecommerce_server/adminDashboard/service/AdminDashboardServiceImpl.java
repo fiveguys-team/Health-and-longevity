@@ -1,12 +1,16 @@
 package com.example.livecommerce_server.adminDashboard.service;
 
 import com.example.livecommerce_server.adminDashboard.dto.AnnualRevenueDTO;
+import com.example.livecommerce_server.adminDashboard.dto.CategoryRevenueDTO;
 import com.example.livecommerce_server.adminDashboard.dto.MonthOrdersDTO;
 import com.example.livecommerce_server.adminDashboard.dto.MonthlyRevenueDTO;
+import com.example.livecommerce_server.adminDashboard.dto.VendorMaxViewersDTO;
 import com.example.livecommerce_server.adminDashboard.mapper.AdminDashboardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -71,5 +75,14 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 				.build();
 	}
 
+	@Override
+	public List<CategoryRevenueDTO> findCategoryRevenue() {
+		return adminDashboardMapper.selectCategoryRevenue();
+	}
+
+	@Override
+	public List<VendorMaxViewersDTO> findVendorMaxViewers() {
+		return adminDashboardMapper.selectVendorMaxViewers();
+	}
 
 }

@@ -1,8 +1,10 @@
 package com.example.livecommerce_server.adminDashboard.controller;
 
 import com.example.livecommerce_server.adminDashboard.dto.AnnualRevenueDTO;
+import com.example.livecommerce_server.adminDashboard.dto.CategoryRevenueDTO;
 import com.example.livecommerce_server.adminDashboard.dto.MonthOrdersDTO;
 import com.example.livecommerce_server.adminDashboard.dto.MonthlyRevenueDTO;
+import com.example.livecommerce_server.adminDashboard.dto.VendorMaxViewersDTO;
 import com.example.livecommerce_server.adminDashboard.service.AdminDashboardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @CrossOrigin(origins = {"http://localhost:5174", "http://localhost:5173",
 		"http://localhost:3000"}, allowedHeaders = "*", methods = {RequestMethod.GET,
@@ -68,5 +72,29 @@ public class AdminDashboardController {
 		log.info("이번 달 매출!");
 		MonthlyRevenueDTO monthlyRevenueDTO = adminDashboardService.findMonthRevenue();
 		return new ResponseEntity<>(monthlyRevenueDTO, HttpStatus.OK);
+	}
+
+	/**
+	 * 관리자 대시보드의 카테고리별 매출을 반환합니다.
+	 *
+	 * @return 카테고리별 매출 목록
+	 */
+	@GetMapping("/api/admin/revenues/category")
+	public ResponseEntity<List<CategoryRevenueDTO>> getCategoryRevenue() {
+		log.info("카테고리별 매출 호출");
+		List<CategoryRevenueDTO> categoryRevenue = adminDashboardService.findCategoryRevenue();
+		return new ResponseEntity<>(categoryRevenue, HttpStatus.OK);
+	}
+
+	/**
+	 * 관리자 대시보드의 이번달 입점업체별 라이브 방송 최고 시청자 수를 반환합니다.
+	 *
+	 * @return 입점업체별 최고 시청자 수 목록
+	 */
+	@GetMapping("/api/admin/vendors/max-viewers")
+	public ResponseEntity<List<VendorMaxViewersDTO>> getVendorMaxViewers() {
+		log.info("입점업체별 최고 시청자 수 호출");
+		List<VendorMaxViewersDTO> vendorMaxViewers = adminDashboardService.findVendorMaxViewers();
+		return new ResponseEntity<>(vendorMaxViewers, HttpStatus.OK);
 	}
 }
