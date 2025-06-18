@@ -1,5 +1,6 @@
 package com.example.livecommerce_server.adminDashboard.service;
 
+import com.example.livecommerce_server.adminDashboard.dto.AnnualRevenueDTO;
 import com.example.livecommerce_server.adminDashboard.dto.MonthOrdersDTO;
 import com.example.livecommerce_server.adminDashboard.mapper.AdminDashboardMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,23 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 	@Override
 	public int findVendorCount() {
 		return adminDashboardMapper.selectVendorCount();
+	}
+
+	@Override
+	public AnnualRevenueDTO findAnnualRevenue() {
+		int yearRevenue = adminDashboardMapper.selectTotalRevenue();
+		int previousRevenue = adminDashboardMapper.selectPreviousRevenue();
+		log.info(String.valueOf(yearRevenue));
+		log.info(String.valueOf(previousRevenue));
+
+		int revenueRate = 0;
+		if(previousRevenue!=0) {
+			revenueRate = (yearRevenue - previousRevenue) / previousRevenue * 100;
+		}
+		return AnnualRevenueDTO.builder()
+				.totalRevenue(yearRevenue)
+				.revenueChangeRate(revenueRate)
+				.build();
 	}
 
 
