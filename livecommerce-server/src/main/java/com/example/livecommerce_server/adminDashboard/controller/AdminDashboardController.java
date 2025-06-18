@@ -1,10 +1,8 @@
 package com.example.livecommerce_server.adminDashboard.controller;
 
+import com.example.livecommerce_server.adminDashboard.dto.AnnualRevenueDTO;
 import com.example.livecommerce_server.adminDashboard.dto.MonthOrdersDTO;
 import com.example.livecommerce_server.adminDashboard.service.AdminDashboardService;
-import com.example.livecommerce_server.live.dto.LiveDTO;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,5 +38,12 @@ public class AdminDashboardController {
 	public ResponseEntity<?> getVendorCount() {
 		int vendorCount = adminDashboardService.findVendorCount();
 		return new ResponseEntity<>(vendorCount, HttpStatus.OK);
+	}
+
+	@GetMapping("/api/admin/revenues/annual")
+	public ResponseEntity<AnnualRevenueDTO> getAnnualRevenue() {
+		log.info("매출액 호출");
+		AnnualRevenueDTO annualRevenue = adminDashboardService.findAnnualRevenue();
+		return new ResponseEntity<>(annualRevenue, HttpStatus.OK);
 	}
 }
