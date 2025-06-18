@@ -16,6 +16,22 @@
           />
         </router-link>
 
+        <!-- ✅ 품절 배지 -->
+        <span
+            v-if="item.stockCount === 0"
+            class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded z-10"
+        >
+          품절
+        </span>
+
+        <!-- ✅ 할인 뱃지 -->
+        <span
+            v-if="item.discountRate && item.discountRate > 0"
+            class="absolute top-2 right-2 bg-yellow-400 text-black text-xs px-2 py-1 rounded z-10"
+        >
+          -{{ item.discountRate }}%
+        </span>
+
         <!-- ✅ 상품 태그 -->
         <div
             v-if="item.tag"
@@ -32,7 +48,6 @@
 
       <!-- ✅ 상품 정보 -->
       <div class="md:px-2 lg:px-4 xl:px-6 lg:pt-6 pt-5 flex gap-4 md:gap-5 flex-col">
-
         <h2 class="text-2xl font-semibold dark:text-white leading-snug">
           <router-link :to="`/product-details/${item.id}`" class="text-underline">
             {{ item.name }}
@@ -43,29 +58,37 @@
           {{ item.vendor }}
         </p>
 
-        <h5 class="font-medium leading-none dark:text-white text-lg">
-          {{ item.price.toLocaleString() }}원
-        </h5>
+        <!-- ✅ 가격 표시 영역 -->
+        <div class="flex gap-2 items-baseline mt-2">
+          <span
+              v-if="item.discountRate && item.discountedPrice"
+              class="text-sm text-gray-400 line-through"
+          >
+            {{ item.price.toLocaleString() }}원
+          </span>
+          <span class="font-medium text-lg text-black">
+            {{
+              item.discountRate && item.discountedPrice
+                  ? item.discountedPrice.toLocaleString()
+                  : item.price.toLocaleString()
+            }}원
+          </span>
+        </div>
 
-        <div>
-
-
-
-          <!-- ✅ 리뷰 별점 (미구현 상태) -->
-          <div class="flex items-center gap-1 mt-1">
-            <div
-                v-for="n in 5"
-                :key="n"
-                class="relative w-5 h-5"
-            >
-              <i class="fa fa-star text-gray-300 absolute left-0 top-0 w-full h-full"></i>
-              <i
-                  class="fa fa-star text-yellow-400 absolute left-0 top-0 h-full overflow-hidden"
-                  style="width: 0%"
-              ></i>
-            </div>
-            <span class="ml-2 text-sm text-gray-400">(0)</span>
+        <!-- ✅ 리뷰 별점 (미구현 상태) -->
+        <div class="flex items-center gap-1 mt-1">
+          <div
+              v-for="n in 5"
+              :key="n"
+              class="relative w-5 h-5"
+          >
+            <i class="fa fa-star text-gray-300 absolute left-0 top-0 w-full h-full"></i>
+            <i
+                class="fa fa-star text-yellow-400 absolute left-0 top-0 h-full overflow-hidden"
+                style="width: 0%"
+            ></i>
           </div>
+          <span class="ml-2 text-sm text-gray-400">(0)</span>
         </div>
       </div>
     </div>
@@ -89,7 +112,6 @@ function getImageUrl(imageName) {
   return `/uploads/images/${imageName}`
 }
 
-// ✅ 이미지 로딩 실패 시 대체 이미지로 설정
 function onImageError(event) {
   event.target.src = '/no-image.png'
 }
