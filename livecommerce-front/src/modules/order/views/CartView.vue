@@ -53,9 +53,11 @@
                 <td>
                   <IncDec
                       :modelValue="item.quantity"
-                      @update:modelValue="(val) => {
-                      item.quantity = val  // 화면 상 바인딩 수동 적용
-                      updateQuantity(item.cartItemId, val)}"
+                      :max="item.stockCount"
+                  @update:modelValue="(val) => {
+                  item.quantity = val
+                  updateQuantity(item.cartItemId, val)
+                  }"
                   />
 <!--                  <IncDec :modelValue="item.quantity" @update:modelValue="(val) => updateQuantity(item.cartItemId, val)" />-->
                 </td>
@@ -104,9 +106,10 @@
               <router-link to="/" class="btn btn-sm btn-outline !text-title hover:!text-white before:!z-[-1] dark:!text-white dark:hover:!text-title">
                 계속 쇼핑하기
               </router-link>
-              <router-link to="/checkout" class="btn btn-sm btn-theme-solid !text-white hover:!text-primary before:!z-[-1]">
-                결제하기
-              </router-link>
+              <button @click="handleGoToCheckout" class="btn btn-sm btn-theme-solid !text-white hover:!text-primary before:!z-[-1]">결제하기</button>
+<!--              <router-link to="/cart-checkout" class="btn btn-sm btn-theme-solid !text-white hover:!text-primary before:!z-[-1]">-->
+<!--                결제하기-->
+<!--              </router-link>-->
             </div>
           </div>
         </div>
@@ -126,10 +129,15 @@ import NavbarOne from '@/components/navbar/navbar-one.vue'
 import IncDec from '@/components/inc-dec.vue'
 import FooterThree from '@/components/footer/footer-three.vue'
 import ScrollToTop from '@/components/scroll-to-top.vue'
+import {useCartOrderStore} from '@/modules/order/stores/order'
+import { useRouter } from 'vue-router'
 
 import Aos from 'aos'
 import {getCartByUserId, getCartItems, updateCartItemQuantity, deleteCartItem} from "@/modules/order/services/orderApi";
 import {useAuthStore} from "@/modules/auth/stores/auth";
+
+const cartOrderStore = useCartOrderStore()
+const router = useRouter()
 
 const authStore = useAuthStore();
 const userId = authStore.id;
@@ -160,6 +168,34 @@ const shippingFee = computed(() =>
 const totalBeforeShipping = computed(() =>
     subtotal.value - discount.value
 )
+
+const handleGoToCheckout = async () => {
+  try {
+    const res = await getCartItems(cartData.value.cartId)
+    const latestItems = res.data
+
+    console.log('[🛒 장바구니에서 결제 이동 전 items]', latestItems)
+    if (!latestItems || latestItems.length === 0) {
+      alert('🛒 결제할 상품이 없습니다.')
+      return
+    }
+
+    // 필요한 필터링/검증 로직 (예: 재고 부족, 가격 오류)
+    const hasProblem = latestItems.some(item => item.quantity > item.stockCount)
+    if (hasProblem) {
+      alert('일부 상품에 문제가 있습니다. 다시 확인해주세요.')
+      return
+    }
+
+    cartOrderStore.setCartItems(latestItems)
+    sessionStorage.setItem('cartItems', JSON.stringify(latestItems))
+    cartOrderStore.setCartItems(latestItems) // 🧠 이 타이밍에만 저장
+    router.push('/cart-checkout')            // → 이후는 CheckoutCartView.vue에서 렌더링
+  } catch (e) {
+    console.error('최신 장바구니 조회 실패:', e)
+    alert('장바구니 확인 중 문제가 발생했습니다.')
+  }
+}
 
 onMounted(async () => {
   Aos.init()

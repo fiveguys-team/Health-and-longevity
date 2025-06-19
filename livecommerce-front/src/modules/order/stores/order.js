@@ -16,3 +16,18 @@ export const useOrderStore = defineStore('order', {
         }
     }
 })
+
+
+export const useCartOrderStore = defineStore('cartOrder', {
+    state: () => ({
+        cartItems: []
+    }),
+    actions: {
+        setCartItems(items) {
+            this.cartItems = items
+        },
+        clearCartItems() {
+            this.cartItems = []
+        }
+    }
+})

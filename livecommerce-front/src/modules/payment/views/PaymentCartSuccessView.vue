@@ -62,6 +62,7 @@ import bg from '@/assets/img/shortcode/breadcumb.jpg'
 import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { confirmPayment } from '@/modules/payment/services/payment'
+import { deleteCartItems } from '@/modules/order/services/orderApi'
 
 const router = useRouter()
 const paymentInfo = ref({})
@@ -73,7 +74,6 @@ const formatDate = dateStr =>
     new Date(dateStr).toLocaleString()
 
 onMounted(async () => {
-  // ✅ Toss가 리다이렉트할 때 붙이는 쿼리 파라미터는 window.location.search에 위치함
   const searchParams = new URLSearchParams(window.location.search)
   const paymentKey = searchParams.get('paymentKey')
   const orderId = searchParams.get('orderId')
@@ -82,7 +82,6 @@ onMounted(async () => {
   const storedRaw = sessionStorage.getItem('paymentInfo')
   let stored
 
-  // 세션에 저장된 게 있으면 파싱
   if (storedRaw) {
     try {
       stored = JSON.parse(storedRaw)
@@ -91,7 +90,6 @@ onMounted(async () => {
     }
   }
 
-  // 기존 세션 정보 복원
   if (stored && (!orderId || orderId === stored.orderId)) {
     paymentInfo.value = stored
     return
@@ -99,7 +97,6 @@ onMounted(async () => {
 
   sessionStorage.removeItem('paymentInfo')
 
-  // 필수 파라미터 없으면 홈으로 이동
   if (!paymentKey || !orderId || !amount) {
     router.replace('/')
     return
@@ -114,18 +111,27 @@ onMounted(async () => {
     paymentInfo.value = data
     sessionStorage.setItem('paymentInfo', JSON.stringify(data))
 
-    // ✅ 승인 완료 후 URL만 정리 (쿼리 제거)
-    window.history.replaceState({}, document.title, window.location.origin + '/#/payment-success')
+    // ✅ Toss 리다이렉트 URL 정리
+    window.history.replaceState({}, document.title, window.location.origin + '/#/payment-success-cart')
+
+    // ✅ 장바구니 아이템 삭제
+    const rawCartItems = sessionStorage.getItem('cartItems') || '[]'
+    const cartItemIds = JSON.parse(rawCartItems).map(item => item.cartItemId)
+
+    if (cartItemIds.length > 0) {
+      await deleteCartItems(cartItemIds)
+      console.log('🧹 장바구니 항목 삭제 완료:', cartItemIds)
+    }
+
+    // 세션 정리
+    sessionStorage.removeItem('cartItems')
   } catch (e) {
-    console.error('❌ Toss 결제 승인 오류:', e)
+    console.error('❌ 결제 승인 오류:', e)
     router.replace('/')
   }
 })
-
-// window.history.replaceState({}, document.title, window.location.origin + '/#/payment-success')
 </script>
 
-
 <style scoped>
-/* 추가적인 스타일이 필요하다면 여기에 */
+/* 필요 시 스타일 추가 */
 </style>
