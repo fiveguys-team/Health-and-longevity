@@ -49,12 +49,16 @@ public class ProductController {
         }
     }
 
-    // 3. 입점업체의 상품 목록 조회
     @GetMapping("/vendor/{vendorId}/products")
     public ResponseEntity<List<ProductDTO>> getProductsByVendor(
             @PathVariable Long vendorId,
             @RequestParam(required = false) String status
     ) {
+        // 👇 빈 문자열이면 null로 변환 (전체 조회용)
+        if (status != null && status.trim().isEmpty()) {
+            status = null;
+        }
+
         List<ProductDTO> productList = productService.getProductsByVendor(vendorId, status);
         return ResponseEntity.ok(productList);
     }
