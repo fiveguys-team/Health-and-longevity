@@ -44,7 +44,8 @@
             </h4>
             <div class="grid gap-5 md:gap-6">
               <div>
-                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">이름</label>
+                <label
+                    class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">이름</label>
                 <input
                     ref="nameRef"
                     v-model="form.name"
@@ -101,7 +102,8 @@
                       class="flex-1 h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
                       placeholder="우편번호를 선택하세요"
                   />
-                  <button  ref="postcodeButtonRef" @click="openPostcode" class="ml-2 bg-primary text-white px-4 md:px-6 rounded-md">
+                  <button ref="postcodeButtonRef" @click="openPostcode"
+                          class="ml-2 bg-primary text-white px-4 md:px-6 rounded-md">
                     우편번호 찾기
                   </button>
                 </div>
@@ -109,7 +111,8 @@
 
               <!-- 기본주소 표시 (readonly) -->
               <div>
-                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">기본주소</label>
+                <label
+                    class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">기본주소</label>
                 <input
                     v-model="basicAddress"
                     readonly
@@ -135,7 +138,8 @@
             </div>
 
             <div class="mt-5">
-              <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">배송 요청사항</label>
+              <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">배송
+                요청사항</label>
               <textarea
                   v-model="form.note"
                   class="w-full h-[120px] bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
@@ -157,60 +161,70 @@
           </div>
 
           <div data-aos="fade-up" data-aos-delay="200">
-            <div v-if="orderItem"
+            <div v-if="cartItems.length > 0"
                  class="bg-[#FAFAFA] dark:bg-dark-secondary pt-[30px] md:pt-[40px] lg:pt-[50px] px-[30px] md:px-[40px] lg:px-[50px] pb-[30px] border border-[#17243026] border-opacity-15 rounded-xl">
               <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-10">
                 상품 정보
               </h4>
-              <div class="grid gap-5 mg:gap-6">
-                <div class="flex items-center justify-between gap-5">
-                  <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product flex-wrap">
-                    <div class="w-16 sm:w-[70px] flex-none">
-                      <img :src="orderItem.productImage" alt="product" />
-                    </div>
-                    <div class="flex-1">
-                      <h5 class="font-semibold leading-none mt-2">
-                        <router-link to="#">{{ orderItem.productName }}</router-link>
-                      </h5>
-                      <br>
-                      <h6 class="leading-none font-medium">{{orderItem.categoryName}}</h6>
-                    </div>
+
+              <!-- 상품 리스트 반복 렌더링 -->
+              <div class="grid gap-6 px-4 sm:px-6">
+                <div
+                    v-for="item in cartItems"
+                    :key="item.cartItemId"
+                    class="flex items-start gap-6 border-b border-gray-200 pb-5"
+                >
+                  <!-- 상품 이미지 -->
+                  <img
+                      :src="item.imageUrl || '/img/default.png'"
+                      alt="product"
+                      class="w-20 sm:w-[80px] object-cover rounded-md flex-shrink-0"
+                  />
+
+                  <!-- 텍스트 영역 -->
+                  <div class="flex flex-col justify-center">
+                    <p class="font-semibold text-title text-[16px]">{{ item.productName }}</p>
+                    <p class="text-sm text-gray-500 mt-1">수량: {{ item.quantity }}개</p>
+                    <p class="text-sm text-gray-500 mt-1">
+                      가격: {{ item.discountedPrice.toLocaleString() }}원
+                    </p>
                   </div>
-                  <h6 class="leading-none">{{ orderItem.price.toLocaleString() }} 원</h6>
-                  <h6 class="leading-none text-sm text-gray-500 mt-1">
-                  </h6>
                 </div>
               </div>
+
+
+              <!-- 주문 요약 정보 -->
               <div
                   class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk text-right flex justify-end flex-col w-full ml-auto mr-0">
                 <div
                     class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
                   <span>수량:</span>
-                  <span>{{ orderItem.quantity }} 개</span>
+                  <span>{{ totalQuantity }} 개</span>
                 </div>
                 <div
                     class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
                   <span>배송비:</span>
-                  <span> {{ deliveryFee.toLocaleString() }} 원</span>
+                  <span>{{ deliveryFee.toLocaleString() }} 원</span>
                 </div>
                 <div
                     class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
                   <span>총 할인 금액:</span>
-                  <span>{{ ((orderItem.discountAmount || 0) * (orderItem.quantity || 1)).toLocaleString() }} 원</span>
+                  <span>{{ totalDiscount.toLocaleString() }} 원</span>
                 </div>
                 <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium">
                   <span>총 주문 금액:</span>
                   <span>{{ totalPrice.toLocaleString() }} 원</span>
                 </div>
-
               </div>
+
               <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
                 <div class="flex justify-between flex-wrap font-semibold leading-none text-2xl md:text-3xl">
                   <span>총 결제 금액:</span>
-                  <span>{{ totalAmount.toLocaleString() }} 원 </span>
+                  <span>{{ totalAmount.toLocaleString() }} 원</span>
                 </div>
               </div>
             </div>
+
             <div v-else class="text-center text-gray-500 mt-10">
               <p>🛒 주문할 상품이 없습니다.</p>
             </div>
@@ -247,9 +261,9 @@
 </template>
 
 <script setup>
-import { useOrderStore } from '@/modules/order/stores/order'
+import {useCartOrderStore} from '@/modules/order/stores/order'
 import {computed, ref, reactive, watch, onMounted} from "vue";
-import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import {loadTossPayments} from "@tosspayments/tosspayments-sdk";
 import NavbarOne from '@/components/navbar/navbar-one.vue';
 import FooterThree from '@/components/footer/footer-three.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
@@ -257,7 +271,7 @@ import 'swiper/swiper-bundle.css';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import bg from "@/assets/img/shortcode/breadcumb.jpg";
-import  {prepareOrder} from "@/modules/order/services/orderApi";
+import {prepareOrder} from "@/modules/order/services/orderApi";
 import {cancelPayment} from "@/modules/payment/services/payment";
 import {useRouter} from "vue-router";
 import {useAuthStore} from "@/modules/auth/stores/auth";
@@ -266,18 +280,30 @@ function generateRandomString() {
   return window.btoa(Math.random().toString()).slice(0, 20);
 }
 
-const orderStore = useOrderStore()
+const cartOrderStore = useCartOrderStore()
+const cartItems = computed(() => cartOrderStore.cartItems)
 
 const authStore = useAuthStore();
 const userId = authStore.id
 
-const orderItem = computed(() => orderStore.orderItem)
 const totalPrice = computed(() => {
-  return orderItem.value.price * orderItem.value.quantity;
+  return cartItems.value.reduce((sum, item) => {
+    return sum + item.discountedPrice * item.quantity;
+  }, 0)
 })
 const totalAmount = computed(() => {
   return totalPrice.value + deliveryFee.value;
 })
+
+const totalQuantity = computed(() =>
+    cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
+)
+
+const totalDiscount = computed(() =>
+    cartItems.value.reduce((sum, item) =>
+        sum + ((item.price - item.discountedPrice) * item.quantity), 0)
+)
+
 
 const deliveryFee = computed(() => totalPrice.value >= 50000 ? 0 : 3000)
 
@@ -326,7 +352,7 @@ const handleSubmit = () => {
     alert('주소를 입력해주세요. "우편번호 찾기" 버튼을 눌러 주소를 입력하세요.')
     return
   }
-  if(!form.detailAddress) {
+  if (!form.detailAddress) {
     alert('상세주소를 입력해주세요')
     return
   }
@@ -375,7 +401,7 @@ async function fetchPaymentWidgets() {
     const tossPayments = await loadTossPayments(clientKey);
 
     // ─── 회원 결제를 위한 위젯 생성 (로그인한 사용자의 식별키인 customerKey 사용) ───
-    widgets.value = tossPayments.widgets({ customerKey });
+    widgets.value = tossPayments.widgets({customerKey});
 
     // ─── 비회원 결제를 원하실 경우 아래처럼 변경하여 사용하세요. ───
     // widgets.value = tossPayments.widgets({ customerKey: ANONYMOUS });
@@ -420,14 +446,15 @@ async function requestPayment() {
     return;
   }
 
-  if (!orderItem.value || totalAmount.value <= 0) {
-    alert("결제 금액이 유효하지 않습니다.");
+  if (!cartItems.value || cartItems.value.length === 0 || totalAmount.value <= 0) {
+    alert("결제할 상품이 없습니다.");
     return;
   }
 
-  if (orderItem.value.stockCount < orderItem.value.quantity) {
-    alert('해당 제품의 재고 수량이 부족합니다!');
-    router.push('/');
+  const hasStockIssue = cartItems.value.some(item => item.quantity > item.stockCount);
+  if (hasStockIssue) {
+    alert("일부 상품의 재고가 부족합니다.");
+    router.push('/cart');
     return;
   }
 
@@ -435,31 +462,29 @@ async function requestPayment() {
 
   try {
     const payload = {
-      userId: userId, //추후 본인 아이디로 변경필요.
-      orderItems: [
-        {
-          productId: orderItem.value.productId,
-          quantity: orderItem.value.quantity,
-        }
-      ],
+      userId: userId,
+      orderItems: cartItems.value.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity
+      })),
       shippingRequest: form.note,
       postalCode: postalCode.value,
       basicAddress: basicAddress.value,
       detailedAddress: form.detailAddress
-    };
+    }
 
 
     console.log("🚀 userId payload에 담긴 값:", payload.userId);
 
     const res = await prepareOrder(payload);
-    const { orderName, customerName } = res.data;
+    const {orderName, customerName} = res.data;
     orderId = res.data.orderId;
 
     await widgets.value.requestPayment({
       orderId,
       orderName,
       customerName,
-      successUrl: "http://localhost:3000/#/payment-success",
+      successUrl: "http://localhost:3000/#/payment-success-cart",
       failUrl: "http://localhost:3000/#/payment-failure",
     });
 
@@ -475,14 +500,13 @@ async function requestPayment() {
 
 onMounted(() => {
   Aos.init();
-  if (!orderStore.orderItem) {
-    const saved = sessionStorage.getItem('orderItem')
+  if (!cartOrderStore.cartItems.length) {
+    const saved = sessionStorage.getItem('cartItems')
     if (saved) {
-      orderStore.setOrderItem(JSON.parse(saved))
+      cartOrderStore.setCartItems(JSON.parse(saved))
     }
   }
 });
-
 
 
 // 컴포넌트 마운트 시 결제 위젯 초기화 & 렌더링
