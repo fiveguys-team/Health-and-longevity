@@ -30,7 +30,7 @@
 	<select id="selectTotalRevenue" resultType="Integer">
 		SELECT COALESCE(sum(discount_amount), 0) + COALESCE(sum(total_amount), 0) as totalRevenue
 		FROM orders_m o, payment_d p
-		WHERE o.payments_id = p.payments_id AND p.payment_status_code = '04'
+		WHERE o.payments_id = p.payments_id AND p.payment_status_code = 'done'
 		AND left(o.order_date, 8) BETWEEN DATE_FORMAT(CURRENT_DATE, '%Y0101') AND DATE_FORMAT(CURRENT_DATE, '%Y%m%d')
 	</select>
 
@@ -38,7 +38,7 @@
 	<select id="selectPreviousRevenue" resultType="Integer">
 		SELECT COALESCE(SUM(o.discount_amount), 0) + COALESCE(SUM(o.total_amount), 0) AS totalRevenue
 		FROM orders_m o, payment_d p
-		WHERE o.payments_id = p.payments_id AND p.payment_status_code = '04'
+		WHERE o.payments_id = p.payments_id AND p.payment_status_code = 'done'
 		AND LEFT(o.order_date, 8) BETWEEN CONCAT(DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 YEAR),'%Y'),'0101')
 		AND DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 YEAR),'%Y%m%d');
 	</select>
@@ -47,7 +47,7 @@
 	<select id="selectCurrentMonthRevenue" resultType="Integer">
 		SELECT COALESCE(SUM(o.discount_amount), 0) + COALESCE(SUM(o.total_amount), 0) AS totalRevenue
 		FROM orders_m o, payment_d p
-		WHERE o.payments_id = p.payments_id AND p.payment_status_code = '04'
+		WHERE o.payments_id = p.payments_id AND p.payment_status_code = 'done'
 		AND LEFT(o.order_date, 8) BETWEEN CONCAT(DATE_FORMAT(CURRENT_DATE, '%Y%m'), '01')
 		AND DATE_FORMAT(CURRENT_DATE, '%Y%m%d')
 	</select>
@@ -56,7 +56,7 @@
 	<select id="selectPreviousMonthRevenue" resultType="Integer">
 		SELECT COALESCE(SUM(o.discount_amount), 0) + COALESCE(SUM(o.total_amount), 0) AS totalRevenue
 		FROM orders_m o, payment_d p
-		WHERE o.payments_id = p.payments_id AND p.payment_status_code = '04'
+		WHERE o.payments_id = p.payments_id AND p.payment_status_code = 'done'
 		AND LEFT(o.order_date, 8) BETWEEN CONCAT(DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y%m'), '01')
 		AND DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y%m%d')
 	</select>
@@ -72,7 +72,7 @@
 		JOIN order_item_d oi ON o.order_id = oi.order_id
 		JOIN product pr ON oi.product_id = pr.product_id
 		JOIN category c ON pr.category_id = c.category_id
-		WHERE p.payment_status_code = '04'
+		WHERE p.payment_status_code = 'done'
 		AND LEFT(o.order_date, 8) BETWEEN DATE_FORMAT(CURRENT_DATE, '%Y0101') AND DATE_FORMAT(CURRENT_DATE, '%Y%m%d')
 		GROUP BY c.category_id, c.name
 		ORDER BY revenue DESC
