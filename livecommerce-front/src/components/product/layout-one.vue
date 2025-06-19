@@ -69,17 +69,6 @@
           </h4>
         </div>
 
-        <!-- ✅ 별점 -->
-        <div class="flex items-center gap-1 mt-2">
-          <div v-for="n in 5" :key="n" class="relative w-5 h-5">
-            <i class="fa fa-star text-gray-300 absolute left-0 top-0 w-full h-full"></i>
-            <i
-                class="fa fa-star text-yellow-400 absolute left-0 top-0 h-full overflow-hidden"
-                :style="{ width: getStarFill(n, item.averageRating) + '%' }"
-            ></i>
-          </div>
-          <span class="ml-2 text-sm text-gray-400">({{ item.reviewCount || 0 }})</span>
-        </div>
       </router-link>
     </div>
   </div>
@@ -110,11 +99,4 @@ function onImageError(event) {
   event.target.src = '/no-image.png'
 }
 
-function getStarFill(starIndex, rating) {
-  const full = Math.floor(rating || 0)
-  const partial = Math.round(((rating || 0) - full) * 100)
-  if (starIndex <= full) return 100
-  if (starIndex === full + 1) return partial
-  return 0
-}
 </script>

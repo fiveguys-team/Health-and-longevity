@@ -64,14 +64,6 @@
             <div class="pb-4 sm:pb-6 border-b border-bdr-clr dark:border-bdr-clr-drk">
               <div v-if="data">
                 <h2 class="font-semibold leading-none">{{ data.name }}</h2>
-                <div class="flex items-center gap-3 mt-3">
-                  <div class="text-yellow-500 font-medium">
-                    ⭐ {{ averageRating }} / 5.0
-                  </div>
-                  <div class="text-gray-600 text-sm">
-                    (리뷰 {{ reviewCount }}개)
-                  </div>
-                </div>
                 <p class="sm:text-lg mt-5 md:mt-7">
                   <strong>업체:</strong> {{ data.vendor }}
                 </p>
@@ -111,8 +103,8 @@
                   <span>🔒</span> 현재 품절된 상품입니다.
                 </p>
               </template>
-              <template v-else>
-                <h4 class="text-xl md:text-[22px] font-semibold">얼마 남지 않았어요!</h4>
+              <template v-else-if="data?.stockCount < 10">
+                <h4 class="text-xl md:text-[22px] font-semibold text-red-500">얼마 남지 않았어요!</h4>
               </template>
             </div>
 
@@ -162,7 +154,6 @@ import ScrollToTop from '@/components/scroll-to-top.vue'
 import bg from '@/assets/img/shortcode/breadcumb.jpg' // ✅ 배경 이미지 import
 import Aos from 'aos'
 import { useOrderStore } from '@/modules/order/stores/order'
-import { detailReview } from '@/data/data'
 import {useAuthStore} from "@/modules/auth/stores/auth";
 import { getCartByUserId, addCartItem } from "@/modules/order/services/orderApi";
 
@@ -208,16 +199,7 @@ function onImageError(event) {
   event.target.src = '/no-image.png';
 }
 
-// 리뷰 계산
-const filteredReviews = computed(() => {
-  return detailReview.filter(review => review.product === data.value?.name)
-})
-const reviewCount = computed(() => filteredReviews.value.length)
-const averageRating = computed(() => {
-  if (!filteredReviews.value.length) return 0
-  const total = filteredReviews.value.reduce((sum, r) => sum + r.rating, 0)
-  return (total / filteredReviews.value.length).toFixed(1)
-})
+
 
 // 타이머
 const now = ref(new Date().getTime())
