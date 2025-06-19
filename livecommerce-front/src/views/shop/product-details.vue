@@ -189,12 +189,13 @@ onMounted(async () => {
   }
 })
 
-function getImageUrl(filename) {
-  if (!filename || filename === '') {
-    return '/no-image.png'; // public 폴더 기준 경로
+function getImageUrl(url) {
+  if (!url || url === '') {
+    return '/no-image.png';
   }
-  return `http://localhost:8080/uploads/images/${filename}`;
+  return url; // 전체 URL이면 그대로 반환
 }
+
 function onImageError(event) {
   event.target.src = '/no-image.png';
 }

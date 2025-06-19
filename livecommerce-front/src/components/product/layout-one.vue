@@ -91,8 +91,12 @@ const filteredList = computed(() =>
     }))
 )
 
-function getImageUrl(imageName) {
-  return imageName ? `/uploads/images/${imageName}` : '/no-image.png'
+function getImageUrl(imageUrl) {
+  if (!imageUrl || imageUrl === '') {
+    return '/no-image.png'
+  }
+
+  return imageUrl // 전체 URL이면 그대로 사용
 }
 
 function onImageError(event) {
