@@ -29,7 +29,6 @@
               <option value="default">기본 정렬</option>
               <option value="price-asc">가격 낮은순</option>
               <option value="price-desc">가격 높은순</option>
-              <option value="rating">인기순</option>
             </select>
           </div>
 
