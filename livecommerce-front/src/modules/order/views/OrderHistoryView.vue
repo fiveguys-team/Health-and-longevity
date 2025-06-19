@@ -12,7 +12,25 @@
         </ul>
       </div>
     </div>
+    <div class="container-fluid my-10">
+      <div class="max-w-[600px] mx-auto bg-white dark:bg-dark-secondary rounded-xl p-6 border border-bdr-clr shadow">
+        <h3 class="text-xl font-semibold mb-4">테스트 이미지 업로드</h3>
 
+        <input type="file" @change="handleFileChange" accept="image/*" />
+        <button
+            class="mt-3 bg-blue-600 text-white px-4 py-2 rounded"
+            :disabled="!selectedFile || uploading"
+            @click="uploadImage"
+        >
+          업로드
+        </button>
+
+        <div v-if="uploadedUrl" class="mt-4">
+          <p class="text-sm mb-2">업로드된 이미지:</p>
+          <img :src="uploadedUrl" alt="업로드 이미지" class="w-40 border rounded" />
+        </div>
+      </div>
+    </div>
     <div class="s-py-100" data-aos="fade-up">
       <div class="container-fluid">
         <div class="max-w-[1720px] mx-auto flex items-start gap-8 md:gap-12 2xl:gap-24 flex-col md:flex-row my-profile-navtab">
@@ -59,6 +77,26 @@
       </div>
     </div>
 
+    <div class="container-fluid my-10">
+      <div class="max-w-[600px] mx-auto bg-white dark:bg-dark-secondary rounded-xl p-6 border border-bdr-clr shadow">
+        <h3 class="text-xl font-semibold mb-4">테스트 이미지 업로드</h3>
+
+        <input type="file" @change="handleFileChange" accept="image/*" />
+        <button
+            class="mt-3 bg-blue-600 text-white px-4 py-2 rounded"
+            :disabled="!selectedFile || uploading"
+            @click="uploadImage"
+        >
+          업로드
+        </button>
+
+        <div v-if="uploadedUrl" class="mt-4">
+          <p class="text-sm mb-2">업로드된 이미지:</p>
+          <img :src="uploadedUrl" alt="업로드 이미지" class="w-40 border rounded" />
+        </div>
+      </div>
+    </div>
+
     <FooterThree/>
 
     <ScrollToTop/>
@@ -67,17 +105,42 @@
 
 <script setup>
 import { onMounted } from 'vue';
-
+import { ref } from 'vue'
 import NavbarOne from '@/components/navbar/navbar-one.vue';
 import ProfileTab from '@/components/profile-tab.vue';
 import FooterThree from '@/components/footer/footer-three.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
-
-import bg from '@/assets/img/shortcode/breadcumb.jpg'
-
 import { cartData } from '@/data/data';
+import {useAuthStore} from "@/modules/auth/stores/auth";
 
 import Aos from 'aos';
+import {uploadFileToNcp} from "@/data/uploadApi";
+const authStore = useAuthStore();
+const userId = authStore.id
+
+const selectedFile = ref(null)
+const uploadedUrl = ref(null)
+const uploading = ref(false)
+
+const handleFileChange = (e) => {
+  selectedFile.value = e.target.files[0]
+}
+
+const uploadImage = async () => {
+  if (!selectedFile.value) return
+
+  try {
+    uploading.value = true
+    const url = await uploadFileToNcp(selectedFile.value, userId)
+    uploadedUrl.value = url
+    console.log('✅ 업로드 성공:', url) // <<< 여기 url을 db에 꽂으면 됩니다.
+  } catch (e) {
+    console.error('❌ 업로드 실패', e)
+    alert('업로드 실패')
+  } finally {
+    uploading.value = false
+  }
+}
 
 onMounted(()=>{
   Aos.init()

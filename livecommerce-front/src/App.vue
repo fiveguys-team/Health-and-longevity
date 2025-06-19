@@ -1,6 +1,7 @@
 <template>
   <router-view></router-view>
   <!--  <ChatbotWindow />-->
+  <FileUploader/>
 </template>
 
 <script setup>
