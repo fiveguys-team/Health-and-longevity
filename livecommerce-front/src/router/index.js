@@ -31,7 +31,6 @@ import ProductCategory from '@/views/shop/product-category.vue'
 
 // 대시보드 views
 import adminDashboard from '@/views/dashboard/adminDashboard.vue'
-//import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 
 
 // modules/product/views - 입점업체
