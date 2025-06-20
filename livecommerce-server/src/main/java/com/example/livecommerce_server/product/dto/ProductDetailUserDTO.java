@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class ProductDetailUserDTO {
-    // product 테이블 정보
     private String id;
     private String name;
     private String vendor;
@@ -13,7 +12,6 @@ public class ProductDetailUserDTO {
     private String productImage;
     private String category;
 
-    // product_detail 테이블 정보
     private Long certNo;
     private String expiryDate;
     private String approvalDate;
@@ -24,4 +22,7 @@ public class ProductDetailUserDTO {
     private String standard;
     private String ingredients;
     private String productName;
+
+    private Integer discountRate;
+    private Integer discountedPrice;
 }

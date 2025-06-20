@@ -43,6 +43,8 @@ public interface CartService {
      */
     void removeCartItem(String cartItemId);
 
+    void removeCartItems(List<String> cartItemIds);
+
     /**
      * 장바구니 ID로 전체 항목 조회 (할인, 재고 포함)
      *

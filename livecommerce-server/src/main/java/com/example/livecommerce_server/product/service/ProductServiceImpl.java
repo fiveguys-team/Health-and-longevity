@@ -2,12 +2,13 @@ package com.example.livecommerce_server.product.service;
 
 
 import com.example.livecommerce_server.product.dto.AdminProductDetailDTO;
+import com.example.livecommerce_server.product.dto.DiscountedProductDTO;
 import com.example.livecommerce_server.product.dto.ProductDetailDTO;
 import com.example.livecommerce_server.product.dto.ProductDTO;
 import com.example.livecommerce_server.product.dto.ProductDetailUserDTO;
 import com.example.livecommerce_server.product.dto.ProductListDTO;
 import com.example.livecommerce_server.product.dto.ProductRegisterRequestDTO;
-import com.example.livecommerce_server.product.dto.UserProductDTO;
+import com.example.livecommerce_server.product.dto.UserProductListDTO;
 import com.example.livecommerce_server.product.repository.ProductDetailMapper;
 import com.example.livecommerce_server.product.repository.ProductMapper;
 import java.util.List;
@@ -182,11 +183,11 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.selectProductsByStatus(status);
     }
 
-    public List<UserProductDTO> getUserApprovedProducts() {
+    public List<UserProductListDTO> getUserApprovedProducts() {
         return productMapper.selectUserApprovedProducts();
     }
     @Override
-    public List<UserProductDTO> getUserProductsFiltered(String status, String category) {
+    public List<UserProductListDTO> getUserProductsFiltered(String status, String category) {
         return productMapper.selectUserApprovedProductsFiltered(status, category);
     }
 
@@ -195,4 +196,22 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.selectProductDetailUserById(id);
     }
 
+    public List<ProductDTO> getPagedProducts(String category, String status, int page, int size) {
+        int offset = (page - 1) * size;
+        return productMapper.findProductsByCategoryAndStatus(category, status, size, offset);
+    }
+
+    public int countProducts(String category, String status) {
+        return productMapper.countProductsByCategoryAndStatus(category, status);
+    }
+
+    @Override
+    public List<DiscountedProductDTO> getDiscountedProducts() {
+        return productMapper.findAllDiscountedProducts();
+    }
+
+    @Override
+    public List<UserProductListDTO> getUserProductsByCategoryAndStatus(String category, String status, int size, int offset) {
+        return productMapper.findUserProductsByCategoryAndStatus(category, status, size, offset);
+    }
 }

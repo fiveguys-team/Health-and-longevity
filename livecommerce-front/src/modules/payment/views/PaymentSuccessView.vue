@@ -59,11 +59,10 @@ import NavbarOne from '@/components/navbar/navbar-one.vue'
 import FooterThree from '@/components/footer/footer-three.vue'
 import ScrollToTop from '@/components/scroll-to-top.vue'
 import bg from '@/assets/img/shortcode/breadcumb.jpg'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { confirmPayment } from '@/modules/payment/services/payment'
 
-const route = useRoute()
 const router = useRouter()
 const paymentInfo = ref({})
 
@@ -74,11 +73,16 @@ const formatDate = dateStr =>
     new Date(dateStr).toLocaleString()
 
 onMounted(async () => {
-  const { paymentKey, orderId, amount } = route.query
+  // ✅ Toss가 리다이렉트할 때 붙이는 쿼리 파라미터는 window.location.search에 위치함
+  const searchParams = new URLSearchParams(window.location.search)
+  const paymentKey = searchParams.get('paymentKey')
+  const orderId = searchParams.get('orderId')
+  const amount = searchParams.get('amount')
+
   const storedRaw = sessionStorage.getItem('paymentInfo')
   let stored
 
-  // 1) 세션에 저장된 게 있으면 파싱
+  // 세션에 저장된 게 있으면 파싱
   if (storedRaw) {
     try {
       stored = JSON.parse(storedRaw)
@@ -87,36 +91,40 @@ onMounted(async () => {
     }
   }
 
-  // 2) 만약 저장된 주문이 있고, URL에 파라미터가 없거나(새로고침) URL의 orderId === 저장된 orderId 라면 → 복원만
+  // 기존 세션 정보 복원
   if (stored && (!orderId || orderId === stored.orderId)) {
     paymentInfo.value = stored
     return
   }
 
-  // 3) 여기까지 왔으면 (1) 저장 없거나, (2) 새 결제(orderId 다름)이므로 세션 초기화
   sessionStorage.removeItem('paymentInfo')
 
-  // 4) 쿼리 파라미터가 없으면 홈으로
+  // 필수 파라미터 없으면 홈으로 이동
   if (!paymentKey || !orderId || !amount) {
-    router.replace({ name: 'home' })
+    router.replace('/')
     return
   }
 
-  // 5) API 호출 후 세션에 저장
   try {
     const data = await confirmPayment({
       paymentKey,
       orderId,
-      amount: Number(amount)
+      amount: Number(amount),
     })
     paymentInfo.value = data
     sessionStorage.setItem('paymentInfo', JSON.stringify(data))
+
+    // ✅ 승인 완료 후 URL만 정리 (쿼리 제거)
+    window.history.replaceState({}, document.title, window.location.origin + '/#/payment-success')
   } catch (e) {
     console.error('❌ Toss 결제 승인 오류:', e)
-    router.replace({ name: 'home' })
+    router.replace('/')
   }
 })
+
+// window.history.replaceState({}, document.title, window.location.origin + '/#/payment-success')
 </script>
+
 
 <style scoped>
 /* 추가적인 스타일이 필요하다면 여기에 */

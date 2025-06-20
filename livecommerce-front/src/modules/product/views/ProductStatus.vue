@@ -125,7 +125,10 @@ const getStatusClass = (status) => {
 const fetchProducts = async () => {
   try {
     const vendorId = 1 // TODO: 로그인된 사용자 ID로 교체
-    const url = `/product/vendor/${vendorId}/products${currentStatus.value ? `?status=${currentStatus.value}` : ''}`
+    const url = currentStatus.value
+        ? `/product/vendor/${vendorId}/products?status=${currentStatus.value}`
+        : `/product/vendor/${vendorId}/products`
+
     const res = await axios.get(url)
     products.value = res.data
   } catch (err) {

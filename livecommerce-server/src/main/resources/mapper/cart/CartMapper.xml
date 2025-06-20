@@ -45,6 +45,14 @@
         WHERE cart_item_id = #{cartItemId}
     </delete>
 
+    <delete id="deleteCartItemsByIds" parameterType="list">
+        DELETE FROM cart_item_d
+        WHERE cart_item_id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
     <select id="selectCartItemsByCartId"
             parameterType="string"
             resultType="com.example.livecommerce_server.cart.dto.CartItemDetailDTO">

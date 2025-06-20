@@ -1,8 +1,7 @@
 package com.example.livecommerce_server.product.controller;
 
 import com.example.livecommerce_server.product.dto.ProductDetailUserDTO;
-import com.example.livecommerce_server.product.dto.ProductListDTO;
-import com.example.livecommerce_server.product.dto.UserProductDTO;
+import com.example.livecommerce_server.product.dto.UserProductListDTO;
 import com.example.livecommerce_server.product.service.ProductService;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ public class ProductUserController {
     }
 
     @GetMapping
-    public List<UserProductDTO> getUserProducts(
+    public List<UserProductListDTO> getUserProducts(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String category
     ) {

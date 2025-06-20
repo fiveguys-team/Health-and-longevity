@@ -11,19 +11,41 @@
     WHERE status = 'APPROVED'
   </select>
 
-  <select id="findProductsByVendorId" resultType="com.example.livecommerce_server.product.dto.ProductVendorDTO">
+  <select id="findProductsByVendorId"
+    resultType="com.example.livecommerce_server.product.dto.ProductVendorDTO">
     SELECT
     p.product_id AS productId,
     p.name,
     p.price,
     p.stock_count AS stockCount,
     p.product_image AS productImage,
-    v.name AS vendor
+    v.name AS vendor,
+
+    -- ✅ live 할인 조건
+    CASE
+    WHEN l.status_cd = 'ON'
+    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+    AND (l.end_cd IS NULL OR l.end_cd = '')
+    THEN COALESCE(lp.discountRate, 0)
+    ELSE 0
+    END AS discountRate,
+
+    CASE
+    WHEN l.status_cd = 'ON'
+      AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+    AND (l.end_cd IS NULL OR l.end_cd = '')
+    THEN FLOOR(p.price * (100 - lp.discountRate) / 100)
+    ELSE p.price
+    END AS discountedPrice
+
     FROM product p
     JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
+    LEFT JOIN live_m l ON lp.live_id = l.live_id
     WHERE p.vendor_id = #{vendorId}
     AND p.status = 'APPROVED'
   </select>
+
 
 
 </mapper>

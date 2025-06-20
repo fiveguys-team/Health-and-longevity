@@ -459,8 +459,8 @@ async function requestPayment() {
       orderId,
       orderName,
       customerName,
-      successUrl: `${window.location.origin}/payment-success`,
-      failUrl: `${window.location.origin}/payment-failure`
+      successUrl: "http://localhost:3000/#/payment-success",
+      failUrl: "http://localhost:3000/#/payment-failure",
     });
 
   } catch (error) {

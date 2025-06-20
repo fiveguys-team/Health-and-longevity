@@ -21,6 +21,10 @@
       modelValue:{
         type: Number,
         default:1
+      },
+      max: {
+        type: Number,
+        default: Infinity // 👈 최대값으로 재고 제한
       }
     })
 
@@ -31,14 +35,20 @@
         return props.modelValue
       },
       set(val) {
-        const next = val < 1 ? 1 : val
+        let next = val < 1 ? 1 : val
+        if (isNaN(next) || next < 1) next = 1
+        if (next > props.max) next = props.max
         emit('update:modelValue', next)
       }
     })
 
     // 4. 버튼 클릭 시 count 조작
     function increment() {
-      count.value++
+      if (count.value < props.max) {
+        count.value++
+      }else {
+        alert(`재고가 부족합니다. 최대 ${props.max}개까지만 구매할 수 있습니다.`);
+      }
     }
 
     function decrement() {
@@ -46,4 +56,6 @@
         count.value--
       }
     }
+
+
 </script>
