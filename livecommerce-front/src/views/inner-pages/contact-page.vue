@@ -31,37 +31,37 @@
                             <div>
                                 <div class="grid sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
                                     <div>
-                                        <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2.5 block">Full Name</label>
-                                        <input class="w-full h-12 md:h-14 bg-snow dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" type="text" placeholder="Enter your full name">
+                                        <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2.5 block">사업자 등록번호</label>
+                                        <input
+                                            v-model="businessNumber"
+                                            class="w-full h-12 md:h-14 bg-snow dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
+                                            type="text"
+                                            placeholder="사업자 등록번호를 입력하세요"
+                                            maxlength="10"
+                                            pattern="\d{10}"
+                                            required
+                                            @input="businessNumber = businessNumber.replace(/\D/g, '').slice(0, 10)"
+                                        >
                                     </div>
                                     <div>
-                                        <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2.5 block">Email</label>
-                                        <input class="w-full h-12 md:h-14 bg-snow dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" type="email" placeholder="Enter your email address">
-                                    </div>
-                                    <div>
-                                        <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2.5 block">Phone No.</label>
-                                        <input class="w-full h-12 md:h-14 bg-snow dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" type="number" placeholder="Type your phone number">
-                                    </div>
-                                    <div>
-                                        <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2.5 block">Subject</label>
-                                        <div class="nice-select select-active bg-snow dark:bg-dark-secondary" :class="isOpen ? 'open' : ''" @click="toggleDropdown">
-                                            <span class="current">{{ selectedOption }}</span>
-                                            <ul class="list">
-                                                <li v-for="(item, index) in options" :key="index" data-value="1" class="option" @click="handleSelect(item, $event)">
-                                                    {{ item }}
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2.5 block">건강기능식품 판매업 인허가번호</label>
+                                        <input
+                                            v-model="permitNumber"
+                                            class="w-full h-12 md:h-14 bg-snow dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
+                                            type="text"
+                                            placeholder="건강기능식품 판매업 인허가번호를 입력하세요"
+                                            maxlength="11"
+                                            pattern="\d{11}"
+                                            required
+                                            @input="permitNumber = permitNumber.replace(/\D/g, '').slice(0, 11)"
+                                        >
                                     </div>
                                 </div>
-                                <div class="mt-5 sm:gap-6">
-                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2.5 block">Your Message</label>
-                                    <textarea class="w-full h-28 md:h-[170px] bg-snow dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" name="Message" placeholder="Type your message"></textarea>
-                                </div>
+
                                 <div class="mt-5">
-                                    <router-link to="#" class="btn btn-solid" data-text="Submit">
+                                    <button @click="vendorRegistration" class="btn btn-solid" data-text="Submit">
                                         <span>Submit</span>
-                                    </router-link>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -70,18 +70,10 @@
             </div>
         </div>
 
-        <div class="s-pb-100" data-aos="fade-up">
-            <div class="container-fluid">
-                <div class="max-w-[1720px] mx-auto">
-                    <iframe class="w-full h-[400px] md:h-[600px]" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d28951.79709608298!2d91.85394430000001!3d24.898846749999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m3!3e6!4m0!4m0!5e0!3m2!1sen!2sbd!4v1668006237424!5m2!1sen!2sbd" style="border:0;"></iframe>
-                </div>
-            </div>
-        </div>
-
         <FooterOne/>
 
         <ScrollToTop/>
-        
+
     </div>
 </template>
 
@@ -90,33 +82,41 @@
     import bg from '@/assets/img/shortcode/breadcumb.jpg'
 
     import bg2 from '@/assets/img/thumb/contact-thumb.jpg'
-    import { onMounted, ref } from 'vue';
+    import {onMounted, ref} from 'vue';
     import Aos from 'aos';
-import FooterOne from '@/components/footer/footer-one.vue';
-import ScrollToTop from '@/components/scroll-to-top.vue';
+    import FooterOne from '@/components/footer/footer-one.vue';
+    import ScrollToTop from '@/components/scroll-to-top.vue';
+    import axiosInstance from "@/api/axios";
+    import {useAuthStore} from "@/modules/auth/stores/auth";
+
+    const authStore = useAuthStore()
+    const businessNumber = ref("")
+    const permitNumber = ref("")
 
     onMounted(()=>{
         Aos.init()
     })
 
-    const isOpen = ref(false)
-    const selectedOption = ref('Navana Furniture')
+    const vendorRegistration = async () => {
+      if (businessNumber.value.length !== 10 || permitNumber.value.length !== 11) {
+        alert("사업자등록번호는 10자리, 인허가번호는 11자리 숫자로 입력해주세요.");
+        return;
+      }
 
-    const options = [
-        "Navana Furniture",
-        "RFL Furniture",
-        "Gazi Furniture",
-        "Plastic Furniture",
-        "Luxury Furniture",
-    ];
+      // 서버에서 현재 사용자의 입점 상태 확인
+      const { data: vendorStatus } = await axiosInstance.get(`/member/vendor-status?userId=${authStore.id}`);
+      if (vendorStatus !== null && vendorStatus !== "REJECTED") {
+        alert("이미 입점 신청 중이거나 승인된 업체입니다.");
+        return;
+      }
 
-    const toggleDropdown = () =>{
-        isOpen.value = !isOpen.value
-    }
+      const registrationData = {
+        userId: authStore.id,
+        businessNumber: businessNumber.value,
+        permitNumber: permitNumber.value,
+      };
 
-    const handleSelect = (option,event) => {
-        event.stopPropagation();
-        selectedOption.value = option
-        isOpen.value = false
-    }
+      await axiosInstance.post("/member/vendor-registration", registrationData);
+    };
+
 </script>

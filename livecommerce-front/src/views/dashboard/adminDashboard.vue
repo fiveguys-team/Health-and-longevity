@@ -22,9 +22,9 @@
           </li>
           <li>
             <router-link 
-              to="/admin/store" 
+              to="/admin/vendor-management"
               class="flex items-center px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-light"
-              :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/admin/store' }"
+              :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/admin/vendor-management' }"
             >
               <span class="mx-3">업체 관리</span>
             </router-link>
