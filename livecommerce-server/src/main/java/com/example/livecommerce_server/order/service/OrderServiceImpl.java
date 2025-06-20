@@ -156,6 +156,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    @Override
+    public List<OrderHistoryDTO> findOrderHistoryByUserId(int userId) {
+        return orderMapper.findOrderHistoryByUserId(userId);
+    }
+
+
     private String nowCompactString() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     }

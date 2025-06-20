@@ -1,10 +1,8 @@
 package com.example.livecommerce_server.order.mapper;
 
-import com.example.livecommerce_server.order.dto.OrderInsertDTO;
-import com.example.livecommerce_server.order.dto.OrderItemInsertDTO;
-import com.example.livecommerce_server.order.dto.OrderPageDTO;
-import com.example.livecommerce_server.order.dto.OrderStatusUpdateDTO;
+import com.example.livecommerce_server.order.dto.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -24,4 +22,6 @@ public interface OrderMapper {
     int updateStockCountByOrderId(String orderId);
 
     Integer selectDiscountRateByProductIdIfLiveOn(String productId);
+
+    List<OrderHistoryDTO> findOrderHistoryByUserId(@Param("userId") int userId);
 }
