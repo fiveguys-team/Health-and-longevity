@@ -63,20 +63,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderPrepareResponseDTO addOrder(OrderPrepareRequestDTO orderPrepareRequestDTO) {
-        //UUID 생성
+        // UUID 생성
         String orderId = UUID.randomUUID().toString();
-        //주문 테이블 생성 시간
         String now = nowCompactString();
 
-        //상품 ID 리스트 추출
+        // 상품 ID 리스트 추출
         List<String> productIds = orderPrepareRequestDTO.getOrderItems().stream()
                 .map(OrderItemRequestDTO::getProductId)
                 .toList();
 
-        //상품 정보 조회
+        // 상품 정보 조회
         List<ProductDTO> products = productMapper.findProductsByProductId(productIds);
-        Map<String, ProductDTO> productMap = products.stream().
-                collect(Collectors.toMap(ProductDTO::getProductId, p -> p));
+        Map<String, ProductDTO> productMap = products.stream()
+                .collect(Collectors.toMap(ProductDTO::getProductId, p -> p));
 
         int totalAmount = 0;
         int totalDiscountAmount = 0;
@@ -88,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             int originalPrice = product.getPrice();
-            Integer discountRate = getDiscountRateIfLiveOn(product.getProductId()); // 동일 로직 사용
+            Integer discountRate = getDiscountRateIfLiveOn(product.getProductId());
             int discountAmount = 0;
             int finalUnitPrice = originalPrice;
 
@@ -101,19 +100,23 @@ public class OrderServiceImpl implements OrderService {
             totalDiscountAmount += discountAmount * item.getQuantity();
         }
 
-        //주문 ID 생성과 동시에 주문 임시 테이블 생성
+        // 배송비 정책: 5만원 미만이면 3000원 추가
+        int shippingFee = (totalAmount < 50000) ? 3000 : 0;
+        int finalAmount = totalAmount + shippingFee;
+
+        // 결제 ID 생성
         String paymentId = paymentService.addTempPaymentAndReturnId();
 
-        // 주문 마스터 테이블 insert
+        // 주문 마스터 insert
         OrderInsertDTO orderInsertDTO = OrderInsertDTO.builder()
                 .orderId(orderId)
-                .paymentId(paymentId) // 결제 전 상태
+                .paymentId(paymentId)
                 .userId(orderPrepareRequestDTO.getUserId())
                 .orderStatusCode("PEND")
                 .discountAmount(totalDiscountAmount)
                 .orderDate(now)
                 .createdAt(now)
-                .totalAmount(totalAmount)
+                .totalAmount(finalAmount) // 배송비 포함
                 .shippingReq(orderPrepareRequestDTO.getShippingRequest())
                 .postalCode(orderPrepareRequestDTO.getPostalCode())
                 .basicAddress(orderPrepareRequestDTO.getBasicAddress())
@@ -133,22 +136,18 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
         orderMapper.insertOrderItems(itemInsertDTOs);
 
-
+        // 주문명 생성
         String orderName = generateOrderName(products);
-        String customerName = "테스트커스터머";
+        String customerName = "테스트커스터머"; // 추후 Security 기반 이름 사용 가능
 
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-//        String customerName = customUserDetails.getName();// 시큐리티로 자기 이름.
-
-        // 리스폰스 데이터
         return OrderPrepareResponseDTO.builder()
                 .orderId(orderId)
-                .amount(totalAmount)
+                .amount(finalAmount)
                 .orderName(orderName)
                 .customerName(customerName)
                 .build();
     }
+
 
     @Override
     public Integer getDiscountRateIfLiveOn(String productId) {
