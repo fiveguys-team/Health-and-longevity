@@ -123,7 +123,7 @@ import ProfileTab from '@/components/profile-tab.vue'
 import FooterThree from '@/components/footer/footer-three.vue'
 import ScrollToTop from '@/components/scroll-to-top.vue'
 import { useAuthStore } from "@/modules/auth/stores/auth"
-// import Aos from 'aos'
+import Aos from 'aos'
 import { getOrderHistoryByUserId } from "@/modules/order/services/orderApi"
 
 const authStore = useAuthStore()
@@ -160,7 +160,7 @@ function formatDate(yyyymmddhhmmss) {
 }
 
 onMounted(async () => {
-
+  Aos.init()
 
   try {
     const response = await getOrderHistoryByUserId(userId)
