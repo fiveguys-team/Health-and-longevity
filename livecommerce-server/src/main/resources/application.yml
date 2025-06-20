@@ -63,3 +63,11 @@ mybatis:
 openvidu:
   url: ${OPENVIDU_URL}
   secret: ${OPENVIDU_SECRET}
+
+ncp:
+  object-storage:
+    endpoint: https://kr.object.ncloudstorage.com
+    region: kr-standard
+    access-key: ncp_iam_BPASKR2mqCpxc24Dtm5I
+    secret-key: ncp_iam_BPKSKRJvRQ4UGL6HCktiiaePuR8QEVeO6y
+    bucket-name: health-and-longevity-storage

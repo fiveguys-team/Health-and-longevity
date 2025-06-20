@@ -12,10 +12,20 @@
       <nav class="mt-6">
         <ul>
           <li>
-            <router-link 
-              to="/admin/chat/reports" 
+            <router-link
+                to="/admin-dashboard/dashboard"
+                class="flex items-center px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-light"
+                :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/admin-dashboard/dashboard' }"
+            >
+              <span class="mx-3">대시보드</span>
+            </router-link>
+          </li>
+
+          <li>
+            <router-link
+              to="/admin-dashboard/chat/reports"
               class="flex items-center px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-light"
-              :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/admin/chat/reports' }"
+              :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/admin-dashboard/chat/reports' }"
             >
               <span class="mx-3">채팅 관리</span>
             </router-link>
@@ -31,9 +41,9 @@
           </li>
           <li>
             <router-link 
-              to="/admin/products"
+              to="/admin-dashboard/products"
               class="flex items-center px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-light"
-              :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/admin/product/list' }"
+              :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/admin-dashboard/products' }"
             >
               <span class="mx-3">상품 관리</span>
             </router-link>
@@ -41,7 +51,6 @@
         </ul>
       </nav>
     </div>
-
     <!-- 메인 컨텐츠 -->
     <div class="flex-1 overflow-x-hidden overflow-y-auto">
       <router-view></router-view>

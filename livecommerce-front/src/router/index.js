@@ -31,7 +31,6 @@ import ProductCategory from '@/views/shop/product-category.vue'
 
 // 대시보드 views
 import adminDashboard from '@/views/dashboard/adminDashboard.vue'
-//import storeDashboard from '@/views/dashboard/storeDashboard.vue'
 
 
 // modules/product/views - 입점업체
@@ -64,6 +63,8 @@ import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryVi
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
 import test from "@/modules/live/views/testView.vue";
 import OAuthSuccess from "@/modules/auth/views/OAuthSuccess.vue";
+import CheckoutCartView from "@/modules/order/views/CheckoutCartView.vue";
+import PaymentCartSuccessView from "@/modules/payment/views/PaymentCartSuccessView.vue";
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -105,7 +106,36 @@ const routes = [
   {path: '/oauth-success', component:OAuthSuccess},
 
   { path: "/admin-dashboard", component: adminDashboard,
-    meta: {requiresAuth: true, roles: ['ADMIN']}
+    meta: {requiresAuth: true, roles: ['ADMIN']},
+    redirect: '/admin-dashboard/dashboard',
+    children: [
+      {
+        path: "dashboard",
+        name: "adminDashboardMain",
+        component: () => import("@/components/dashboard/adminDashboardComponent.vue"),
+      },
+      {
+        path: "chat/reports",
+        name: "ChatReportLog",
+        component: () => import("@/modules/chat/components/ChatReportLog.vue"),
+      },
+      {
+        path: 'products',
+        name: 'AdminProductList',
+        component: () => import('@/modules/product/views/AdminProductList.vue')
+      },
+      {
+        path: 'product/detail/:id',
+        name: 'AdminProductDetail',
+        component: () => import('@/modules/product/views/AdminProductDetail.vue'),
+        props: true
+      },
+        {
+            path: 'vendor-management',
+            name: 'VendorManagement',
+            component: () => import('@/views/dashboard/admin/vendorManagement.vue'),
+        },
+    ]
   },
   //{ path: "/store-dashboard", component: storeDashboard },
 
@@ -167,7 +197,9 @@ const routes = [
   {path: '/partner/order-history',component: PartnerOrderHistoryView},
   {path: '/partner/return-request',component: PartnerReturnRequestView},
   {path: '/cart',component: CartView},
+  {path: '/cart-checkout',component: CheckoutCartView},
   {path: '/payment-success',component: PaymentSuccessView},
+  {path: '/payment-success-cart',component: PaymentCartSuccessView},
   {path: '/payment-failure',component: PaymentFailureView},
   {path: '/product-test',component: ProductTest},
   {path: '/product-test',component: ProductTest},
@@ -177,36 +209,7 @@ const routes = [
   // 관리자 대시보드 라우트입니다.
   {
     path: "/admin",
-    component: () => import("@/views/dashboard/adminDashboard.vue"),
-    meta: { requiresAuth: true, roles: ['ADMIN'] },
-    children: [
-      {
-        path: "chat/reports",
-        name: "ChatReportLog",
-        component: () => import("@/modules/chat/components/ChatReportLog.vue"),
-      },
-      {
-        path: 'chat/reports',
-        name: 'ChatReportLog',
-        component: () => import('@/modules/chat/components/ChatReportLog.vue')
-      },
-      {
-        path: 'products',
-        name: 'AdminProductList',
-        component: () => import('@/modules/product/views/AdminProductList.vue')
-      },
-      {
-        path: 'product/detail/:id',
-        name: 'AdminProductDetail',
-        component: () => import('@/modules/product/views/AdminProductDetail.vue'),
-        props : true
-      },
-      {
-        path: 'vendor-management',
-        name: 'VendorManagement',
-        component: () => import('@/views/dashboard/admin/vendorManagement.vue'),
-      },
-    ],
+    redirect: "/admin-dashboard"
   },
 
   // 입점업체 대시보드 라우트입니다.

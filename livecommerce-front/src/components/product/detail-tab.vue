@@ -12,13 +12,6 @@
           >
             상품 정보
           </li>
-          <li
-              @click="activeTab = 2"
-              class="cursor-pointer pb-2 border-b-2"
-              :class="activeTab === 2 ? 'text-primary font-semibold border-primary' : 'text-gray-500 border-transparent'"
-          >
-            리뷰
-          </li>
         </ul>
       </div>
 
@@ -37,10 +30,6 @@
         </ul>
       </div>
 
-      <!-- 리뷰 -->
-      <div v-if="activeTab === 2" class="bg-white shadow rounded-xl p-6 text-gray-600 text-base">
-        <p>리뷰 기능은 추후 구현 예정입니다.</p>
-      </div>
     </div>
   </div>
 </template>
