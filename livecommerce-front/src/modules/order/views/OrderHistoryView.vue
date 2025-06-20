@@ -1,4 +1,5 @@
 <template>
+
   <div>
     <NavbarOne />
 
@@ -42,11 +43,28 @@
                     </div>
                     <div class="text-sm font-semibold w-[60px] text-center">{{ item.quantity }}개</div>
                     <div class="w-[100px] text-center">
-                      <span v-if="!item.serviceCode" class="text-green-600 font-semibold">구매 완료</span>
-                      <span v-else class="text-orange-600 font-semibold">{{ formatStatus(item.serviceCode, item.serviceStatus) }}</span>
-                    </div>
-                  </div>
+                      <div v-if="!item.serviceCode" class="text-green-600 font-semibold">
+                        <div>구매 완료</div>
+                        <div class="mt-2 flex flex-col items-center space-y-1">
+                          <button class="text-xs text-black border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 w-fit">
+                            교환요청
+                          </button>
+                          <button class="text-xs text-black border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 w-fit">
+                            환불요청
+                          </button>
+                        </div>
+                      </div>
 
+                      <div v-else class="text-orange-600 font-semibold">
+                        {{ formatStatus(item.serviceCode, item.serviceStatus) }}
+                      </div>
+                    </div>
+
+                      <!--                    <div class="w-[100px] text-center">-->
+<!--                      <span v-if="!item.serviceCode" class="text-green-600 font-semibold">구매 완료</span>-->
+<!--                      <span v-else class="text-orange-600 font-semibold">{{ formatStatus(item.serviceCode, item.serviceStatus) }}</span>-->
+<!--                    </div>-->
+                  </div>
                   <!-- 주문 요약 -->
                   <div class="flex justify-between items-center mt-3 text-base font-semibold text-title dark:text-white">
                     <span>주문일시: {{ formatDate(order.orderDate) }}</span>
@@ -55,7 +73,6 @@
 
                 </li>
               </ul>
-
               <!-- 페이지네이션 -->
               <div class="flex justify-center mt-10 gap-2 text-title dark:text-white">
                 <button
@@ -100,13 +117,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import {onMounted, ref, computed, watch} from 'vue'
 import NavbarOne from '@/components/navbar/navbar-one.vue'
 import ProfileTab from '@/components/profile-tab.vue'
 import FooterThree from '@/components/footer/footer-three.vue'
 import ScrollToTop from '@/components/scroll-to-top.vue'
 import { useAuthStore } from "@/modules/auth/stores/auth"
-import Aos from 'aos'
+// import Aos from 'aos'
 import { getOrderHistoryByUserId } from "@/modules/order/services/orderApi"
 
 const authStore = useAuthStore()
@@ -143,9 +160,24 @@ function formatDate(yyyymmddhhmmss) {
 }
 
 onMounted(async () => {
-  Aos.init()
-  const response = await getOrderHistoryByUserId(userId)
-  orderList.value = response.data
+
+
+  try {
+    const response = await getOrderHistoryByUserId(userId)
+    console.log("✅ 주문내역 응답:", response.data)
+
+    orderList.value = [...response.data] // 💡 배열 복사하여 반응성 보장
+    console.log("📦 저장된 orderList.value:", orderList.value)
+  } catch (e) {
+    console.error("❌ 주문내역 요청 실패:", e)
+  }
 })
+
+watch(currentPage, () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
 
 </script>
