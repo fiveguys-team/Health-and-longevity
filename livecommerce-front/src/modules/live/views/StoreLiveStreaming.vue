@@ -142,55 +142,61 @@
 
     <!-- 라이브 스트리밍 화면 -->
     <div v-if="session" class="max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-[1fr,320px] gap-4">
-        <!-- 메인 콘텐츠 영역 -->
-        <div class="flex flex-col gap-3">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 메인 콘텐츠 영역 (2/3 차지) -->
+        <div class="lg:col-span-2 flex flex-col gap-4">
           <!-- 헤더 -->
-          <div class="bg-white rounded-lg shadow-sm px-4 py-3">
-            <h2 class="text-lg font-bold text-gray-800">{{ streamTitle }}</h2>
-            <div class="mt-1">
-              <span class="text-sm text-gray-600">👥 시청자 <span class="font-semibold">{{ viewerCount }}명</span></span>
-            </div>
+          <div class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-gray-800">{{ streamTitle }}</h2>
+            <!-- 방송 종료 버튼 (우측 상단으로 이동) -->
+            <button @click="endStream"
+              class="px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+              방송 종료
+            </button>
           </div>
 
           <!-- 비디오 영역 -->
           <div class="relative bg-black rounded-lg overflow-hidden shadow-lg" style="aspect-ratio: 16/9;">
-            <div v-if="!publisher" class="absolute inset-0 flex items-center justify-center">
-              <span class="text-white">카메라 연결 중...</span>
+            <div v-if="!publisher" class="absolute inset-0 flex items-center justify-center bg-gray-900">
+              <div class="text-center">
+                <i class="fas fa-spinner fa-spin text-white text-4xl"></i>
+                <p class="mt-4 text-white">카메라를 연결하고 있습니다...</p>
+              </div>
             </div>
-            <user-video v-else :stream-manager="publisher" class="absolute inset-0" />
+            <user-video v-else :stream-manager="publisher" class="w-full h-full" />
           </div>
 
           <!-- 상품 정보 -->
-          <div class="bg-white rounded-lg shadow-sm p-4 max-h-48 overflow-y-auto">
-            <div class="space-y-3">
-              <div v-for="item in discountedProducts" :key="item.id" class="pb-3 border-b last:border-b-0 last:pb-0">
-                <h3 class="text-base font-semibold text-gray-800">{{ item.name }}</h3>
-                <p class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</p>
-                <p class="text-xs text-gray-500">(정가 {{ item.price.toLocaleString() }}원)</p>
-                <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
+          <div class="bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-lg font-bold text-gray-800 mb-3">판매 상품</h3>
+            <div class="space-y-4 max-h-48 overflow-y-auto">
+              <div v-for="item in discountedProducts" :key="item.id"
+                class="flex items-center gap-4 pb-4 border-b last:border-b-0 last:pb-0">
+                <!-- <img :src="item.thumbnail" alt="상품 이미지" class="w-20 h-20 rounded-md object-cover"> -->
+                <div class="flex-1">
+                  <h4 class="text-base font-semibold text-gray-800">{{ item.name }}</h4>
+                  <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
+                  <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</span>
+                    <span class="text-sm text-gray-500 line-through">{{ item.price.toLocaleString() }}원</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- 방송 종료 버튼 -->
-          <button @click="endStream"
-            class="self-center px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
-            방송 종료
-          </button>
         </div>
 
-        <!-- 채팅 영역 -->
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden" style="height: 600px;">
+        <!-- 채팅 영역 (1/3 차지) -->
+        <div class="bg-white rounded-lg shadow-md flex flex-col">
           <!-- 채팅방 ID가 생성된 경우에만 ChatContainer를 렌더링 -->
           <ChatContainer v-if="chatRoomId" :room-id="chatRoomId" :initial-announcement="chatAnnouncement"
-            class="h-full" />
+            class="flex-1 min-h-0" />
 
           <!-- 채팅방 생성 중 또는 실패 시 표시 -->
-          <div v-else class="h-full flex items-center justify-center">
+          <div v-else class="h-full flex items-center justify-center p-4">
             <div class="text-center text-gray-500">
-              <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
-              <p class="text-sm">채팅방을 준비하고 있습니다...</p>
+              <i class="fas fa-spinner fa-spin text-2xl mb-3"></i>
+              <p>채팅방을 불러오는 중입니다...</p>
             </div>
           </div>
         </div>
@@ -230,7 +236,6 @@ const thumbnailPreview = ref(''); // 썸네일 미리보기
 const availableProducts = ref([]); // 임접업체 상품 목록
 const selectedProducts = ref([]); // 선택된 상품들
 const discountRate = ref(0); // 할인율
-const viewerCount = ref(0); // 시청자 수 상태 관리
 const startTime = ref('');
 const category = ref('');
 
