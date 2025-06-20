@@ -89,4 +89,50 @@
           AND lm.status_cd = 'ON'
     </select>
 
+    <select id="findOrderHistoryByUserId" parameterType="int" resultMap="OrderHistoryResultMap">
+        SELECT
+            o.order_id,
+            o.order_date,
+            o.total_amount,
+            p.payment_method,
+
+            oi.order_item_id,
+            oi.product_id,
+            oi.quantity,
+
+            pr.name AS product_name,
+            pr.product_image,
+
+            s.service_code,
+            s.status_code AS service_status
+
+        FROM orders_m o
+                 JOIN payment_d p ON o.payments_id = p.payments_id
+                 JOIN order_item_d oi ON o.order_id = oi.order_id
+                 JOIN product pr ON oi.product_id = pr.product_id
+                 LEFT JOIN service_m s ON oi.order_item_id = s.order_item_id
+
+        WHERE o.user_id = #{userId}
+          AND o.order_status_code = 'DONE'
+
+        ORDER BY o.order_date DESC
+    </select>
+
+    <resultMap id="OrderHistoryResultMap" type="OrderHistoryDTO">
+        <id property="orderId" column="order_id"/>
+        <result property="orderDate" column="order_date"/>
+        <result property="paymentMethod" column="payment_method"/>
+        <result property="totalAmount" column="total_amount"/>
+
+        <collection property="items" ofType="OrderHistoryItemDTO">
+            <id property="orderItemId" column="order_item_id"/>
+            <result property="productId" column="product_id"/>
+            <result property="productName" column="product_name"/>
+            <result property="productImage" column="product_image"/>
+            <result property="quantity" column="quantity"/>
+            <result property="serviceCode" column="service_code"/>
+            <result property="serviceStatus" column="service_status"/>
+        </collection>
+    </resultMap>
+
 </mapper>

@@ -103,3 +103,17 @@ export async function deleteCartItems(cartItemIds) {
     });
 }
 
+/**
+ * 주문 내역 조회 API 호출
+ * @param {number|string} userId - 사용자 ID
+ * @returns {Promise} - Axios 응답 프로미스
+ */
+export async function getOrderHistoryByUserId(userId) {
+    return axios.get(`${API_BASE_URL}/order/history`, {
+        params: { userId },
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
+
