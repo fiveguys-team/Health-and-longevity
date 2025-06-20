@@ -130,11 +130,11 @@ const routes = [
         component: () => import('@/modules/product/views/AdminProductDetail.vue'),
         props: true
       },
-        {
-            path: 'vendor-management',
-            name: 'VendorManagement',
-            component: () => import('@/views/dashboard/admin/vendorManagement.vue'),
-        },
+      {
+        path: 'vendor-management',
+        name: 'VendorManagement',
+        component: () => import('@/views/dashboard/admin/vendorManagement.vue'),
+      },
     ]
   },
   //{ path: "/store-dashboard", component: storeDashboard },
