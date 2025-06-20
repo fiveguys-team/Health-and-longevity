@@ -104,7 +104,31 @@ const routes = [
   {path: '/oauth-success', component:OAuthSuccess},
 
   { path: "/admin-dashboard", component: adminDashboard,
-    meta: {requiresAuth: true, roles: ['ADMIN']}
+    meta: {requiresAuth: true, roles: ['ADMIN']},
+    redirect: '/admin-dashboard/dashboard',
+    children: [
+      {
+        path: "dashboard",
+        name: "adminDashboardMain",
+        component: () => import("@/components/dashboard/adminDashboardComponent.vue"),
+      },
+      {
+        path: "chat/reports",
+        name: "ChatReportLog",
+        component: () => import("@/modules/chat/components/ChatReportLog.vue"),
+      },
+      {
+        path: 'products',
+        name: 'AdminProductList',
+        component: () => import('@/modules/product/views/AdminProductList.vue')
+      },
+      {
+        path: 'product/detail/:id',
+        name: 'AdminProductDetail',
+        component: () => import('@/modules/product/views/AdminProductDetail.vue'),
+        props: true
+      }
+    ]
   },
   //{ path: "/store-dashboard", component: storeDashboard },
 
@@ -178,31 +202,7 @@ const routes = [
   // 관리자 대시보드 라우트입니다.
   {
     path: "/admin",
-    component: () => import("@/views/dashboard/adminDashboard.vue"),
-    meta: { requiresAuth: true, roles: ['ADMIN'] },
-    children: [
-      {
-        path: "chat/reports",
-        name: "ChatReportLog",
-        component: () => import("@/modules/chat/components/ChatReportLog.vue"),
-      },
-      {
-        path: 'chat/reports',
-        name: 'ChatReportLog',
-        component: () => import('@/modules/chat/components/ChatReportLog.vue')
-      },
-      {
-        path: 'products',
-        name: 'AdminProductList',
-        component: () => import('@/modules/product/views/AdminProductList.vue')
-      },
-      {
-        path: 'product/detail/:id',
-        name: 'AdminProductDetail',
-        component: () => import('@/modules/product/views/AdminProductDetail.vue'),
-        props : true
-      }
-    ],
+    redirect: "/admin-dashboard"
   },
 
   // 입점업체 대시보드 라우트입니다.
