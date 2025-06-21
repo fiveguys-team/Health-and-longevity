@@ -508,6 +508,8 @@ function openProductDetails(id) {
 
 .live-video-container {
   position: relative;
+  max-width: 1000px;
+  max-height: 600px;
   width: 100%;
   aspect-ratio: 16 / 9;
   background-color: #000;
