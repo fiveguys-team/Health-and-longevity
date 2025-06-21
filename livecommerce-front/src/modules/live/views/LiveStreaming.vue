@@ -27,6 +27,7 @@
             </div>
             <div class="product-name">{{ item.name }}</div>
             <div class="price">
+              <span v-if="discountRate > 0" class="discount-percent">({{ discountRate }}%↓)</span>
               <span class="discount-price">{{ item.discountedPrice.toLocaleString() }}원</span>
               <span class="original-price">{{ item.price.toLocaleString() }}원</span>
             </div>
@@ -79,6 +80,7 @@ const session = ref(undefined);
 const mainStreamManager = ref(undefined);
 const streamData = ref({});
 const loadingMessage = ref('방송에 연결 중입니다...');
+const discountRate = ref(0);
 
 // 시청자 통계 관련 상태
 const viewerCount = ref(0);
@@ -151,6 +153,7 @@ const handleStreamCreated = async ({stream}) => {
     const connectionData = JSON.parse(stream.connection.data || '{}');
     if (connectionData.clientData?.type === 'host') {
       streamData.value = connectionData.clientData;
+      discountRate.value = connectionData.clientData.discountRate || 0;
       
       if (connectionData.clientData.startTime) {
         broadcastStartTime.value = new Date(connectionData.clientData.startTime);
@@ -497,7 +500,7 @@ function openProductDetails(id) {
 }
 
 .main-content {
-  flex: 1;
+  flex-basis: 70%;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -549,6 +552,13 @@ function openProductDetails(id) {
   justify-content: center;
   align-items: baseline;
   margin-bottom: 12px;
+}
+
+.discount-percent {
+  color: #e74c3c;
+  font-weight: 600;
+  margin-right: 8px;
+  font-size: 1.1em;
 }
 
 .discount-price {

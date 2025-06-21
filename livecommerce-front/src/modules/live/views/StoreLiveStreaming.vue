@@ -122,6 +122,7 @@
                     <span class="text-gray-500 line-through">{{ item.price.toLocaleString() }}원</span>
                     <span class="text-gray-400">→</span>
                     <span class="text-red-600 font-semibold">{{ item.discountedPrice.toLocaleString() }}원</span>
+                    <span v-if="discountRate > 0" class="font-bold text-red-500">({{ discountRate }}%↓)</span>
                   </div>
                 </div>
               </div>
@@ -167,7 +168,10 @@
             <div class="space-y-3">
               <div v-for="item in discountedProducts" :key="item.id" class="pb-3 border-b last:border-b-0 last:pb-0">
                 <h3 class="text-base font-semibold text-gray-800">{{ item.name }}</h3>
-                <p class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</p>
+                <div class="flex items-baseline gap-2">
+                  <p v-if="discountRate > 0" class="text-red-500 font-bold text-lg">({{ discountRate }}%↓)</p>
+                  <p class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</p>
+                </div>
                 <p class="text-xs text-gray-500">(정가 {{ item.price.toLocaleString() }}원)</p>
                 <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
               </div>
@@ -344,7 +348,8 @@ const enterBroadcast = async () => {
         liveId: liveId.value,              // 이제 접근 가능
         chatRoomId: chatRoomId.value,       // 이미 ref로 되어 있음
         announcement: chatAnnouncement.value,
-        startTime: startTime.value
+        startTime: startTime.value,
+        discountRate: discountRate.value
       }
     });
 
