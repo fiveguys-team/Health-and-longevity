@@ -82,9 +82,9 @@ const loadingMessage = ref('방송에 연결 중입니다...');
 
 // 시청자 통계 관련 상태
 const viewerCount = ref(0);
-const startTime = ref(Date.now());
-const now = ref(Date.now());
-let timerId;
+const broadcastStartTime = ref(null);
+const elapsedTime = ref(0);
+let timerId = null;
 let viewerCountInterval;
 
 // OpenVidu 관련 상태 관리 아래에 추가
@@ -151,6 +151,17 @@ const handleStreamCreated = async ({stream}) => {
     const connectionData = JSON.parse(stream.connection.data || '{}');
     if (connectionData.clientData?.type === 'host') {
       streamData.value = connectionData.clientData;
+      
+      if (connectionData.clientData.startTime) {
+        broadcastStartTime.value = new Date(connectionData.clientData.startTime);
+        
+        // 타이머 시작
+        if (timerId) clearInterval(timerId);
+        timerId = setInterval(() => {
+          elapsedTime.value = Math.floor((Date.now() - broadcastStartTime.value) / 1000);
+        }, 1000);
+      }
+      
       // ✅ 채팅방 ID 저장
       if (connectionData.clientData.chatRoomId) {
         chatRoomId.value = connectionData.clientData.chatRoomId;
@@ -354,8 +365,11 @@ const cleanupSession = () => {
 
       // 시청자 퇴장 처리
       saveViewerLeave();
-      
-      // 시청자 수 업데이트 중지
+
+      // 타이머 및 인터벌 정리
+      if (timerId) {
+        clearInterval(timerId);
+      }
       if (viewerCountInterval) {
         clearInterval(viewerCountInterval);
       }
@@ -385,11 +399,6 @@ onMounted(async () => {
   try {
     const sessionId = route.params.sessionId;
     await joinSession(sessionId);
-    
-    // 타이머 시작
-    timerId = setInterval(() => {
-      now.value = Date.now();
-    }, 1000);
   } catch (error) {
     console.error('방송 참여 중 오류 발생:', error);
     loadingMessage.value = '방송 참여 중 오류가 발생했습니다.';
@@ -402,16 +411,16 @@ onMounted(async () => {
 // 컴포넌트 언마운트 시 정리
 onBeforeUnmount(() => {
   cleanupSession();
-  if (timerId) {
-    clearInterval(timerId);
-  }
 });
 
 const displayElapsed = computed(() => {
-  const diff = Math.floor((now.value - startTime.value) / 1000);
-  const h = String(Math.floor(diff / 3600)).padStart(2, '0');
-  const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
-  const s = String(diff % 60).padStart(2, '0');
+  if (!broadcastStartTime.value) return '00:00:00';
+  
+  const seconds = elapsedTime.value;
+  const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+  const s = String(Math.floor(seconds % 60)).padStart(2, '0');
+  
   return `${h}:${m}:${s}`;
 });
 

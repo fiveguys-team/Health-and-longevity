@@ -148,8 +148,9 @@
           <!-- 헤더 -->
           <div class="bg-white rounded-lg shadow-sm px-4 py-3">
             <h2 class="text-lg font-bold text-gray-800">{{ streamTitle }}</h2>
-            <div class="mt-1">
+            <div class="mt-1 flex items-center gap-4">
               <span class="text-sm text-gray-600">👥 시청자 <span class="font-semibold">{{ viewerCount }}명</span></span>
+              <span class="text-sm text-gray-600">⏱ <span class="font-semibold">{{ displayElapsed }}</span> 방송중</span>
             </div>
           </div>
 
@@ -234,6 +235,11 @@ const viewerCount = ref(0); // 시청자 수 상태 관리
 const startTime = ref('');
 const category = ref('');
 
+// 타이머 관련 상태
+const broadcastStartTime = ref(null);
+const elapsedTime = ref(0);
+let timerId = null;
+
 // 1. 채팅방 정보를 저장할 ref 추가
 const liveId = ref(null);
 const chatRoomId = ref(null);        // 생성된 채팅방 ID
@@ -249,6 +255,18 @@ const discountedProducts = computed(() =>
     discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
   }))
 )
+
+// 타이머 표시용 computed
+const displayElapsed = computed(() => {
+  if (!broadcastStartTime.value) return '00:00:00';
+  
+  const seconds = elapsedTime.value;
+  const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+  const s = String(Math.floor(seconds % 60)).padStart(2, '0');
+  
+  return `${h}:${m}:${s}`;
+});
 
 // 최대 상품 선택 초과 에러 상태
 const showMaxProductsError = ref(false);
@@ -301,6 +319,14 @@ const enterBroadcast = async () => {
 
   // 방송 시작 시간 설정
   startTime.value = new Date().toISOString()
+  
+  // 타이머 시작
+  broadcastStartTime.value = new Date();
+  if (timerId) clearInterval(timerId);
+  timerId = setInterval(() => {
+    elapsedTime.value = Math.floor((Date.now() - broadcastStartTime.value) / 1000);
+  }, 1000);
+  
   try {
     // OpenVidu 객체 생성, 세션 생성 
     OV.value = new OpenVidu();
@@ -317,7 +343,8 @@ const enterBroadcast = async () => {
         products: discountedProducts.value,
         liveId: liveId.value,              // 이제 접근 가능
         chatRoomId: chatRoomId.value,       // 이미 ref로 되어 있음
-        announcement: chatAnnouncement.value
+        announcement: chatAnnouncement.value,
+        startTime: startTime.value
       }
     });
 
@@ -383,6 +410,11 @@ const endStream = async () => {
   } catch (error) {
     console.error('방송 종료 중 오류 발생:', error);
   } finally {
+    // 타이머 정리
+    if (timerId) {
+      clearInterval(timerId);
+    }
+    
     session.value = undefined;
     publisher.value = undefined;
     OV.value = undefined;
