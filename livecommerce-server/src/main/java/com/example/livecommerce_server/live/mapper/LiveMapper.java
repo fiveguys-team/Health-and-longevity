@@ -27,4 +27,11 @@ public interface LiveMapper {
 	 */
 	String selectVendorName(String vendorId);
 
+	/**
+	 * 유저 Id를 통해 VendorId를 반환하는 메서드
+	 * @param userId
+	 * @return vendorId
+	 */
+	int selectVendorId(int userId);
+
 }

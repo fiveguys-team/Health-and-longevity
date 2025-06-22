@@ -16,4 +16,6 @@ public interface LiveService {
 	void saveLiveInfo(String sessionId);
 
 	String findVendorName(String vendorId);
+
+	int findVendorId(int userId);
 }

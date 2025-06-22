@@ -424,7 +424,7 @@ const endStream = async () => {
     publisher.value = undefined;
     OV.value = undefined;
     // 방송 종료 후 레포트 view로 이동
-    await router.push(`/vendor/live/reportList/${vendorId}`);
+    await router.push(`/vendor-dashboard/live/reportList/${vendorId}`);
   }
 };
 

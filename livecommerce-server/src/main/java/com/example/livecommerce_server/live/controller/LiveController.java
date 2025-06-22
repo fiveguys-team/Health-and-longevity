@@ -326,5 +326,12 @@ public class LiveController {
 		List<LiveStatisticsDTO> reportList = liveStatisticsService.findLiveStatisticsList(vendorId);
 		return new ResponseEntity<>(reportList, HttpStatus.OK);
 	}
+
+	@GetMapping("/api/vendors/user/{userId}")
+	public ResponseEntity<?> selectVendorId(@PathVariable("userId") int userId) {
+		int vendorId = liveService.findVendorId(userId);
+		log.info("호출됨: "+ vendorId);
+		return new ResponseEntity<>(vendorId, HttpStatus.OK);
+	}
 }
 
