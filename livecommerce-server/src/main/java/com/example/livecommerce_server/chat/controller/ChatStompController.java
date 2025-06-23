@@ -3,6 +3,7 @@ package com.example.livecommerce_server.chat.controller;
 import com.example.livecommerce_server.chat.dto.ChatMessageReqDto;
 import com.example.livecommerce_server.chat.enums.BanwordFilterPolicy;
 import com.example.livecommerce_server.chat.service.ChatMessageService;
+import com.example.livecommerce_server.chat.service.ChatPublisher;
 import com.example.livecommerce_server.chat.validator.BanwordValidator;
 import com.example.livecommerce_server.chat.validator.DuplicateMessageValidator;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,9 @@ public class ChatStompController {
     private final ChatMessageService chatMessageService;
     private final BanwordValidator banwordValidator;
     private final DuplicateMessageValidator duplicateMessageValidator;
+
+    // Redis Pub/Sub을 위한 ChatPublisher 추가
+    private final ChatPublisher chatPublisher;
 
 
 
@@ -81,7 +85,12 @@ public class ChatStompController {
     }
 
     /**
-     * 실제 메시지 처리 로직 (금칙어 검사, 저장, 전송)
+     * 실제 메시지 처리 로직 (금칙어 검사, 저장, Redis 발행)
+     *
+     *  변경사항:
+     * - 기존: messageTemplate.convertAndSend() 직접 호출
+     * - 현재: chatPublisher.publishMessage()로 Redis 발행
+     *         → ChatSubscriber가 자동으로 WebSocket 전송 처리
      */
     private void processMessage(Long roomId, ChatMessageReqDto messageDto) {
         // 1. 기본 금칙어 검사
@@ -116,10 +125,24 @@ public class ChatStompController {
         // 5. 메시지를 데이터베이스에 저장
         chatMessageService.addMessage(messageDto);
 
-        // 6. 모든 구독자에게 메시지 전송
-        messageTemplate.convertAndSend("/topic/" + roomId, messageDto);
+        //  6. Redis Pub/Sub으로 모든 서버에 메시지 브로드캐스트
+        // 기존: messageTemplate.convertAndSend("/topic/" + roomId, messageDto);
+        // 현재: Redis 채널에 발행 → ChatSubscriber가 WebSocket 전송 처리
+        try {
+            chatPublisher.publishMessage(messageDto);
 
-        log.info("메시지 전송 완료 - 채팅방 ID: {}, 사용자 ID: {}", roomId, messageDto.getUserId());
+            log.info(" Redis Pub/Sub 메시지 발행 완료 - 채팅방 ID: {}, 사용자 ID: {}",
+                    roomId, messageDto.getUserId());
+            log.info("    ChatSubscriber가 자동으로 WebSocket 전송 처리할 예정");
+
+        } catch (Exception e) {
+            log.error(" Redis 메시지 발행 실패 - 채팅방 ID: {}, 사용자 ID: {}",
+                    roomId, messageDto.getUserId(), e);
+
+            // Redis 실패 시 기존 방식으로 폴백 (장애 대응)
+            log.warn(" Redis 실패로 인한 폴백: 직접 WebSocket 전송");
+            messageTemplate.convertAndSend("/topic/" + roomId, messageDto);
+        }
     }
 
     /**

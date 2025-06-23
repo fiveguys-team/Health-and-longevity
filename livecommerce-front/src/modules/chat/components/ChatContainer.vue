@@ -1,65 +1,68 @@
 <template>
     <!-- 채팅 컨테이너 전체 영역 -->
-    <div class="chat-container h-full flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-        <!-- 채팅방 헤더: 제목, 참여자 수, 닫기 버튼 -->
-        <div class="chat-header p-4 border-b dark:border-gray-700">
+    <div class="chat-container flex flex-col h-full bg-white dark:bg-gray-900">
+        <!-- 채팅방 헤더: 제목, 참여자 수 -->
+        <div class="chat-header p-4 border-b border-gray-200 dark:border-gray-700">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <div class="text-lg font-semibold dark:text-white">라이브 채팅</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                        <span class="online-count">{{ participantCount }}</span> 명 시청중
-                    </div>
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-comments text-blue-500 text-xl"></i>
+                    <div class="text-lg font-bold text-gray-800 dark:text-white">라이브 채팅</div>
                 </div>
-                <button @click="leaveRoom"
-                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="flex items-center space-x-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <i class="fas fa-users text-gray-400"></i>
+                    <span><span class="font-bold text-gray-800 dark:text-white">{{ participantCount }}</span>명</span>
+                </div>
             </div>
         </div>
 
         <!-- 공지사항 섹션 -->
-        <div v-if="currentNotice" class="notice-section p-3 bg-blue-50 dark:bg-gray-700 border-b dark:border-gray-600">
+        <div v-if="currentNotice"
+            class="notice-section p-3 bg-blue-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
             <div class="flex items-center">
-                <span class="bg-red-500 text-white text-xs px-2 py-1 rounded mr-2">공지</span>
+                <span class="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full mr-3">공지</span>
                 <p class="text-sm text-gray-800 dark:text-gray-200 flex-1">{{ currentNotice }}</p>
             </div>
         </div>
 
         <!-- 채팅 메시지 표시 영역 -->
         <div class="chat-messages flex-1 p-4 overflow-y-auto" ref="messageContainer">
-            <div v-for="message in messages" :key="message.id" class="mb-3"
-                :class="{ 'flex justify-end': message.isMyMessage }">
-                <div class="flex flex-col" :class="{ 'items-end': message.isMyMessage }">
-                    <div class="flex items-center" :class="{ 'space-x-reverse': message.isMyMessage }">
-                        <span class="text-xs text-gray-500 order-1"
-                            :class="{ 'ml-2': !message.isMyMessage, 'mr-2': message.isMyMessage }">
-                            {{ formatTime(message.time) }}
-                        </span>
-                        <span class="font-medium text-gray-900 dark:text-white"
-                            :class="{ 'order-2': !message.isMyMessage, 'order-0': message.isMyMessage }">
+            <div v-for="message in messages" :key="message.id" class="message-group mb-4 flex"
+                :class="message.isMyMessage ? 'justify-end' : 'justify-start'">
+                <div class="flex items-end max-w-[85%]" :class="message.isMyMessage ? 'flex-row-reverse' : 'flex-row'">
+
+                    <!-- 메시지 컨텐츠 -->
+                    <div class="message-content mx-2">
+                        <!-- 보낸 사람 (내 메시지가 아닐 경우) -->
+                        <div v-if="!message.isMyMessage"
+                            class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                             {{ message.displayName }}
-                        </span>
+                        </div>
+                        <div class="text-base p-3 rounded-lg break-words" :class="{
+                            'bg-blue-500 text-white rounded-br-none': message.isMyMessage,
+                            'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-none': !message.isMyMessage && !message.isWarning,
+                            'bg-red-100 text-red-800 border border-red-200 rounded-lg': message.isWarning
+                        }">
+                            {{ message.content }}
+                        </div>
                     </div>
-                    <p class="mt-1 text-gray-800 dark:text-gray-200 max-w-[80%] break-words" :class="{
-                        'bg-blue-500 text-white px-3 py-2 rounded-lg': message.isMyMessage,
-                        'bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg': !message.isMyMessage && !message.isWarning,
-                        'bg-red-100 text-red-700 px-3 py-2 rounded-lg border border-red-300': message.isWarning
-                    }">
-                        {{ message.content }}
-                    </p>
+
+                    <!-- 시간 -->
+                    <div class="text-xs text-gray-400 dark:text-gray-500 self-end whitespace-nowrap">
+                        {{ formatTime(message.time) }}
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- 메시지 입력 영역 -->
-        <div class="chat-input p-4 border-t dark:border-gray-700">
-            <div class="flex space-x-2">
+        <div class="chat-input p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div class="flex items-center space-x-3">
                 <input v-model="newMessage" type="text" placeholder="메시지를 입력하세요..."
-                    class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    class="flex-1 w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition"
                     @keyup.enter="sendMessage">
-                <button @click="sendMessage"
-                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    전송
+                <button @click="sendMessage" :disabled="!newMessage.trim()"
+                    class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex-shrink-0">
+                    <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
@@ -100,7 +103,37 @@ const authStore = useAuthStore();
 // 현재 로그인한 사용자 ID (반응형)
 const currentUserId = computed(() => authStore.id);
 
-// 메시지 수신 처리 - 내 메시지인지 구분 추가
+// 🆕 최근 메시지 처리 함수 (입장 시 받는 이전 메시지들)
+const handleRecentMessages = (response) => {
+    try {
+        const message = JSON.parse(response.body);
+
+        console.log('최근 메시지 수신:', message);
+
+        // 최근 메시지는 앞쪽에 추가 (시간순으로 오래된 것부터)
+        messages.value.unshift({
+            id: message.messageId || `recent_${Date.now()}_${Math.random()}`,
+            username: message.userName || `사용자${message.userId}`,
+            displayName: message.userName || `사용자${message.userId}`,
+            content: message.content,
+            time: message.createdAt || new Date().toISOString(),
+            isMyMessage: String(message.userId) === String(currentUserId.value),
+            userId: message.userId
+        });
+
+        // 스크롤을 맨 아래로 (최신 메시지가 보이도록)
+        nextTick(() => {
+            if (messageContainer.value) {
+                messageContainer.value.scrollTop = messageContainer.value.scrollHeight;
+            }
+        });
+
+    } catch (error) {
+        console.error('최근 메시지 처리 중 오류:', error);
+    }
+};
+
+// 메시지 수신 처리 - 내 메시지인지 구분 추가 (새로운 실시간 메시지)
 const handleMessage = (receivedMessage) => {
     console.log('서버에서 받은 메시지 전체:', receivedMessage);
     console.log('현재 사용자 ID:', currentUserId.value);
@@ -108,8 +141,9 @@ const handleMessage = (receivedMessage) => {
 
     const isMyMessage = String(receivedMessage.userId) === String(currentUserId.value);
 
+    // 새 메시지는 뒤쪽에 추가 (실시간)
     messages.value.push({
-        id: Date.now(),
+        id: receivedMessage.messageId || Date.now(),
         username: receivedMessage.userName || `사용자${receivedMessage.userId}`,
         displayName: receivedMessage.userName || `사용자${receivedMessage.userId}`,
         content: receivedMessage.content,
@@ -157,11 +191,6 @@ const sendMessage = () => {
     newMessage.value = '';
 };
 
-// 채팅방 나가기
-const leaveRoom = () => {
-    websocketService.disconnect();
-};
-
 // 시간 포맷팅
 const formatTime = (isoString) => {
     const date = new Date(isoString);
@@ -188,8 +217,24 @@ const subscribeToParticipants = (roomId) => {
                 (message) => {
                     participantCount.value = parseInt(message.body, 10);
                 },
-                { roomId: roomId.toString() }
+                {
+                    roomId: roomId.toString(),
+                    userId: authStore.id.toString()  // ✅ userId 헤더 추가
+                }
             );
+        }
+    }, 500);
+};
+
+// 🆕 최근 메시지 구독 함수
+const subscribeToRecentMessages = () => {
+    setTimeout(() => {
+        if (websocketService.stompClient && websocketService.stompClient.connected) {
+            console.log('최근 메시지 구독 시작');
+
+            websocketService.stompClient.subscribe(`/user/${authStore.id}/queue/recent-messages`, handleRecentMessages);
+
+            console.log('최근 메시지 구독 완료');
         }
     }, 500);
 };
@@ -205,6 +250,7 @@ watch(() => props.roomId, (newRoomId, oldRoomId) => {
         setTimeout(() => {
             websocketService.connect(newRoomId, handleMessage, handleWarning);
             subscribeToParticipants(newRoomId);
+            subscribeToRecentMessages(); // 🆕 최근 메시지 구독 추가
         }, 100);
     }
 });
@@ -220,6 +266,9 @@ onMounted(() => {
     // 실시간 참여자 수 구독
     subscribeToParticipants(props.roomId);
 
+    // 🆕 최근 메시지 구독
+    subscribeToRecentMessages();
+
     // 사용자 변경 감지
     watch(() => authStore.id, (newId, oldId) => {
         if (newId !== oldId && oldId !== null) {
@@ -231,6 +280,7 @@ onMounted(() => {
                 setTimeout(() => {
                     websocketService.connect(props.roomId, handleMessage, handleWarning);
                     subscribeToParticipants(props.roomId);
+                    subscribeToRecentMessages(); // 🆕 최근 메시지 구독 추가
                 }, 100);
             }
         }
@@ -246,24 +296,16 @@ onBeforeUnmount(() => {
 <style scoped>
 /* 채팅 전체 컨테이너를 부모 높이에 맞춰 유연하게 설정 */
 .chat-container {
-    height: 100%;
     display: flex;
     flex-direction: column;
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
 /* 채팅 메시지 영역은 유동적으로 늘어나고 스크롤 가능 */
 .chat-messages {
-    flex: 1;
-    padding: 1rem;
-    overflow-y: auto;
-
-    /* 스크롤바 스타일 */
     scrollbar-width: thin;
-    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+    scrollbar-color: #a0aec0 #f1f5f9;
+    /* 스크롤바 색상, 트랙 색상 */
 }
 
 .chat-messages::-webkit-scrollbar {
@@ -271,23 +313,32 @@ onBeforeUnmount(() => {
 }
 
 .chat-messages::-webkit-scrollbar-track {
-    background: transparent;
+    background: #f1f5f9;
+    /* light: gray-100 */
+}
+
+.dark .chat-messages::-webkit-scrollbar-track {
+    background: #1f2937;
+    /* dark: gray-800 */
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-    background-color: rgba(156, 163, 175, 0.5);
+    background-color: #a0aec0;
+    /* light: gray-400 */
     border-radius: 3px;
+}
+
+.dark .chat-messages::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+    /* dark: gray-600 */
 }
 
 /* 공지사항 애니메이션 */
 .notice-section {
-    animation: fadeIn 0.3s ease-in-out;
-    background-color: #ebf8ff;
-    border-bottom: 1px solid #cbd5e0;
-    padding: 0.75rem;
+    animation: fadeInDown 0.5s ease-in-out;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInDown {
     from {
         opacity: 0;
         transform: translateY(-10px);

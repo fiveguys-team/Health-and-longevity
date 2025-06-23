@@ -1,68 +1,72 @@
 <template>
-  <div class="live-consumer">
-    <!-- Live Info Bar -->
-    <div class="live-info-bar" v-if="session && mainStreamManager">
-      <div class="live-title">{{ streamData.title }}</div>
-      <div class="vendor-name">{{ streamData.vendorName }}</div>
-      <div class="viewer-count">
-        <span class="viewer-number">{{ viewerCount }}</span>명
-      </div>
-      <div class="timer">⏱ {{ displayElapsed }} 방송중</div>
-    </div>
-
-    <!-- Body: Video + Products and Chat Side by Side -->
-    <div class="live-body" v-if="session && mainStreamManager">
-      <!-- Left: Video and Products -->
-      <div class="main-content">
-        <!-- Video Area -->
-        <div class="live-video-container">
-          <user-video :stream-manager="mainStreamManager"/>
+  <div class="live-streaming-page">
+    <!-- 헤더 없이 바로 메인 컨텐츠 -->
+    <div class="main-wrapper">
+      <div v-if="!session || !mainStreamManager" class="loading-overlay">
+        <div class="text-center">
+          <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
+          <p>{{ loadingMessage }}</p>
         </div>
-
-        <!-- Products Display -->
-        <div class="products">
-          <div class="product-card" v-for="item in streamData.products" :key="item.id">
-            <div class="product-image">
-              <img :src="item.imageUrl" alt="상품 이미지"/>
-            </div>
-            <div class="product-name">{{ item.name }}</div>
-            <div class="price">
-              <span v-if="discountRate > 0" class="discount-percent">({{ discountRate }}%↓)</span>
-              <span class="discount-price">{{ item.discountedPrice.toLocaleString() }}원</span>
-              <span class="original-price">{{ item.price.toLocaleString() }}원</span>
-            </div>
-            <button class="" @click="openProductDetails(item.productId)">구매하기</button>
+      </div>
+      <template v-else>
+        <header class="header-bar">
+          <div class="stream-info">
+            <h1 class="title">{{ streamData.title }}</h1>
+            <p class="vendor">{{ streamData.vendorName }}</p>
           </div>
-        </div>
-      </div>
-
-      <!-- Right: Chat Area -->
-<div class="chat-area">
-  <chat-container 
-    v-if="chatRoomId"
-    :room-id="chatRoomId"
-    :initial-announcement="streamData.announcement"
-  />
-  <!-- 채팅방 로딩 중 표시 -->
-  <div v-else class="chat-loading">
-    <p>채팅방 연결 중...</p>
-  </div>
-</div>
-    </div>
-
-    <!-- Loading/Error Message -->
-    <div class="loading" v-else>
-      <p>{{ loadingMessage }}</p>
+          <div class="live-badge">
+            <span class="status">
+              <span class="red-dot"></span>
+              LIVE
+            </span>
+            <span class="timer">{{ displayElapsed }}</span>
+          </div>
+        </header>
+        <main class="main-container">
+          <div class="content-area">
+            <div class="video-wrapper home-shopping">
+              <user-video :stream-manager="mainStreamManager"
+                style="position: absolute; top:0; left:0; width:100%; height:100%;" />
+            </div>
+            <div class="products-row" v-if="streamData.products && streamData.products.length">
+              <div class="product-card-row" v-for="item in streamData.products.slice(0, 3)" :key="item.id"
+                @click="openProductDetails(item.productId)">
+                <div class="product-image-row">
+                  <img :src="item.imageUrl || '/no-image.png'" alt="상품 이미지" @error="handleImageError" />
+                </div>
+                <div class="product-info-row">
+                  <div class="name">{{ item.name }}</div>
+                  <div class="price-container">
+                    <span class="discount-price">{{ item.discountedPrice.toLocaleString() }}원</span>
+                    <span class="original-price">{{ item.price.toLocaleString() }}원</span>
+                  </div>
+                  <button class="buy-button" @click.stop="openProductDetails(item.productId)">구매하기</button>
+                </div>
+              </div>
+            </div>
+            <div v-else class="no-products">진행 중인 상품이 없습니다.</div>
+          </div>
+          <aside class="chat-column">
+            <chat-container v-if="chatRoomId" :room-id="chatRoomId" :initial-announcement="streamData.announcement" />
+            <div v-else class="h-full flex items-center justify-center text-center text-gray-500">
+              <div>
+                <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
+                <p>채팅방을 불러오는 중...</p>
+              </div>
+            </div>
+          </aside>
+        </main>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
-import {ref, onMounted, onBeforeUnmount, computed} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
-import {useAuthStore} from "@/modules/auth/stores/auth";
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from "@/modules/auth/stores/auth";
 import axios from 'axios';
-import {OpenVidu} from 'openvidu-browser';
+import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import { v4 as uuidv4 } from 'uuid';
@@ -72,7 +76,7 @@ const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+  : 'http://localhost:8080/';
 
 // OpenVidu 관련 상태 관리
 const OV = ref(undefined);
@@ -80,17 +84,19 @@ const session = ref(undefined);
 const mainStreamManager = ref(undefined);
 const streamData = ref({});
 const loadingMessage = ref('방송에 연결 중입니다...');
-const discountRate = ref(0);
 
 // 시청자 통계 관련 상태
 const viewerCount = ref(0);
-const broadcastStartTime = ref(null);
-const elapsedTime = ref(0);
-let timerId = null;
+const startTime = ref(Date.now());
+const now = ref(Date.now());
+let timerId;
 let viewerCountInterval;
 
 // OpenVidu 관련 상태 관리 아래에 추가
 const chatRoomId = ref(null);  // 채팅방 ID 저장용
+
+// 플래그 선언 (최상단)
+let isSessionCleaned = false;
 
 // 사용자 ID 관리
 const getUserId = () => {
@@ -142,7 +148,7 @@ const saveViewerLeave = async () => {
  * 1. 스트림을 구독하고 비디오 표시 설정
  * 2. 호스트 정보 저장
  */
-const handleStreamCreated = async ({stream}) => {
+const handleStreamCreated = async ({ stream }) => {
   try {
     // 스트림 구독 설정
     mainStreamManager.value = await session.value.subscribeAsync(stream, {
@@ -153,18 +159,6 @@ const handleStreamCreated = async ({stream}) => {
     const connectionData = JSON.parse(stream.connection.data || '{}');
     if (connectionData.clientData?.type === 'host') {
       streamData.value = connectionData.clientData;
-      discountRate.value = connectionData.clientData.discountRate || 0;
-      
-      if (connectionData.clientData.startTime) {
-        broadcastStartTime.value = new Date(connectionData.clientData.startTime);
-        
-        // 타이머 시작
-        if (timerId) clearInterval(timerId);
-        timerId = setInterval(() => {
-          elapsedTime.value = Math.floor((Date.now() - broadcastStartTime.value) / 1000);
-        }, 1000);
-      }
-      
       // ✅ 채팅방 ID 저장
       if (connectionData.clientData.chatRoomId) {
         chatRoomId.value = connectionData.clientData.chatRoomId;
@@ -237,12 +231,12 @@ const handleParticipantEvicted = (event) => {
 const getToken = async (sessionId) => {
   try {
     const response = await axios.post(
-        `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
-        {},
-        {
-          headers: {'Content-Type': 'application/json'},
-          timeout: 5000 // 5초 타임아웃 설정
-        }
+      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
+      {},
+      {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 5000 // 5초 타임아웃 설정
+      }
     );
     return response.data;
   } catch (error) {
@@ -262,398 +256,332 @@ const updateViewerCount = async () => {
   try {
     const sessionId = route.params.sessionId;
     const response = await axios.get(`${APPLICATION_SERVER_URL}api/sessions/${sessionId}/viewers/count`);
-    viewerCount.value = response.data;
+    viewerCount.value = response.data.count;
   } catch (error) {
     console.error('시청자 수 업데이트 실패:', error);
   }
 };
 
 /**
- * 세션 참가 함수
- * 1. OpenVidu 세션 초기화
- * 2. 이벤트 핸들러 등록
+ * OpenVidu 세션에 연결하는 함수
+ * 1. OpenVidu 객체 초기화
+ * 2. 세션 초기화 및 이벤트 리스너 설정
  * 3. 토큰 발급 및 세션 연결
+ * 4. 시청자 입장 처리
+ * 5. 주기적으로 시청자 수 업데이트
  */
-const joinSession = async (sessionId) => {
+const joinSession = async () => {
   try {
-    // 이전 세션 정리
-    if (session.value) {
-      cleanupSession();
-    }
-
-    // OpenVidu 초기화
     OV.value = new OpenVidu();
     session.value = OV.value.initSession();
 
-    // 이벤트 핸들러 등록
     session.value.on('streamCreated', handleStreamCreated);
     session.value.on('streamDestroyed', handleStreamDestroyed);
     session.value.on('sessionDisconnected', handleSessionDisconnected);
     session.value.on('participantEvicted', handleParticipantEvicted);
 
-    // 에러 이벤트 핸들러
-    session.value.on('error', (error) => {
-      console.error('Session error:', error);
-      loadingMessage.value = getErrorMessage(error);
-      if (error.name === 'NETWORK_ERROR' || error.name === 'DISCONNECTED') {
-        cleanupSession();
-        router.push('/');
-      }
+    const sessionId = route.params.sessionId;
+    const token = await getToken(sessionId);
+    await session.value.connect(token, {
+      clientData: {
+        type: 'consumer',
+        userId: getUserId(),
+      },
     });
 
-    // 세션 연결
-    const token = await getToken(sessionId);
-    if (!token) {
-      throw new Error('토큰을 받아올 수 없습니다.');
-    }
-
-    await session.value.connect(token, {clientData: {type: 'viewer'}});
-    
-    // 시청자 입장 처리 및 시청자 수 업데이트 시작
     await addViewerJoin();
-    viewerCountInterval = setInterval(updateViewerCount, 5000); // 5초마다 시청자 수 업데이트
+
+    // 시청자 수 주기적 업데이트
+    updateViewerCount();
+    viewerCountInterval = setInterval(updateViewerCount, 10000); // 10초마다
+
+    // 방송 경과 시간 업데이트
+    startTime.value = Date.now();
+    timerId = setInterval(() => {
+      now.value = Date.now();
+    }, 1000);
 
   } catch (error) {
-    console.error('세션 참가 중 오류 발생:', error);
-    loadingMessage.value = error.message || '방송 참여 중 오류가 발생했습니다.';
-    setTimeout(() => {
-      router.push('/');
-    }, 3000);
+    console.error('세션 연결 실패:', error);
+    loadingMessage.value = error.message;
+    cleanupSession();
   }
 };
 
 /**
- * 에러 메시지 생성 함수
- * - OpenVidu 에러 타입별 사용자 친화적 메시지 반환
- */
-const getErrorMessage = (error) => {
-  switch (error.name) {
-    case 'GENERIC_ERROR':
-      return '연결 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
-    case 'NETWORK_ERROR':
-      return '네트워크 연결을 확인해주세요.';
-    case 'MEDIA_ACCESS_DENIED':
-      return '카메라/마이크 접근이 거부되었습니다.';
-    case 'DISCONNECTED':
-      return '연결이 종료되었습니다.';
-    case 'USER_NOT_FOUND':
-      return '사용자를 찾을 수 없습니다.';
-    default:
-      return '알 수 없는 오류가 발생했습니다.';
-  }
-};
-
-/**
- * 세션 정리 함수
- * - 이벤트 리스너 제거
- * - 스트림 구독 해제
- * - 세션 연결 해제
- * - 상태 초기화
+ * 세션 및 관련 리소스 정리
  */
 const cleanupSession = () => {
-  try {
-    if (session.value) {
-      // 이벤트 리스너 제거
-      session.value.off('streamCreated');
-      session.value.off('streamDestroyed');
-      session.value.off('sessionDisconnected');
-      session.value.off('participantEvicted');
-      session.value.off('error');
-
-      // 스트림 구독 해제
-      if (mainStreamManager.value) {
-        session.value.unsubscribe(mainStreamManager.value);
-        mainStreamManager.value = undefined;
-      }
-
-      // 시청자 퇴장 처리
-      saveViewerLeave();
-
-      // 타이머 및 인터벌 정리
-      if (timerId) {
-        clearInterval(timerId);
-      }
-      if (viewerCountInterval) {
-        clearInterval(viewerCountInterval);
-      }
-
-      // 세션 연결 해제
-      session.value.disconnect();
-    }
-  } catch (error) {
-    console.error('세션 정리 중 오류 발생:', error);
-  } finally {
-    // 상태 초기화
-    session.value = undefined;
-    OV.value = undefined;
-    streamData.value = {};
-    viewerCount.value = 0;
-    chatRoomId.value = null; // 추가
+  if (isSessionCleaned) return; // 중복 방지
+  isSessionCleaned = true;
+  if (session.value) {
+    session.value.disconnect();
   }
+  OV.value = undefined;
+  session.value = undefined;
+  mainStreamManager.value = undefined;
+  clearInterval(timerId);
+  clearInterval(viewerCountInterval);
 };
 
-// 페이지 새로고침/종료 시 정리
-window.addEventListener('beforeunload', () => {
+// 컴포넌트 마운트 시 플래그 초기화
+onMounted(() => {
+  isSessionCleaned = false;
+  joinSession();
+});
+
+// 컴포넌트 언마운트 시 세션 정리
+onBeforeUnmount(async () => {
+  await saveViewerLeave();
   cleanupSession();
 });
 
-// 컴포넌트 마운트 시 세션 참가
-onMounted(async () => {
-  try {
-    const sessionId = route.params.sessionId;
-    await joinSession(sessionId);
-  } catch (error) {
-    console.error('방송 참여 중 오류 발생:', error);
-    loadingMessage.value = '방송 참여 중 오류가 발생했습니다.';
-    setTimeout(() => {
-      router.push('/');
-    }, 2000);
-  }
-});
-
-// 컴포넌트 언마운트 시 정리
-onBeforeUnmount(() => {
-  cleanupSession();
-});
-
+// 방송 경과 시간 계산
 const displayElapsed = computed(() => {
-  if (!broadcastStartTime.value) return '00:00:00';
-  
-  const seconds = elapsedTime.value;
-  const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
-  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
-  const s = String(Math.floor(seconds % 60)).padStart(2, '0');
-  
-  return `${h}:${m}:${s}`;
+  if (!startTime.value) return '00:00:00';
+  const elapsed = Math.floor((now.value - startTime.value) / 1000);
+  const hours = Math.floor(elapsed / 3600).toString().padStart(2, '0');
+  const minutes = Math.floor((elapsed % 3600) / 60).toString().padStart(2, '0');
+  const seconds = (elapsed % 60).toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
 });
 
-function openProductDetails(id) {
-  // 라우터로 URL을 생성하고, window.open 으로 새 창(또는 새 탭) 띄우기
-  const routeData = router.resolve({
-    name: 'ProductDetails',
-    params: { id }
-  })
+// 상품 상세 페이지로 이동
+const openProductDetails = (productId) => {
+  router.push({ name: 'ProductDetails', params: { id: productId } });
+};
 
-  // 이 경우 routeData.href → "/product-details/abc123" 와 같은 형태
-  const fullUrl = window.location.origin + routeData.href
-  window.open(fullUrl, '_blank')
-}
+// 이미지 에러 핸들러
+const handleImageError = (event) => {
+  event.target.src = '/no-image.png'; // 기본 이미지 경로
+};
 </script>
 
 <style scoped>
-.live-consumer {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px;
-  box-sizing: border-box;
-  font-family: 'Noto Sans KR', sans-serif;
-  color: #333;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+.live-streaming-page {
+  background-color: #f4f4f5;
+  min-height: 100vh;
 }
 
-.live-info-bar {
+.main-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem 1.5rem;
+}
+
+.header-bar {
+  margin-top: 2rem;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 1.25rem 2rem 1.25rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fafafa;
-  padding: 12px 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
-  font-size: 14px;
 }
 
-.live-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #2c3e50;
+.stream-info .title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #18181b;
 }
 
-.vendor-name {
-  color: #7f8c8d;
+.stream-info .vendor {
+  font-size: 0.95rem;
+  color: #71717a;
+  margin-top: 0.25rem;
 }
 
-.viewer-count {
+.live-badge {
   display: flex;
   align-items: center;
+  gap: 1.2rem;
 }
 
-.viewer-number {
-  margin-right: 4px;
-  color: #e74c3c;
+.live-badge .status {
+  background-color: #ef4444;
+  color: white;
+  padding: 0.25rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 1rem;
   font-weight: 600;
-}
-
-.timer {
-  font-weight: 500;
-  color: #2980b9;
-}
-
-.live-body {
   display: flex;
-  gap: 24px;
-  flex: 1;
-  min-height: 0;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.main-content {
-  flex-basis: 70%;
+.live-badge .status .red-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: white;
+  border-radius: 9999px;
+  animation: pulse 1.5s infinite;
+}
+
+.live-badge .timer {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #52525b;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.main-container {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.content-area {
+  flex: 1 1 0%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  gap: 1.5rem;
 }
 
-.live-video-container {
-  position: relative;
-  max-width: 1000px;
-  max-height: 600px;
+.video-wrapper.home-shopping {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  background-color: #000;
-  border-radius: 8px;
+  max-width: 800px;
+  aspect-ratio: 16/9;
+  background: #000;
+  border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 16px;
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-.products {
+.products-row {
   display: flex;
-  gap: 16px;
-  flex: 1;
-  margin-top: 30px;
-}
-
-.product-card {
-  flex: 1;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
-  height: fit-content;
-}
-
-.product-image img {
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
-
-.product-name {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.price {
-  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
   justify-content: center;
-  align-items: baseline;
-  margin-bottom: 12px;
 }
 
-.discount-percent {
-  color: #e74c3c;
+.product-card-row {
+  flex: 1 1 0;
+  max-width: 220px;
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.product-card-row:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.product-image-row {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 0.75rem;
+}
+
+.product-image-row img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.product-info-row .name {
   font-weight: 600;
-  margin-right: 8px;
-  font-size: 1.1em;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.product-info-row .price-container {
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .discount-price {
-  font-size: 16px;
-  color: #e74c3c;
-  font-weight: 600;
-  margin-right: 6px;
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
 .original-price {
-  font-size: 14px;
-  color: #bdc3c7;
+  color: #a1a1aa;
   text-decoration: line-through;
+  margin-left: 0.5rem;
+  font-size: 0.95rem;
 }
 
-.chat-area {
-  width: 350px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-}
-
-.chat-area :deep(chat-container) {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.btn {
+.buy-button {
   width: 100%;
-  padding: 8px 16px;
+  background: #2563eb;
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 0.5rem;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  transition: background 0.2s;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  color: white;
+.buy-button:hover {
+  background: #1d4ed8;
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;
+.chat-column {
+  width: 350px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  min-height: 500px;
+  max-height: 700px;
 }
 
-.loading {
-  text-align: center;
-  padding: 50px;
-  font-size: 1.2em;
-  color: #666;
+@media (max-width: 1200px) {
+  .main-wrapper {
+    max-width: 100vw;
+    padding: 0 0.5rem;
+  }
+
+  .main-container {
+    gap: 1rem;
+  }
+
+  .video-wrapper.home-shopping {
+    max-width: 100vw;
+  }
 }
 
-@media (max-width: 1024px) {
-  .live-body {
+@media (max-width: 900px) {
+  .main-container {
     flex-direction: column;
   }
 
-  .chat-area {
+  .chat-column {
     width: 100%;
-    height: 400px;
-    margin-top: 24px;
-  }
-
-  .products {
-    flex-wrap: wrap;
-  }
-
-  .product-card {
-    flex: 1 1 calc(50% - 16px);
-    margin-bottom: 16px;
-  }
-}
-
-@media (max-width: 600px) {
-  .live-info-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .live-info-bar > * {
-    width: 100%;
-  }
-
-  .product-card {
-    flex: 1 1 100%;
-  }
-
-  .chat-area {
-    height: 300px;
+    max-width: 100vw;
+    min-height: 350px;
+    margin-top: 1.5rem;
   }
 }
 </style>
