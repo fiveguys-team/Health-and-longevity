@@ -320,6 +320,8 @@ public class LiveController {
 	/**
 	 * 입점업체의 통계 레포트 자료를 반환합니다.
 	 *
+	 * @param vendorId
+	 * @return vendor의 통계 레포트 리스트 반환
 	 */
 	@GetMapping("/api/sessions/{vendorId}/report")
 	public ResponseEntity<List<LiveStatisticsDTO>> vendorReportList(@PathVariable("vendorId") String vendorId) {
@@ -327,6 +329,12 @@ public class LiveController {
 		return new ResponseEntity<>(reportList, HttpStatus.OK);
 	}
 
+	/**
+	 * userId를 통해 vendorId를 반환합니다.
+	 *
+	 * @param userId
+	 * @return 입점업체 Id
+	 */
 	@GetMapping("/api/vendors/user/{userId}")
 	public ResponseEntity<?> selectVendorId(@PathVariable("userId") int userId) {
 		int vendorId = liveService.findVendorId(userId);
