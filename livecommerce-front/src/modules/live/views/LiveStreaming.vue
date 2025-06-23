@@ -32,7 +32,7 @@
               <div class="product-card-row" v-for="item in streamData.products.slice(0, 3)" :key="item.id"
                 @click="openProductDetails(item.productId)">
                 <div class="product-image-row">
-                  <img :src="item.imageUrl || '/no-image.png'" alt="상품 이미지" @error="handleImageError" />
+                  <img :src="getProductImageSrc(item)" alt="상품 이미지" @error="handleImageError" />
                 </div>
                 <div class="product-info-row">
                   <div class="name">{{ item.name }}</div>
@@ -356,6 +356,12 @@ const openProductDetails = (productId) => {
 const handleImageError = (event) => {
   event.target.src = '/no-image.png'; // 기본 이미지 경로
 };
+
+function getProductImageSrc(item) {
+  if (!item.image) return '/no-image.png';
+  if (item.image.startsWith('http')) return item.image;
+  return `http://localhost:8080/uploads/images/${item.image}`;
+}
 </script>
 
 <style scoped>

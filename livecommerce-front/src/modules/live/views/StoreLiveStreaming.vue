@@ -318,7 +318,7 @@ const enterBroadcast = async () => {
       clientData: {
         type: 'host',
         title: streamTitle.value,
-        thumbnail: thumbnailFile.value,
+        thumbnailFile: thumbnailFile.value,
         products: discountedProducts.value,
         liveId: liveId.value,              // 이제 접근 가능
         chatRoomId: chatRoomId.value,       // 이미 ref로 되어 있음
@@ -436,7 +436,7 @@ const createSession = async () => {
   formData.append('title', streamTitle.value);
   formData.append('announcement', announcement.value);
   if (thumbnailFile.value) {
-    formData.append('thumbnail', thumbnailFile.value);
+    formData.append('thumbnailFile', thumbnailFile.value);
   }
   formData.append('products', JSON.stringify(selectedProducts.value));
   formData.append('discountRate', discountRate.value);

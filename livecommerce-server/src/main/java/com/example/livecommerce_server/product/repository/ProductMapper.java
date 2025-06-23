@@ -51,4 +51,6 @@ public interface ProductMapper {
             @Param("offset") int offset
     );
 
+    ProductDTO findProductById(@Param("productId") String productId);
+
 }
