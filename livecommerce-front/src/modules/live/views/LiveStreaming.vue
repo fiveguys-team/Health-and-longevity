@@ -346,9 +346,10 @@ const displayElapsed = computed(() => {
   return `${hours}:${minutes}:${seconds}`;
 });
 
-// 상품 상세 페이지로 이동
+// 상품 상세 페이지로 이동 (새 탭)
 const openProductDetails = (productId) => {
-  router.push({ name: 'ProductDetails', params: { id: productId } });
+  const url = router.resolve({ name: 'ProductDetails', params: { id: productId } }).href;
+  window.open(url, '_blank');
 };
 
 // 이미지 에러 핸들러
