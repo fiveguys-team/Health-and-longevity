@@ -1,10 +1,15 @@
 package com.example.livecommerce_server.member.service;
 
+import com.example.livecommerce_server.common.config.CustomUserDetails;
 import com.example.livecommerce_server.member.domain.Member;
+import com.example.livecommerce_server.member.domain.Role;
 import com.example.livecommerce_server.member.dto.MemberCreateDto;
 import com.example.livecommerce_server.member.dto.MemberLoginDto;
+import com.example.livecommerce_server.member.dto.VendorRegistrationDto;
 import com.example.livecommerce_server.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,5 +58,13 @@ public class MemberService {
         } else {
             return member;
         }
+    }
+
+    public void createVendor(VendorRegistrationDto vendorRegistrationDto) {
+        memberRepository.createVendor(vendorRegistrationDto);
+    }
+
+    public Optional<String> getVendorStatus(String userId) {
+        return memberRepository.findVendorStatusByUserId(userId);
     }
 }

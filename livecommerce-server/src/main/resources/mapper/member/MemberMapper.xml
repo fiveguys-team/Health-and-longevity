@@ -19,4 +19,20 @@
     <update id="update" parameterType="com.example.livecommerce_server.member.domain.Member">
         update USER_M set social_id = #{socialId}, social_type = #{socialType}, name = #{name} where email = #{email}
     </update>
+
+    <insert id="createVendor" parameterType="com.example.livecommerce_server.member.dto.VendorRegistrationDto">
+        insert into VENDOR_M (user_id, business_number, permit_number) values (#{userId}, #{businessNumber}, #{permitNumber})
+    </insert>
+
+    <update id="updateUserRole" parameterType="map">
+        update USER_M set role = #{role} where user_id = #{userId}
+    </update>
+
+    <select id="findVendorStatusByUserId" resultType="string">
+        select status
+        from VENDOR_M
+        where user_id = #{userId}
+        order by vendor_id desc
+        limit 1
+    </select>
 </mapper>

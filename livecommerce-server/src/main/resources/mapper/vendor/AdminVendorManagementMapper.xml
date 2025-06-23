@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.livecommerce_server.vendor.mapper.AdminVendorManagementMapper">
+    <select id="readAllVendor" resultType="com.example.livecommerce_server.vendor.dto.VendorInfoDto">
+        select u.name, u.email, v.user_id, v.business_number, v.permit_number, v.status
+        from VENDOR_M v join USER_M u
+        where v.user_id = u.user_id;
+    </select>
+
+    <update id="updateInfo" parameterType="com.example.livecommerce_server.vendor.dto.VendorUpdateDto">
+        update VENDOR_M set name = #{name}, address = #{address}, status = #{status} where user_id = #{userId}
+    </update>
+</mapper>

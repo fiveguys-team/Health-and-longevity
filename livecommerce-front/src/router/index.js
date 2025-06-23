@@ -99,7 +99,9 @@ const routes = [
     props: true
   },
   {path: '/checkout',component:CheckoutPage},
-  {path: '/contact',component:ContactPage},
+  {path: '/contact',component:ContactPage,
+    meta: {requiresAuth: true, roles: ['USER']}
+  },
   {path: '/product-category',component:ProductCategory},
   {path: '/oauth-success', component:OAuthSuccess},
 
@@ -127,7 +129,12 @@ const routes = [
         name: 'AdminProductDetail',
         component: () => import('@/modules/product/views/AdminProductDetail.vue'),
         props: true
-      }
+      },
+      {
+        path: 'vendor-management',
+        name: 'VendorManagement',
+        component: () => import('@/views/dashboard/admin/vendorManagement.vue'),
+      },
     ]
   },
   //{ path: "/store-dashboard", component: storeDashboard },

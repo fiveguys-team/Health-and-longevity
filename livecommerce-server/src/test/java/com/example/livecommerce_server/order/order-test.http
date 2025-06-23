@@ -73,3 +73,7 @@ Content-Disposition: form-data; name="userId"
 
 7
 --WebAppBoundary--
+
+
+### 주문 내역 조회 호출
+GET http://localhost:8080/api/order/history?userId=7

@@ -4,6 +4,7 @@ import com.example.livecommerce_server.common.auth.JwtTokenProvider;
 import com.example.livecommerce_server.member.domain.Member;
 import com.example.livecommerce_server.member.dto.*;
 import com.example.livecommerce_server.member.service.MemberService;
+import com.example.livecommerce_server.product.service.VendorService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,10 +23,12 @@ import java.util.Optional;
 public class MemberController {
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final VendorService vendorService;
 
-    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
+    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider, VendorService vendorService) {
         this.memberService = memberService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.vendorService = vendorService;
     }
 
     @PostMapping("/create")
@@ -86,5 +89,16 @@ public class MemberController {
 
         return ResponseEntity.ok(body);
     }
-}
 
+    @PostMapping("/vendor-registration")
+    public ResponseEntity<?> createVendor(@RequestBody VendorRegistrationDto vendorRegistrationDto) {
+        memberService.createVendor(vendorRegistrationDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/vendor-status")
+    public ResponseEntity<?> getVendorStatus(@RequestParam String userId) {
+        Optional<String> status = memberService.getVendorStatus(userId);
+        return ResponseEntity.ok(status.orElse(null));
+    }
+}

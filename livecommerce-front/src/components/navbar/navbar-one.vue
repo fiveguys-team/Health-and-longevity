@@ -40,7 +40,9 @@
                         <router-link to="/store-dashboard">대시보드</router-link>
                       </li>
 
-                        <li :class="current === '/contact' ? 'active' : ''"><router-link to="/contact">입점신청</router-link></li>
+                      <li v-if="role === 'USER' || role === null">
+                        <router-link to="/contact">입점신청</router-link>
+                      </li>
 <!--                        <li :class="current === '/login' ? 'active' : ''" class="lg:hidden"><router-link to="/login">로그인</router-link></li>-->
                     </ul>
                 </div>
