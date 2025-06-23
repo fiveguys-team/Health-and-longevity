@@ -196,13 +196,13 @@
             </div>
         </div>
      <FooterThree/>
-        <ScrollToTop/>
-
+      <ScrollToTop/>
+      <SurveyModal v-if="showSurvey" @close="showSurvey = false"/>
     </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import {onMounted, ref, watch} from 'vue';
 
 // 이미지 imports
 import banner3 from '@/assets/img/shortcode/carousel/Summer.png'
@@ -219,6 +219,7 @@ import NavbarOne from '@/components/navbar/navbar-one.vue';
 import LayoutOne from '@/components/product/layout-one.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
 import FooterThree from '@/components/footer/footer-three.vue';
+import SurveyModal from "@/components/survey/survey-modal.vue";
 
 // Swiper imports
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -227,12 +228,33 @@ import 'swiper/swiper-bundle.css';
 
 // 데이터 imports
 import { productList } from '@/data/data';
+import { useAuthStore } from "@/modules/auth/stores/auth";
 
 // AOS 애니메이션
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 
-onMounted(() => {
-    Aos.init();
+const showSurvey = ref(false);
+const authStore = useAuthStore();
+
+// 페이지 진입 시 사용자 정보 초기화
+onMounted(async () => {
+  Aos.init();
+  await authStore.initFromServer(); // 추가된 초기화 코드
+  handleLoginSuccess();
 });
+
+// 로그인 상태 감시
+watch(() => authStore.id, (newId) => {
+  if (newId) {
+    showSurvey.value = true;
+  }
+});
+
+// 로그인 성공 처리
+function handleLoginSuccess() {
+  if (authStore.id !== null) {
+    showSurvey.value = true;
+  }
+}
 </script>
