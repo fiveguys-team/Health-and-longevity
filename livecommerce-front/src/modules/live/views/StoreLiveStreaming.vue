@@ -148,11 +148,19 @@
           <!-- 헤더 -->
           <div class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
             <h2 class="text-2xl font-bold text-gray-800">{{ streamTitle }}</h2>
-            <!-- 방송 종료 버튼 (우측 상단으로 이동) -->
-            <button @click="endStream"
-              class="px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
-              방송 종료
-            </button>
+            <div class="flex items-center gap-4">
+              <!-- 방송 상태 및 경과 시간 -->
+              <div class="flex items-center gap-2 bg-red-50 px-3 py-1 rounded-full">
+                <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                <span class="text-red-600 font-semibold text-sm">LIVE</span>
+                <span class="text-red-600 font-mono text-sm">{{ displayElapsed }}</span>
+              </div>
+              <!-- 방송 종료 버튼 -->
+              <button @click="endStream"
+                class="px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+                방송 종료
+              </button>
+            </div>
           </div>
 
           <!-- 비디오 영역 -->
@@ -239,6 +247,10 @@ const discountRate = ref(0); // 할인율
 const startTime = ref('');
 const category = ref('');
 
+// 방송 경과 시간 관련
+const now = ref(Date.now());
+let timerId;
+
 // 1. 채팅방 정보를 저장할 ref 추가
 const liveId = ref(null);
 const chatRoomId = ref(null);        // 생성된 채팅방 ID
@@ -257,6 +269,18 @@ const discountedProducts = computed(() =>
 
 // 최대 상품 선택 초과 에러 상태
 const showMaxProductsError = ref(false);
+
+// 방송 경과 시간 계산
+const displayElapsed = computed(() => {
+  if (!startTime.value) return '00:00:00';
+  const startTimeMs = new Date(startTime.value).getTime();
+  const elapsed = Math.floor((now.value - startTimeMs) / 1000);
+  if (elapsed < 0) return '00:00:00';
+  const hours = Math.floor(elapsed / 3600).toString().padStart(2, '0');
+  const minutes = Math.floor((elapsed % 3600) / 60).toString().padStart(2, '0');
+  const seconds = (elapsed % 60).toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+});
 
 //입점업체 상품 가져오기
 const productList = async () => {
@@ -342,6 +366,11 @@ const enterBroadcast = async () => {
     publisher.value = publisherInstance;
     await session.value.publish(publisher.value);
 
+    // 방송 시작 후 타이머 시작
+    timerId = setInterval(() => {
+      now.value = Date.now();
+    }, 1000);
+
   } catch (error) {
     console.error('방송 준비 중 오류 발생:', error);
     alert('방송 준비 중 오류가 발생했습니다.');
@@ -392,6 +421,7 @@ const endStream = async () => {
     session.value = undefined;
     publisher.value = undefined;
     OV.value = undefined;
+    clearInterval(timerId); // 타이머 정리
     // 방송 종료 후 레포트 view로 이동
     await router.push(`/vendor-dashboard/live/reportList/${vendorId}`);
   }
