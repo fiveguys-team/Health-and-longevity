@@ -11,6 +11,7 @@ import com.example.livecommerce_server.live.service.LiveProductService;
 import com.example.livecommerce_server.live.service.LiveService;
 import com.example.livecommerce_server.live.service.LiveStatisticsService;
 import com.example.livecommerce_server.live.vo.LiveStatisticsVO;
+import com.example.livecommerce_server.storage.service.S3UploadService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.openvidu.java.client.Connection;
@@ -48,6 +49,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import com.example.livecommerce_server.product.dto.ProductDTO;
+import com.example.livecommerce_server.product.service.ProductService;
 
 @CrossOrigin(origins = {"http://localhost:5174", "http://localhost:5173",
 		"http://localhost:3000"}, allowedHeaders = "*", methods = {RequestMethod.GET,
@@ -58,11 +61,14 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class LiveController {
 
+	private final S3UploadService s3UploadService;
+
 	private final ObjectMapper mapper = new ObjectMapper();
 
 	private final LiveService liveService;
 	private final LiveProductService liveProductService;
 	private final LiveStatisticsService liveStatisticsService;
+	private final ProductService productService;
 
 	@Value("${openvidu.url}")
 	private String OPENVIDU_URL;
@@ -113,6 +119,11 @@ public class LiveController {
 	@PostMapping("/api/sessions")
 	public ResponseEntity<?> initializeSession(@ModelAttribute LiveDTO liveDTO) {
 		try {
+			// 썸네일 S3 업로드
+			if (liveDTO.getThumbnailFile() != null && !liveDTO.getThumbnailFile().isEmpty()) {
+				String url = s3UploadService.upload(liveDTO.getThumbnailFile(), liveDTO.getVendorId());
+				liveDTO.setThumbnail(url); // DB에 저장될 URL
+			}
 
 			// OpenVidu 세션 생성
 			Map<String, Object> params = new HashMap<>();
@@ -320,11 +331,52 @@ public class LiveController {
 	/**
 	 * 입점업체의 통계 레포트 자료를 반환합니다.
 	 *
+	 * @param vendorId
+	 * @return vendor의 통계 레포트 리스트 반환
 	 */
 	@GetMapping("/api/sessions/{vendorId}/report")
 	public ResponseEntity<List<LiveStatisticsDTO>> vendorReportList(@PathVariable("vendorId") String vendorId) {
 		List<LiveStatisticsDTO> reportList = liveStatisticsService.findLiveStatisticsList(vendorId);
 		return new ResponseEntity<>(reportList, HttpStatus.OK);
+	}
+
+	/**
+	 * userId를 통해 vendorId를 반환합니다.
+	 *
+	 * @param userId
+	 * @return 입점업체 Id
+	 */
+	@GetMapping("/api/vendors/user/{userId}")
+	public ResponseEntity<?> selectVendorId(@PathVariable("userId") int userId) {
+		int vendorId = liveService.findVendorId(userId);
+		log.info("호출됨: "+ vendorId);
+		return new ResponseEntity<>(vendorId, HttpStatus.OK);
+	}
+
+	/**
+	 * 방송에 포함된 상품 리스트(이미지 포함)를 반환합니다.
+	 */
+	@GetMapping("/api/sessions/{sessionId}/products")
+	public ResponseEntity<List<ProductInfo>> getLiveProducts(@PathVariable("sessionId") String sessionId) {
+		LiveDTO liveDTO = activeSessions.get(sessionId);
+		if (liveDTO == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		try {
+			// 방송에 포함된 상품 ID 리스트 파싱
+			List<ProductInfo> prodList = new ArrayList<>();
+			if (liveDTO.getProducts() != null) {
+				List<ProductInfo> parsed = mapper.readValue(liveDTO.getProducts(), new com.fasterxml.jackson.core.type.TypeReference<List<ProductInfo>>(){});
+				for (ProductInfo info : parsed) {
+					ProductDTO product = productService.getProductById(info.getProductId());
+					info.setImage(product != null ? product.getProductImage() : null);
+					prodList.add(info);
+				}
+			}
+			return ResponseEntity.ok(prodList);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
 

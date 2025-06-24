@@ -32,10 +32,15 @@
               <div class="product-card-row" v-for="item in streamData.products.slice(0, 3)" :key="item.id"
                 @click="openProductDetails(item.productId)">
                 <div class="product-image-row">
-                  <img :src="item.imageUrl || '/no-image.png'" alt="상품 이미지" @error="handleImageError" />
+                  <img :src="getProductImageSrc(item)" alt="상품 이미지" @error="handleImageError" />
                 </div>
                 <div class="product-info-row">
-                  <div class="name">{{ item.name }}</div>
+                  <div class="name-container">
+                    <div class="name">{{ item.name }}</div>
+                    <span v-if="item.discountRate > 0" class="discount-badge">
+                      {{ item.discountRate }}% 할인
+                    </span>
+                  </div>
                   <div class="price-container">
                     <span class="discount-price">{{ item.discountedPrice.toLocaleString() }}원</span>
                     <span class="original-price">{{ item.price.toLocaleString() }}원</span>
@@ -87,7 +92,7 @@ const loadingMessage = ref('방송에 연결 중입니다...');
 
 // 시청자 통계 관련 상태
 const viewerCount = ref(0);
-const startTime = ref(Date.now());
+const startTime = ref(null); // 호스트의 방송 시작 시간을 저장
 const now = ref(Date.now());
 let timerId;
 let viewerCountInterval;
@@ -163,6 +168,11 @@ const handleStreamCreated = async ({ stream }) => {
       if (connectionData.clientData.chatRoomId) {
         chatRoomId.value = connectionData.clientData.chatRoomId;
         console.log('채팅방 ID 수신:', chatRoomId.value);
+      }
+      // ✅ 방송 시작 시간 저장
+      if (connectionData.clientData.startTime) {
+        startTime.value = new Date(connectionData.clientData.startTime).getTime();
+        console.log('방송 시작 시간 수신:', new Date(startTime.value));
       }
     }
   } catch (error) {
@@ -295,8 +305,10 @@ const joinSession = async () => {
     updateViewerCount();
     viewerCountInterval = setInterval(updateViewerCount, 10000); // 10초마다
 
-    // 방송 경과 시간 업데이트
-    startTime.value = Date.now();
+    // 방송 경과 시간 업데이트 (호스트의 방송 시작 시간 사용)
+    if (!startTime.value) {
+      startTime.value = Date.now(); // 호스트 정보가 아직 없는 경우 현재 시간으로 설정
+    }
     timerId = setInterval(() => {
       now.value = Date.now();
     }, 1000);
@@ -338,23 +350,31 @@ onBeforeUnmount(async () => {
 
 // 방송 경과 시간 계산
 const displayElapsed = computed(() => {
-  if (!startTime.value) return '00:00:00';
+  if (!startTime.value) return '--:--:--';
   const elapsed = Math.floor((now.value - startTime.value) / 1000);
+  if (elapsed < 0) return '--:--:--'; // 방송 시작 전
   const hours = Math.floor(elapsed / 3600).toString().padStart(2, '0');
   const minutes = Math.floor((elapsed % 3600) / 60).toString().padStart(2, '0');
   const seconds = (elapsed % 60).toString().padStart(2, '0');
   return `${hours}:${minutes}:${seconds}`;
 });
 
-// 상품 상세 페이지로 이동
+// 상품 상세 페이지로 이동 (새 탭)
 const openProductDetails = (productId) => {
-  router.push({ name: 'ProductDetails', params: { id: productId } });
+  const url = router.resolve({ name: 'ProductDetails', params: { id: productId } }).href;
+  window.open(url, '_blank');
 };
 
 // 이미지 에러 핸들러
 const handleImageError = (event) => {
   event.target.src = '/no-image.png'; // 기본 이미지 경로
 };
+
+function getProductImageSrc(item) {
+  if (!item.image) return '/no-image.png';
+  if (item.image.startsWith('http')) return item.image;
+  return `http://localhost:8080/uploads/images/${item.image}`;
+}
 </script>
 
 <style scoped>
@@ -501,11 +521,26 @@ const handleImageError = (event) => {
   border-radius: 0.5rem;
 }
 
+.product-info-row .name-container {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
 .product-info-row .name {
   font-weight: 600;
   font-size: 1rem;
   margin-bottom: 0.5rem;
   text-align: center;
+}
+
+.product-info-row .discount-badge {
+  background-color: #dc2626;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
 }
 
 .product-info-row .price-container {

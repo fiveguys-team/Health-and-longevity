@@ -73,8 +73,18 @@
 		from payment_d p, live_m l, live_product_j j, product pr, order_item_d o, orders_m m, payment_d
 		where l.live_id = #{liveId} and l.live_id = j.live_id and j.product_id = pr.product_id and o.product_id = pr.product_id
 		    and m.order_id = o.order_id and p.payments_id = m.payments_id
-		    and p.paid_at between l.start_at and l.end_cd and p.payment_status_code = 'DONE'
-
+		    and p.paid_at BETWEEN
+			DATE_FORMAT(
+				STR_TO_DATE(
+					REPLACE(REPLACE(l.start_at, 'T', ''), 'Z', ''),
+					'%Y-%m-%dT%H:%i:%s.%f'),
+				'%Y%m%d%H%i%s')
+			and DATE_FORMAT(
+				STR_TO_DATE(
+					REPLACE(REPLACE(l.end_cd, 'T', ''), 'Z', ''),
+					'%Y-%m-%dT%H:%i:%s.%f'),
+				'%Y%m%d%H%i%s')
+		  AND p.payment_status_code = 'DONE'
 	</select>
 
 <!--	주문 건 수 -->
@@ -83,7 +93,17 @@
 		FROM live_m l,live_product_j j, product p, order_item_d oi,orders_m o
 		WHERE l.live_id = #{liveId} and l.live_id = j.live_id
 		  and j.product_id = p.product_id and p.product_id = oi.product_id
-		  and oi.order_id = o.order_id and o.order_date between l.start_at and l.end_cd;
+		  and oi.order_id = o.order_id and o.order_date BETWEEN
+			DATE_FORMAT(
+				STR_TO_DATE(
+					REPLACE(REPLACE(l.start_at, 'T', ''), 'Z', ''),
+					'%Y-%m-%dT%H:%i:%s.%f'),
+				'%Y%m%d%H%i%s')
+			and DATE_FORMAT(
+				STR_TO_DATE(
+					REPLACE(REPLACE(l.end_cd, 'T', ''), 'Z', ''),
+					'%Y-%m-%dT%H:%i:%s.%f'),
+				'%Y%m%d%H%i%s')
 	</select>
 
 <!--	구매 전환율-->
@@ -91,7 +111,17 @@
 		SELECT IFNULL(ROUND((COUNT(DISTINCT o.user_id) / COUNT(DISTINCT lvl.user_id)) * 100, 2), 0) as conversion_rate
 		FROM LIVE_M l, LIVE_VIEWER_LOG lvl, ORDERS_M o
 		WHERE  l.live_id = #{liveId} and  l.live_id = lvl.live_id
-		  and o.order_date between l.start_at and l.end_cd
-		  and lvl.is_anonymous = FALSE;
+		  and o.order_date BETWEEN
+			DATE_FORMAT(
+				STR_TO_DATE(
+					REPLACE(REPLACE(l.start_at, 'T', ''), 'Z', ''),
+					'%Y-%m-%dT%H:%i:%s.%f'),
+				'%Y%m%d%H%i%s')
+			and DATE_FORMAT(
+				STR_TO_DATE(
+					REPLACE(REPLACE(l.end_cd, 'T', ''), 'Z', ''),
+					'%Y-%m-%dT%H:%i:%s.%f'),
+				'%Y%m%d%H%i%s')
+		  and lvl.is_anonymous = FALSE
 	</select>
 </mapper> 

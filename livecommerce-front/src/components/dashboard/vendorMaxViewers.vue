@@ -10,11 +10,11 @@ const loading = ref(true);
 
 // 더미 데이터
 const dummyData = [
-  { vendorName: '정관장', maxViewers: 1250 },
-  { vendorName: '롯데제과', maxViewers: 980 },
-  { vendorName: 'CJ제일제당', maxViewers: 750 },
-  { vendorName: '동원F&B', maxViewers: 520 },
-  { vendorName: '농심', maxViewers: 420 }
+  { vendorName: '오펠라헬스케어코리아', maxViewers: 1250 },
+  { vendorName: '브리드케어', maxViewers: 980 },
+  { vendorName: '네츄럴헬스코리아', maxViewers: 750 },
+  { vendorName: '미성뉴트리션', maxViewers: 520 },
+  { vendorName: '영메디케어', maxViewers: 420 }
 ];
 
 const fetchVendorMaxViewers = async () => {

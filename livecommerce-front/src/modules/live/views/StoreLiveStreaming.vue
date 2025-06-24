@@ -148,11 +148,19 @@
           <!-- 헤더 -->
           <div class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
             <h2 class="text-2xl font-bold text-gray-800">{{ streamTitle }}</h2>
-            <!-- 방송 종료 버튼 (우측 상단으로 이동) -->
-            <button @click="endStream"
-              class="px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
-              방송 종료
-            </button>
+            <div class="flex items-center gap-4">
+              <!-- 방송 상태 및 경과 시간 -->
+              <div class="flex items-center gap-2 bg-red-50 px-3 py-1 rounded-full">
+                <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                <span class="text-red-600 font-semibold text-sm">LIVE</span>
+                <span class="text-red-600 font-mono text-sm">{{ displayElapsed }}</span>
+              </div>
+              <!-- 방송 종료 버튼 -->
+              <button @click="endStream"
+                class="px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+                방송 종료
+              </button>
+            </div>
           </div>
 
           <!-- 비디오 영역 -->
@@ -174,7 +182,12 @@
                 class="flex items-center gap-4 pb-4 border-b last:border-b-0 last:pb-0">
                 <!-- <img :src="item.thumbnail" alt="상품 이미지" class="w-20 h-20 rounded-md object-cover"> -->
                 <div class="flex-1">
-                  <h4 class="text-base font-semibold text-gray-800">{{ item.name }}</h4>
+                  <div class="flex items-center gap-2 mb-1">
+                    <h4 class="text-base font-semibold text-gray-800">{{ item.name }}</h4>
+                    <span v-if="item.discountRate > 0" class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                      {{ item.discountRate }}% 할인
+                    </span>
+                  </div>
                   <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
                   <div class="flex items-baseline gap-2 mt-2">
                     <span class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</span>
@@ -239,6 +252,10 @@ const discountRate = ref(0); // 할인율
 const startTime = ref('');
 const category = ref('');
 
+// 방송 경과 시간 관련
+const now = ref(Date.now());
+let timerId;
+
 // 1. 채팅방 정보를 저장할 ref 추가
 const liveId = ref(null);
 const chatRoomId = ref(null);        // 생성된 채팅방 ID
@@ -251,12 +268,25 @@ const chatAnnouncement = ref('');    // 채팅방 공지사항
 const discountedProducts = computed(() =>
   selectedProducts.value.map(p => ({
     ...p,
-    discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
+    discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100),
+    discountRate: discountRate.value
   }))
 )
 
 // 최대 상품 선택 초과 에러 상태
 const showMaxProductsError = ref(false);
+
+// 방송 경과 시간 계산
+const displayElapsed = computed(() => {
+  if (!startTime.value) return '00:00:00';
+  const startTimeMs = new Date(startTime.value).getTime();
+  const elapsed = Math.floor((now.value - startTimeMs) / 1000);
+  if (elapsed < 0) return '00:00:00';
+  const hours = Math.floor(elapsed / 3600).toString().padStart(2, '0');
+  const minutes = Math.floor((elapsed % 3600) / 60).toString().padStart(2, '0');
+  const seconds = (elapsed % 60).toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+});
 
 //입점업체 상품 가져오기
 const productList = async () => {
@@ -318,11 +348,12 @@ const enterBroadcast = async () => {
       clientData: {
         type: 'host',
         title: streamTitle.value,
-        thumbnail: thumbnailFile.value,
+        thumbnailFile: thumbnailFile.value,
         products: discountedProducts.value,
         liveId: liveId.value,              // 이제 접근 가능
         chatRoomId: chatRoomId.value,       // 이미 ref로 되어 있음
-        announcement: chatAnnouncement.value
+        announcement: chatAnnouncement.value,
+        startTime: startTime.value         // 방송 시작 시간 추가
       }
     });
 
@@ -340,6 +371,11 @@ const enterBroadcast = async () => {
 
     publisher.value = publisherInstance;
     await session.value.publish(publisher.value);
+
+    // 방송 시작 후 타이머 시작
+    timerId = setInterval(() => {
+      now.value = Date.now();
+    }, 1000);
 
   } catch (error) {
     console.error('방송 준비 중 오류 발생:', error);
@@ -391,8 +427,9 @@ const endStream = async () => {
     session.value = undefined;
     publisher.value = undefined;
     OV.value = undefined;
+    clearInterval(timerId); // 타이머 정리
     // 방송 종료 후 레포트 view로 이동
-    await router.push(`/vendor/live/reportList/${vendorId}`);
+    await router.push(`/vendor-dashboard/live/reportList/${vendorId}`);
   }
 };
 
@@ -436,7 +473,7 @@ const createSession = async () => {
   formData.append('title', streamTitle.value);
   formData.append('announcement', announcement.value);
   if (thumbnailFile.value) {
-    formData.append('thumbnail', thumbnailFile.value);
+    formData.append('thumbnailFile', thumbnailFile.value);
   }
   formData.append('products', JSON.stringify(selectedProducts.value));
   formData.append('discountRate', discountRate.value);
