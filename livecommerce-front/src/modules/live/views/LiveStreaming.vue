@@ -87,7 +87,7 @@ const loadingMessage = ref('방송에 연결 중입니다...');
 
 // 시청자 통계 관련 상태
 const viewerCount = ref(0);
-const startTime = ref(Date.now());
+const startTime = ref(null); // 호스트의 방송 시작 시간을 저장
 const now = ref(Date.now());
 let timerId;
 let viewerCountInterval;
@@ -163,6 +163,11 @@ const handleStreamCreated = async ({ stream }) => {
       if (connectionData.clientData.chatRoomId) {
         chatRoomId.value = connectionData.clientData.chatRoomId;
         console.log('채팅방 ID 수신:', chatRoomId.value);
+      }
+      // ✅ 방송 시작 시간 저장
+      if (connectionData.clientData.startTime) {
+        startTime.value = new Date(connectionData.clientData.startTime).getTime();
+        console.log('방송 시작 시간 수신:', new Date(startTime.value));
       }
     }
   } catch (error) {
@@ -295,8 +300,10 @@ const joinSession = async () => {
     updateViewerCount();
     viewerCountInterval = setInterval(updateViewerCount, 10000); // 10초마다
 
-    // 방송 경과 시간 업데이트
-    startTime.value = Date.now();
+    // 방송 경과 시간 업데이트 (호스트의 방송 시작 시간 사용)
+    if (!startTime.value) {
+      startTime.value = Date.now(); // 호스트 정보가 아직 없는 경우 현재 시간으로 설정
+    }
     timerId = setInterval(() => {
       now.value = Date.now();
     }, 1000);
@@ -338,8 +345,9 @@ onBeforeUnmount(async () => {
 
 // 방송 경과 시간 계산
 const displayElapsed = computed(() => {
-  if (!startTime.value) return '00:00:00';
+  if (!startTime.value) return '--:--:--';
   const elapsed = Math.floor((now.value - startTime.value) / 1000);
+  if (elapsed < 0) return '--:--:--'; // 방송 시작 전
   const hours = Math.floor(elapsed / 3600).toString().padStart(2, '0');
   const minutes = Math.floor((elapsed % 3600) / 60).toString().padStart(2, '0');
   const seconds = (elapsed % 60).toString().padStart(2, '0');

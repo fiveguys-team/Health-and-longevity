@@ -322,7 +322,8 @@ const enterBroadcast = async () => {
         products: discountedProducts.value,
         liveId: liveId.value,              // 이제 접근 가능
         chatRoomId: chatRoomId.value,       // 이미 ref로 되어 있음
-        announcement: chatAnnouncement.value
+        announcement: chatAnnouncement.value,
+        startTime: startTime.value         // 방송 시작 시간 추가
       }
     });
 
