@@ -35,7 +35,12 @@
                   <img :src="getProductImageSrc(item)" alt="상품 이미지" @error="handleImageError" />
                 </div>
                 <div class="product-info-row">
-                  <div class="name">{{ item.name }}</div>
+                  <div class="name-container">
+                    <div class="name">{{ item.name }}</div>
+                    <span v-if="item.discountRate > 0" class="discount-badge">
+                      {{ item.discountRate }}% 할인
+                    </span>
+                  </div>
                   <div class="price-container">
                     <span class="discount-price">{{ item.discountedPrice.toLocaleString() }}원</span>
                     <span class="original-price">{{ item.price.toLocaleString() }}원</span>
@@ -516,11 +521,26 @@ function getProductImageSrc(item) {
   border-radius: 0.5rem;
 }
 
+.product-info-row .name-container {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
 .product-info-row .name {
   font-weight: 600;
   font-size: 1rem;
   margin-bottom: 0.5rem;
   text-align: center;
+}
+
+.product-info-row .discount-badge {
+  background-color: #dc2626;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
 }
 
 .product-info-row .price-container {

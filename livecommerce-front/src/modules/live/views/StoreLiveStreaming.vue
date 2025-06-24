@@ -182,7 +182,12 @@
                 class="flex items-center gap-4 pb-4 border-b last:border-b-0 last:pb-0">
                 <!-- <img :src="item.thumbnail" alt="상품 이미지" class="w-20 h-20 rounded-md object-cover"> -->
                 <div class="flex-1">
-                  <h4 class="text-base font-semibold text-gray-800">{{ item.name }}</h4>
+                  <div class="flex items-center gap-2 mb-1">
+                    <h4 class="text-base font-semibold text-gray-800">{{ item.name }}</h4>
+                    <span v-if="item.discountRate > 0" class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                      {{ item.discountRate }}% 할인
+                    </span>
+                  </div>
                   <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
                   <div class="flex items-baseline gap-2 mt-2">
                     <span class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</span>
@@ -263,7 +268,8 @@ const chatAnnouncement = ref('');    // 채팅방 공지사항
 const discountedProducts = computed(() =>
   selectedProducts.value.map(p => ({
     ...p,
-    discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
+    discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100),
+    discountRate: discountRate.value
   }))
 )
 
