@@ -16,10 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -124,17 +121,40 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         orderMapper.insertOrder(orderInsertDTO);
 
-        // 주문 상세 insert
-        List<OrderItemInsertDTO> itemInsertDTOs = orderPrepareRequestDTO.getOrderItems().stream()
-                .map(item -> OrderItemInsertDTO.builder()
-                        .orderItemId(UUID.randomUUID().toString())
-                        .orderId(orderId)
-                        .productId(item.getProductId())
-                        .quantity(item.getQuantity())
-                        .createdAt(now)
-                        .build())
-                .collect(Collectors.toList());
+        // 상품별 최종 단가 계산 및 항목 원가 합계 구하기
+        Map<String, Integer> productPaidMap = new HashMap<>();
+        int totalOriginalAmount = 0;
+
+        for (OrderItemRequestDTO item : orderPrepareRequestDTO.getOrderItems()) {
+            ProductDTO product = productMap.get(item.getProductId());
+            Integer discountRate = getDiscountRateIfLiveOn(product.getProductId());
+            int originalPrice = product.getPrice();
+            int finalUnitPrice = (discountRate != null && discountRate > 0)
+                    ? originalPrice - (originalPrice * discountRate / 100)
+                    : originalPrice;
+            int subtotal = finalUnitPrice * item.getQuantity();
+            productPaidMap.put(item.getProductId(), subtotal);
+            totalOriginalAmount += subtotal;
+        }
+
+// 주문 상세 insert DTO 생성 + paidAmount 세팅
+        List<OrderItemInsertDTO> itemInsertDTOs = new ArrayList<>();
+        for (OrderItemRequestDTO item : orderPrepareRequestDTO.getOrderItems()) {
+            int itemAmount = productPaidMap.get(item.getProductId());
+            double ratio = (double) itemAmount / totalOriginalAmount;
+            int paidAmount = (int) Math.round(finalAmount * ratio);
+
+            itemInsertDTOs.add(OrderItemInsertDTO.builder()
+                    .orderItemId(UUID.randomUUID().toString())
+                    .orderId(orderId)
+                    .productId(item.getProductId())
+                    .quantity(item.getQuantity())
+                    .createdAt(now)
+                    .paidAmount(paidAmount)
+                    .build());
+        }
         orderMapper.insertOrderItems(itemInsertDTOs);
+
 
         // 주문명 생성
         String orderName = generateOrderName(products);

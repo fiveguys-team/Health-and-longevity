@@ -51,7 +51,8 @@
         order_id,
         product_id,
         quantity,
-        created_at
+        created_at,
+        paid_amount
         )
         VALUES
         <foreach collection="list" item="item" separator=",">
@@ -60,7 +61,8 @@
             #{item.orderId},
             #{item.productId},
             #{item.quantity},
-            #{item.createdAt}
+            #{item.createdAt},
+            #{item.paidAmount}
             )
         </foreach>
     </insert>
