@@ -11,9 +11,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 /**
- * 채팅 서비스 구현 클래스
+ * 채팅 서비스 구현 클래스 (Redis 적용 버전)
  * 채팅방 생성, 메시지 저장 등 핵심 비즈니스 로직을 처리합니다.
+ *
+ * 변경사항:
+ * - 참여자 수 관리: RDB → Redis Set
+ * - 성능 향상: SQL UPDATE → Redis SADD/SREM
  */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,15 +26,11 @@ public class ChatServiceImpl implements ChatService {
 
     private final ChatRoomMapper chatRoomMapper;
 
-    /**
-     * 전달받은 liveId를 기반으로 채팅방을 생성하고,
-     * 생성된 채팅방의 ID(PK)를 반환합니다.
-     *
-     * @param liveId 라이브 방송 고유 ID
-     * @return 생성된 채팅방의 roomId (PK)
-     */
+    // 🆕 세션 추적 기반 Redis 참여자 관리 서비스
+    private final ChatParticipantRedisService participantRedisService;
+
     @Override
-    public ChatRoomReqDto  createGroupRoom(String liveId) {
+    public ChatRoomReqDto createGroupRoom(String liveId) {
         // 1. 채팅방 생성
         ChatRoom chatRoom = ChatRoom.builder()
                 .liveId(liveId)
@@ -53,97 +54,72 @@ public class ChatServiceImpl implements ChatService {
     }
 
     /**
-     * 채팅방 참여자 수 증가
-     *
-     * @param roomId 채팅방 ID
-     * @return 업데이트 성공 여부
+     * 🆕 세션 추적 기반 참여자 수 증가
      */
     @Override
-    @Transactional
-    public int increaseParticipantCount(Long roomId) {
+    public int increaseParticipantCount(Long roomId, Long userId, String sessionId) {
         try {
             if (!isRoomExists(roomId)) {
-                log.warn("채팅방을 찾을 수 없습니다. roomId={}", roomId);
+                log.warn("❌ 채팅방을 찾을 수 없습니다. roomId={}", roomId);
                 return -1;
             }
 
-            int result = chatRoomMapper.updateParticipantCount(roomId, 1);
-            if (result > 0) {
-                int count = getParticipantCount(roomId);
-                log.info("참여자 수 증가 성공. roomId: {}, 현재: {}", roomId, count);
-                return count;
-            }
+            // 세션 추적 방식으로 사용자 세션 추가
+            int count = participantRedisService.addUserSession(roomId, userId, sessionId);
 
-            return -1;
+            log.info("✅ 참여자 수 증가 완료 (세션 추적) - roomId: {}, userId: {}, sessionId: {}, 현재 사용자: {}명",
+                    roomId, userId, sessionId, count);
+
+            return count;
 
         } catch (Exception e) {
-            log.error("참여자 수 증가 중 오류 발생. roomId: {}", roomId, e);
+            log.error("❌ 참여자 수 증가 중 오류 발생 - roomId: {}, userId: {}, sessionId: {}",
+                    roomId, userId, sessionId, e);
             return -1;
         }
     }
 
-
     /**
-     * 채팅방 참여자 수 감소
-     *
-     * @param roomId 채팅방 ID
-     * @return 업데이트 성공 여부
+     * 🆕 세션 추적 기반 참여자 수 감소
      */
     @Override
-    @Transactional
-    public int decreaseParticipantCount(Long roomId) {
+    public int decreaseParticipantCount(Long roomId, Long userId, String sessionId) {
         try {
-            int currentCount = getParticipantCount(roomId);
-            if (currentCount <= 0) {
-                log.warn("참여자 수가 이미 0입니다. roomId: {}", roomId);
-                return currentCount;
-            }
+            // 세션 추적 방식으로 사용자 세션 제거
+            int count = participantRedisService.removeUserSession(roomId, userId, sessionId);
 
-            int result = chatRoomMapper.updateParticipantCount(roomId, -1);
-            if (result > 0) {
-                int newCount = getParticipantCount(roomId);
-                log.info("참여자 수 감소 성공. roomId: {}, 현재: {}", roomId, newCount);
-                return newCount;
-            }
+            log.info("✅ 참여자 수 감소 완료 (세션 추적) - roomId: {}, userId: {}, sessionId: {}, 현재 사용자: {}명",
+                    roomId, userId, sessionId, count);
 
-            return currentCount;
+            return count;
 
         } catch (Exception e) {
-            log.error("참여자 수 감소 중 오류 발생. roomId: {}", roomId, e);
+            log.error("❌ 참여자 수 감소 중 오류 발생 - roomId: {}, userId: {}, sessionId: {}",
+                    roomId, userId, sessionId, e);
             return -1;
         }
     }
 
     /**
-     * 채팅방 참여자 수 조회
-     *
-     * @param roomId 채팅방 ID
-     * @return 현재 참여자 수
+     * 채팅방 참여자 수 조회 (실제 사용자 수)
      */
     @Override
     public int getParticipantCount(Long roomId) {
         try {
-            // 1. Optional로 안전하게 조회
-            // → 채팅방이 없으면 0 반환
-            return chatRoomMapper.selectParticipantCount(roomId)
+            // Redis에서 실제 사용자 수 조회
+            return participantRedisService.getParticipantCount(roomId)
                     .orElse(0);
 
         } catch (Exception e) {
-            log.error("참여자 수 조회 중 오류 발생. roomId: {}", roomId, e);
+            log.error("❌ 참여자 수 조회 중 오류 발생 - roomId: {}", roomId, e);
             return 0;
         }
     }
 
-
-
     /**
      * 채팅방 존재 여부 확인 (내부 사용)
-     *
-     * @param roomId 채팅방 ID
-     * @return 존재 여부
      */
     private boolean isRoomExists(Long roomId) {
-        // 참여자 수 조회 결과가 있으면 채팅방 존재
         return chatRoomMapper.selectParticipantCount(roomId).isPresent();
     }
 }

@@ -4,6 +4,7 @@ import com.example.livecommerce_server.live.dto.LiveEndRequestDto;
 import com.example.livecommerce_server.live.vo.LiveInfoVO;
 import java.time.Instant;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
+@Slf4j
 @ActiveProfiles("test")
 
 class LiveMapperTest {
@@ -53,7 +55,13 @@ class LiveMapperTest {
 		String vendorName = liveMapper.selectVendorName("1");
 
 		Assertions.assertThat(vendorName).isEqualTo("정관장");
+	}
 
+	@Test
+	@DisplayName("userId -> vendorId 반환하는 메서드")
+	void selectVendorId() {
+		int vendorId = liveMapper.selectVendorId(1);
+		log.info(String.valueOf(vendorId));
 	}
 
 }

@@ -87,4 +87,14 @@ public class LiveServiceImpl implements LiveService {
 	public String findVendorName(String vendorId) {
 		return liveMapper.selectVendorName(vendorId);
 	}
+
+	/**
+	 * userId를 통해 vendorId를 반환하는 메서드
+	 * @param userId
+	 * @return vendorId
+	 */
+	@Override
+	public int findVendorId(int userId) {
+		return liveMapper.selectVendorId(userId);
+	}
 }

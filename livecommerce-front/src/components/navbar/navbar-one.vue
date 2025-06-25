@@ -37,7 +37,7 @@
                         <router-link to="/admin-dashboard">대시보드</router-link>
                       </li>
                       <li v-if="role === 'VENDOR'">
-                        <router-link to="/store-dashboard">대시보드</router-link>
+                        <router-link to="/vendor-dashboard">대시보드</router-link>
                       </li>
 
                       <li v-if="role === 'USER' || role === null">

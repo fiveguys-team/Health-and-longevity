@@ -142,55 +142,74 @@
 
     <!-- 라이브 스트리밍 화면 -->
     <div v-if="session" class="max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-[1fr,320px] gap-4">
-        <!-- 메인 콘텐츠 영역 -->
-        <div class="flex flex-col gap-3">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 메인 콘텐츠 영역 (2/3 차지) -->
+        <div class="lg:col-span-2 flex flex-col gap-4">
           <!-- 헤더 -->
-          <div class="bg-white rounded-lg shadow-sm px-4 py-3">
-            <h2 class="text-lg font-bold text-gray-800">{{ streamTitle }}</h2>
-            <div class="mt-1">
-              <span class="text-sm text-gray-600">👥 시청자 <span class="font-semibold">{{ viewerCount }}명</span></span>
+          <div class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-gray-800">{{ streamTitle }}</h2>
+            <div class="flex items-center gap-4">
+              <!-- 방송 상태 및 경과 시간 -->
+              <div class="flex items-center gap-2 bg-red-50 px-3 py-1 rounded-full">
+                <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                <span class="text-red-600 font-semibold text-sm">LIVE</span>
+                <span class="text-red-600 font-mono text-sm">{{ displayElapsed }}</span>
+              </div>
+              <!-- 방송 종료 버튼 -->
+              <button @click="endStream"
+                class="px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+                방송 종료
+              </button>
             </div>
           </div>
 
           <!-- 비디오 영역 -->
           <div class="relative bg-black rounded-lg overflow-hidden shadow-lg" style="aspect-ratio: 16/9;">
-            <div v-if="!publisher" class="absolute inset-0 flex items-center justify-center">
-              <span class="text-white">카메라 연결 중...</span>
+            <div v-if="!publisher" class="absolute inset-0 flex items-center justify-center bg-gray-900">
+              <div class="text-center">
+                <i class="fas fa-spinner fa-spin text-white text-4xl"></i>
+                <p class="mt-4 text-white">카메라를 연결하고 있습니다...</p>
+              </div>
             </div>
-            <user-video v-else :stream-manager="publisher" class="absolute inset-0" />
+            <user-video v-else :stream-manager="publisher" class="w-full h-full" />
           </div>
 
           <!-- 상품 정보 -->
-          <div class="bg-white rounded-lg shadow-sm p-4 max-h-48 overflow-y-auto">
-            <div class="space-y-3">
-              <div v-for="item in discountedProducts" :key="item.id" class="pb-3 border-b last:border-b-0 last:pb-0">
-                <h3 class="text-base font-semibold text-gray-800">{{ item.name }}</h3>
-                <p class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</p>
-                <p class="text-xs text-gray-500">(정가 {{ item.price.toLocaleString() }}원)</p>
-                <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
+          <div class="bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-lg font-bold text-gray-800 mb-3">판매 상품</h3>
+            <div class="space-y-4 max-h-48 overflow-y-auto">
+              <div v-for="item in discountedProducts" :key="item.id"
+                class="flex items-center gap-4 pb-4 border-b last:border-b-0 last:pb-0">
+                <!-- <img :src="item.thumbnail" alt="상품 이미지" class="w-20 h-20 rounded-md object-cover"> -->
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <h4 class="text-base font-semibold text-gray-800">{{ item.name }}</h4>
+                    <span v-if="item.discountRate > 0" class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                      {{ item.discountRate }}% 할인
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
+                  <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</span>
+                    <span class="text-sm text-gray-500 line-through">{{ item.price.toLocaleString() }}원</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- 방송 종료 버튼 -->
-          <button @click="endStream"
-            class="self-center px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
-            방송 종료
-          </button>
         </div>
 
-        <!-- 채팅 영역 -->
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden" style="height: 600px;">
+        <!-- 채팅 영역 (1/3 차지) -->
+        <div class="bg-white rounded-lg shadow-md flex flex-col">
           <!-- 채팅방 ID가 생성된 경우에만 ChatContainer를 렌더링 -->
           <ChatContainer v-if="chatRoomId" :room-id="chatRoomId" :initial-announcement="chatAnnouncement"
-            class="h-full" />
+            class="flex-1 min-h-0" />
 
           <!-- 채팅방 생성 중 또는 실패 시 표시 -->
-          <div v-else class="h-full flex items-center justify-center">
+          <div v-else class="h-full flex items-center justify-center p-4">
             <div class="text-center text-gray-500">
-              <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
-              <p class="text-sm">채팅방을 준비하고 있습니다...</p>
+              <i class="fas fa-spinner fa-spin text-2xl mb-3"></i>
+              <p>채팅방을 불러오는 중입니다...</p>
             </div>
           </div>
         </div>
@@ -230,9 +249,12 @@ const thumbnailPreview = ref(''); // 썸네일 미리보기
 const availableProducts = ref([]); // 임접업체 상품 목록
 const selectedProducts = ref([]); // 선택된 상품들
 const discountRate = ref(0); // 할인율
-const viewerCount = ref(0); // 시청자 수 상태 관리
 const startTime = ref('');
 const category = ref('');
+
+// 방송 경과 시간 관련
+const now = ref(Date.now());
+let timerId;
 
 // 1. 채팅방 정보를 저장할 ref 추가
 const liveId = ref(null);
@@ -246,12 +268,25 @@ const chatAnnouncement = ref('');    // 채팅방 공지사항
 const discountedProducts = computed(() =>
   selectedProducts.value.map(p => ({
     ...p,
-    discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100)
+    discountedPrice: Math.round(p.price * (100 - discountRate.value) / 100),
+    discountRate: discountRate.value
   }))
 )
 
 // 최대 상품 선택 초과 에러 상태
 const showMaxProductsError = ref(false);
+
+// 방송 경과 시간 계산
+const displayElapsed = computed(() => {
+  if (!startTime.value) return '00:00:00';
+  const startTimeMs = new Date(startTime.value).getTime();
+  const elapsed = Math.floor((now.value - startTimeMs) / 1000);
+  if (elapsed < 0) return '00:00:00';
+  const hours = Math.floor(elapsed / 3600).toString().padStart(2, '0');
+  const minutes = Math.floor((elapsed % 3600) / 60).toString().padStart(2, '0');
+  const seconds = (elapsed % 60).toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+});
 
 //입점업체 상품 가져오기
 const productList = async () => {
@@ -313,11 +348,12 @@ const enterBroadcast = async () => {
       clientData: {
         type: 'host',
         title: streamTitle.value,
-        thumbnail: thumbnailFile.value,
+        thumbnailFile: thumbnailFile.value,
         products: discountedProducts.value,
         liveId: liveId.value,              // 이제 접근 가능
         chatRoomId: chatRoomId.value,       // 이미 ref로 되어 있음
-        announcement: chatAnnouncement.value
+        announcement: chatAnnouncement.value,
+        startTime: startTime.value         // 방송 시작 시간 추가
       }
     });
 
@@ -335,6 +371,11 @@ const enterBroadcast = async () => {
 
     publisher.value = publisherInstance;
     await session.value.publish(publisher.value);
+
+    // 방송 시작 후 타이머 시작
+    timerId = setInterval(() => {
+      now.value = Date.now();
+    }, 1000);
 
   } catch (error) {
     console.error('방송 준비 중 오류 발생:', error);
@@ -386,8 +427,9 @@ const endStream = async () => {
     session.value = undefined;
     publisher.value = undefined;
     OV.value = undefined;
+    clearInterval(timerId); // 타이머 정리
     // 방송 종료 후 레포트 view로 이동
-    await router.push(`/vendor/live/reportList/${vendorId}`);
+    await router.push(`/vendor-dashboard/live/reportList/${vendorId}`);
   }
 };
 
@@ -431,7 +473,7 @@ const createSession = async () => {
   formData.append('title', streamTitle.value);
   formData.append('announcement', announcement.value);
   if (thumbnailFile.value) {
-    formData.append('thumbnail', thumbnailFile.value);
+    formData.append('thumbnailFile', thumbnailFile.value);
   }
   formData.append('products', JSON.stringify(selectedProducts.value));
   formData.append('discountRate', discountRate.value);

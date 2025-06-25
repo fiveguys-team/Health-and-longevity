@@ -21,20 +21,12 @@
     p.product_image AS productImage,
     v.name AS vendor,
 
-    -- ✅ live 할인 조건
-    CASE
-    WHEN l.status_cd = 'ON'
-    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
-    AND (l.end_cd IS NULL OR l.end_cd = '')
-    THEN COALESCE(lp.discountRate, 0)
-    ELSE 0
-    END AS discountRate,
+    -- ✅ live 할인 조건 (최신 라이브 할인만 적용)
+    COALESCE(MAX(lp.discountRate), 0) AS discountRate,
 
     CASE
-    WHEN l.status_cd = 'ON'
-      AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
-    AND (l.end_cd IS NULL OR l.end_cd = '')
-    THEN FLOOR(p.price * (100 - lp.discountRate) / 100)
+    WHEN MAX(lp.discountRate) IS NOT NULL AND MAX(lp.discountRate) > 0
+    THEN FLOOR(p.price * (100 - MAX(lp.discountRate)) / 100)
     ELSE p.price
     END AS discountedPrice
 
@@ -42,8 +34,12 @@
     JOIN vendor_m v ON p.vendor_id = v.vendor_id
     LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
     LEFT JOIN live_m l ON lp.live_id = l.live_id
+    AND l.status_cd = 'ON'
+    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+    AND (l.end_cd IS NULL OR l.end_cd = '')
     WHERE p.vendor_id = #{vendorId}
     AND p.status = 'APPROVED'
+    GROUP BY p.product_id, p.name, p.price, p.stock_count, p.product_image, v.name
   </select>
 
 
