@@ -46,10 +46,14 @@
                       <div v-if="!item.serviceCode" class="text-green-600 font-semibold">
                         <div>구매 완료</div>
                         <div class="mt-2 flex flex-col items-center space-y-1">
-                          <button class="text-xs text-black border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 w-fit">
+                          <button
+                              @click="openModal('교환')"
+                              class="text-xs text-black border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 w-fit">
                             교환요청
                           </button>
-                          <button class="text-xs text-black border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 w-fit">
+                          <button
+                              @click="openModal('환불')"
+                              class="text-xs text-black border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 w-fit">
                             환불요청
                           </button>
                         </div>
@@ -114,6 +118,13 @@
     <FooterThree />
     <ScrollToTop />
   </div>
+
+  <RequestModal
+      :visible="showModal"
+      :type="requestType"
+      @close="closeModal"
+      @submit="submitRequest"
+  />
 </template>
 
 <script setup>
@@ -125,6 +136,10 @@ import ScrollToTop from '@/components/scroll-to-top.vue'
 import { useAuthStore } from "@/modules/auth/stores/auth"
 import Aos from 'aos'
 import { getOrderHistoryByUserId } from "@/modules/order/services/orderApi"
+import RequestModal from "@/modules/order/components/RequestModal.vue";
+
+const showModal = ref(false)
+const requestType = ref('') // '환불' or '교환'
 
 const authStore = useAuthStore()
 const userId = authStore.id
@@ -157,6 +172,21 @@ function formatDate(yyyymmddhhmmss) {
   if (!yyyymmddhhmmss) return ''
   return `${yyyymmddhhmmss.slice(0, 4)}-${yyyymmddhhmmss.slice(4, 6)}-${yyyymmddhhmmss.slice(6, 8)} ` +
       `${yyyymmddhhmmss.slice(8, 10)}:${yyyymmddhhmmss.slice(10, 12)}:${yyyymmddhhmmss.slice(12, 14)}`
+}
+
+function openModal(type) {
+  requestType.value = type
+  showModal.value = true
+}
+
+function closeModal() {
+  showModal.value = false
+}
+
+function submitRequest({ reason, file, type }) {
+  console.log('📤 요청 제출됨', { reason, file, type })
+  // TODO: 실제 서버 전송 처리
+  showModal.value = false
 }
 
 onMounted(async () => {
