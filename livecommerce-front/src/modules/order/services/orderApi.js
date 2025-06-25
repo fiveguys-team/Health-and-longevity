@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, {isAxiosError} from 'axios';
+import axiosInstance from "@/api/axios";
 
 const API_BASE_URL = 'http://localhost:8080/api';
 /**
@@ -141,7 +142,7 @@ export async function requestService(payload) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function getVendorOrdersByUserId(userId) {
-    return axios.get(`${API_BASE_URL}/order/vendor-orders`, {
+    return axiosInstance.get(`api/order/vendor-orders`, {
         params: { userId },
         headers: {
             'Content-Type': 'application/json',
@@ -156,7 +157,7 @@ export async function getVendorOrdersByUserId(userId) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function updateServiceStatus(orderItemId, statusCode) {
-    return axios.put(`${API_BASE_URL}/service/status`, null, {
+    return isAxiosError.put(`api/service/status`, null, {
         params: {
             orderItemId,
             statusCode

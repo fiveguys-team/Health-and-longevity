@@ -106,13 +106,24 @@
 <!--        <button class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 text-sm" @click="closeModal">닫기</button>-->
         <div class="mt-6 flex justify-end gap-4">
           <button
-              class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+              class="px-4 py-2 rounded-lg text-white"
+              :class="{
+        'bg-green-600 hover:bg-green-700': selectedItem?.serviceStatus === 'REQ',
+        'bg-gray-400 cursor-not-allowed': selectedItem?.serviceStatus !== 'REQ'
+      }"
+              :disabled="selectedItem?.serviceStatus !== 'REQ'"
               @click="approveService"
           >
             승인하기
           </button>
+
           <button
-              class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
+              class="px-4 py-2 rounded-lg text-white"
+              :class="{
+        'bg-red-500 hover:bg-red-600': selectedItem?.serviceStatus === 'REQ',
+        'bg-gray-400 cursor-not-allowed': selectedItem?.serviceStatus !== 'REQ'
+      }"
+              :disabled="selectedItem?.serviceStatus !== 'REQ'"
               @click="rejectService"
           >
             반려하기
