@@ -127,7 +127,7 @@ export async function getOrderHistoryByUserId(userId) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function requestService(payload) {
-    return axios.post(`${API_BASE_URL}/service/request`, payload, {
+    return axiosInstance.post(`api/service/request`, payload, {
         headers: {
             'Content-Type': 'application/json',
         }
