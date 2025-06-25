@@ -1,9 +1,6 @@
 <script setup>
-import axios from "axios";
 import {onMounted, ref, computed} from "vue";
-
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+import axiosInstance from "@/api/axios";
 
 const revenue = ref({});
 
@@ -30,7 +27,7 @@ const changeIndicator = computed(() => {
 
 const currentMonthRevenue = async () => {
   try {
-    const response = await axios.get(`${APPLICATION_SERVER_URL}api/admin/revenues/month`);
+    const response = await axiosInstance.get(`/api/admin/revenues/month`);
     revenue.value = response.data;
   } catch (error) {
     console.error('이번 달 매출 로드 실패:', error);

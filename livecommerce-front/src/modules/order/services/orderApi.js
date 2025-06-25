@@ -1,7 +1,5 @@
-import axios, {isAxiosError} from 'axios';
-import axiosInstance from "@/api/axios";
+import axiosInstance from '@/api/axios';
 
-const API_BASE_URL = 'http://localhost:8080/api';
 /**
  * 주문 프리페어 API 호출
  * @param {Object} payload - 주문 요청 데이터
@@ -10,7 +8,7 @@ const API_BASE_URL = 'http://localhost:8080/api';
  */
 
 export async function prepareOrder(payload) {
-    return axios.post(`${API_BASE_URL}/order/prepare`, payload, {
+    return axiosInstance.post(`/api/order/prepare`, payload, {
         headers: {
             'Content-Type': 'application/json',
             // 'Authorization': `Bearer ${token}`
@@ -25,7 +23,7 @@ export async function prepareOrder(payload) {
  * @returns {Promise}
  */
 export async function getCartByUserId(userId) {
-    return axios.get(`${API_BASE_URL}/cart/${userId}`, {
+    return axiosInstance.get(`/api/cart/${userId}`, {
         headers: {
             'Content-Type': 'application/json',
             // 'Authorization': `Bearer ${token}`
@@ -39,7 +37,7 @@ export async function getCartByUserId(userId) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function getCartItems(cartId) {
-    return axios.get(`${API_BASE_URL}/cart/items/${cartId}`, {
+    return axiosInstance.get(`/api/cart/items/${cartId}`, {
         headers: {
             'Content-Type': 'application/json',
         }
@@ -55,7 +53,7 @@ export async function getCartItems(cartId) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function addCartItem(payload) {
-    return axios.post(`${API_BASE_URL}/cart/items`, payload, {
+    return axiosInstance.post(`/api/cart/items`, payload, {
         headers: {
             'Content-Type': 'application/json',
         }
@@ -70,7 +68,7 @@ export async function addCartItem(payload) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function updateCartItemQuantity(payload) {
-    return axios.put(`${API_BASE_URL}/cart/items`, payload, {
+    return axiosInstance.put(`/api/cart/items`, payload, {
         headers: {
             'Content-Type': 'application/json',
         }
@@ -83,7 +81,7 @@ export async function updateCartItemQuantity(payload) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function deleteCartItem(cartItemId) {
-    return axios.delete(`${API_BASE_URL}/cart/items/${cartItemId}`, {
+    return axiosInstance.delete(`/api/cart/items/${cartItemId}`, {
         headers: {
             'Content-Type': 'application/json',
         }
@@ -96,7 +94,7 @@ export async function deleteCartItem(cartItemId) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function deleteCartItems(cartItemIds) {
-    return axios.delete(`${API_BASE_URL}/cart/items`, {
+    return axiosInstance.delete(`/api/cart/items`, {
         headers: {
             'Content-Type': 'application/json',
         },
@@ -110,7 +108,7 @@ export async function deleteCartItems(cartItemIds) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function getOrderHistoryByUserId(userId) {
-    return axios.get(`${API_BASE_URL}/order/history`, {
+    return axiosInstance.get(`/api/order/history`, {
         params: { userId },
         headers: {
             'Content-Type': 'application/json',
@@ -130,38 +128,6 @@ export async function getOrderHistoryByUserId(userId) {
  */
 export async function requestService(payload) {
     return axios.post(`${API_BASE_URL}/service/request`, payload, {
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    });
-}
-
-/**
- * 입점업체 주문 내역 조회 API 호출
- * @param {number|string} userId - 입점업체의 사용자 ID
- * @returns {Promise} - Axios 응답 프로미스
- */
-export async function getVendorOrdersByUserId(userId) {
-    return axiosInstance.get(`api/order/vendor-orders`, {
-        params: { userId },
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    });
-}
-
-/**
- * 교환/환불 승인 또는 반려 처리 API 호출
- * @param {string} orderItemId - 주문 상세 항목 ID
- * @param {string} statusCode - 변경할 상태 코드 ('COMP' | 'RJCT')
- * @returns {Promise} - Axios 응답 프로미스
- */
-export async function updateServiceStatus(orderItemId, statusCode) {
-    return isAxiosError.put(`api/service/status`, null, {
-        params: {
-            orderItemId,
-            statusCode
-        },
         headers: {
             'Content-Type': 'application/json',
         }

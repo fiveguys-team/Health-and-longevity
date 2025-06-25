@@ -55,7 +55,7 @@
 
   <script setup>
   import { ref, onMounted } from 'vue'
-  import axios from '@/utils/axios'
+  import axiosInstance from '@/api/axios'
 
   const products = ref([])
   const currentStatus = ref('') // 전체 보기
@@ -92,11 +92,11 @@
   const fetchProducts = async () => {
     try {
       const url = currentStatus.value
-          ? `/admin/products?status=${currentStatus.value}`
-          : '/admin/products'
+          ? `/api/admin/products?status=${currentStatus.value}`
+          : '/api/admin/products'
 
       console.log("요청 URL:", url)
-      const res = await axios.get(url)
+      const res = await axiosInstance.get(url)
       console.log("응답 데이터:", res.data)
 
       products.value = res.data

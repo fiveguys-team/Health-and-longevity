@@ -70,7 +70,7 @@
         email: email.value,
         password: password.value
       }
-      await axiosInstance.post("/member/create", registerData)
+      await axiosInstance.post("/api/member/create", registerData)
       await router.push("/")
     }
 

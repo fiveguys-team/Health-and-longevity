@@ -61,7 +61,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from '@/utils/axios'
+import axiosInstance from '@/api/axios'
 
 const certNo = ref('')
 const productDetail = ref({
@@ -102,7 +102,7 @@ const resetProductDetail = () => ({
 
 const fetchProductDetail = async () => {
   try {
-    const res = await axios.get(`/product/cert/${certNo.value}`)
+    const res = await axiosInstance.get(`/api/product/cert/${certNo.value}`)
     const row = res.data
     if (!row || Object.keys(row).length === 0) {
       productDetail.value = resetProductDetail()
@@ -194,7 +194,7 @@ const submitRequest = async () => {
   formData.append('image', selectedImage.value)
 
   try {
-    await axios.post('/product/request', formData, {
+    await axiosInstance.post('/api/product/request', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

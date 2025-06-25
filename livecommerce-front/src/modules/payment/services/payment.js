@@ -1,8 +1,6 @@
 // payment.js
 
-import axios from 'axios'
-
-const API_BASE_URL = 'http://localhost:8080/api/payment';
+import axiosInstance from "@/api/axios";
 
 /**
  * 결제 승인 요청
@@ -13,7 +11,7 @@ const API_BASE_URL = 'http://localhost:8080/api/payment';
  */
 export async function confirmPayment({ paymentKey, orderId, amount }) {
     try {
-        const response = await axios.post(`${API_BASE_URL}/confirm`, {
+        const response = await axiosInstance.post(`/api/payment/confirm`, {
             paymentKey,
             orderId,
             amount
@@ -32,7 +30,7 @@ export async function confirmPayment({ paymentKey, orderId, amount }) {
  */
 export async function cancelPayment(orderId) {
     try {
-        const response = await axios.post(`${API_BASE_URL}/cancel`, {
+        const response = await axiosInstance.post(`/api/payment/cancel`, {
             orderId,
             status: 'CNCL'
         });

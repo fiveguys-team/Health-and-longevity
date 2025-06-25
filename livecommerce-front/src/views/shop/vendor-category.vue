@@ -81,7 +81,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from '@/utils/axios'
+import axiosInstance from '@/api/axios'
 import NavbarOne from '@/components/navbar/navbar-one.vue'
 import FooterOne from '@/components/footer/footer-one.vue'
 import ScrollToTop from '@/components/scroll-to-top.vue'
@@ -95,7 +95,7 @@ onMounted(() => {
 
 async function fetchVendors() {
   try {
-    const res = await axios.get('/product/company')
+    const res = await axiosInstance.get('/api/product/company')
     vendorList.value = res.data
   } catch (err) {
     console.error('❌ 업체 목록 불러오기 실패', err)

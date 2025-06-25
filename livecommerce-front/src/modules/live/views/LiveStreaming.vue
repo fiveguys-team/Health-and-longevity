@@ -70,18 +70,16 @@
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from "@/modules/auth/stores/auth";
-import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import { v4 as uuidv4 } from 'uuid';
+import axiosInstance from "@/api/axios";
 
 // 라우터 설정
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-  : 'http://localhost:8080/';
 
 // OpenVidu 관련 상태 관리
 const OV = ref(undefined);
@@ -125,7 +123,7 @@ const addViewerJoin = async () => {
   try {
     const sessionId = route.params.sessionId;
     const userId = getUserId();
-    await axios.post(`${APPLICATION_SERVER_URL}api/sessions/${sessionId}/users/${userId}/join`, {
+    await axiosInstance.post(`/api/sessions/${sessionId}/users/${userId}/join`, {
       isAnonymous: !auth.user?.id // 익명 사용자 여부 전달
     });
     console.log('시청자 입장 처리 완료');
@@ -139,7 +137,7 @@ const saveViewerLeave = async () => {
   try {
     const sessionId = route.params.sessionId;
     const userId = getUserId();
-    await axios.post(`${APPLICATION_SERVER_URL}api/sessions/${sessionId}/users/${userId}/leave`, {
+    await axiosInstance.post(`/api/sessions/${sessionId}/users/${userId}/leave`, {
       isAnonymous: !auth.user?.id
     });
     console.log('시청자 퇴장 처리 완료');
@@ -240,8 +238,8 @@ const handleParticipantEvicted = (event) => {
  */
 const getToken = async (sessionId) => {
   try {
-    const response = await axios.post(
-      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}/connections`,
+    const response = await axiosInstance.post(
+      `/api/sessions/${sessionId}/connections`,
       {},
       {
         headers: { 'Content-Type': 'application/json' },
@@ -265,7 +263,7 @@ const getToken = async (sessionId) => {
 const updateViewerCount = async () => {
   try {
     const sessionId = route.params.sessionId;
-    const response = await axios.get(`${APPLICATION_SERVER_URL}api/sessions/${sessionId}/viewers/count`);
+    const response = await axiosInstance.get(`/api/sessions/${sessionId}/viewers/count`);
     viewerCount.value = response.data.count;
   } catch (error) {
     console.error('시청자 수 업데이트 실패:', error);

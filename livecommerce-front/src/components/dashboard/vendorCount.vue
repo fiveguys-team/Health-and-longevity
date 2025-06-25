@@ -1,16 +1,13 @@
 <script setup>
 
-import axios from "axios";
 import {onMounted, ref} from "vue";
-
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+import axiosInstance from "@/api/axios";
 
 const vendors = ref('');
 
 const vendorCount = async () => {
   try {
-    const response = await axios.get(`${APPLICATION_SERVER_URL}api/admin/vendors/count`);
+    const response = await axiosInstance.get(`/api/admin/vendors/count`);
     vendors.value = response.data;
   } catch (error) {
     console.error('이번달 주문 로드 실패:', error);
