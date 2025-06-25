@@ -39,7 +39,11 @@
                   <div v-for="item in order.items" :key="item.orderItemId" class="flex items-center justify-between gap-5 py-4 border-b border-dashed border-gray-200">
                     <div class="flex items-center gap-4 w-[270px] sm:w-[310px] xl:w-[330px]">
                       <img :src="item.productImage" class="w-16 h-16 object-cover rounded border" />
-                      <div class="text-sm font-medium text-title dark:text-white">{{ item.productName }}</div>
+                      <div class="text-sm font-medium text-title dark:text-white">{{ item.productName }}
+                        <div class="mt-1 text-xs text-gray-500">
+                          결제금액: {{ item.paidAmount.toLocaleString() }}원
+                        </div>
+                      </div>
                     </div>
                     <div class="text-sm font-semibold w-[60px] text-center">{{ item.quantity }}개</div>
                     <div class="w-[100px] text-center">
@@ -74,6 +78,7 @@
                     <span>주문일시: {{ formatDate(order.orderDate) }}</span>
                     <span>총 결제금액: <span class="text-primary ml-2">{{ order.totalAmount.toLocaleString() }}원</span></span>
                   </div>
+
 
                 </li>
               </ul>

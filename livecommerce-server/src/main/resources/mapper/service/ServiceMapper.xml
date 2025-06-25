@@ -21,11 +21,17 @@
                      'REQ',
                      #{reason},
                      #{img},
-                     0,
+                     #{refundAmount},
                      #{updateAt},
                      #{createdAt}
                  )
     </insert>
+
+    <select id="selectPaidAmountByOrderItemId" resultType="int" parameterType="string">
+        SELECT paid_amount
+        FROM order_item_d
+        WHERE order_item_id = #{orderItemId}
+    </select>
 
 
 

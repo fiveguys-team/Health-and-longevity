@@ -83,11 +83,9 @@ POST http://localhost:8080/api/service/request
 Content-Type: application/json
 
 {
-  "orderItemId": "d74d9698-e648-41bc-95a5-bdbc89a7867a",
+  "orderItemId": "5aba3695-a129-42e1-b1f6-f1160d78c5b9",
   "userId": 7,
   "serviceCode": "REFD",
   "reason": "상품에 이상이 있어요",
-  "img": "https://your-ncp-bucket-url.com/path/to/image.jpg",
-  "refundAmount": 0,
-  "statusCode": "REQ"
+  "img": "https://your-ncp-bucket-url.com/path/to/image.jpg"
 }

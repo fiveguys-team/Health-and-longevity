@@ -11,4 +11,6 @@ public interface ServiceMapper {
      * @param requestDTO 요청 DTO
      */
     void insertServiceRequest(ServiceRequestDTO requestDTO);
+
+    int selectPaidAmountByOrderItemId(String orderItemId);
 }

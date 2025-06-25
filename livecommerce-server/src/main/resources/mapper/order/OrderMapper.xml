@@ -101,6 +101,7 @@
             oi.order_item_id,
             oi.product_id,
             oi.quantity,
+            oi.paid_amount,
 
             pr.name AS product_name,
             pr.product_image,
@@ -132,6 +133,7 @@
             <result property="productName" column="product_name"/>
             <result property="productImage" column="product_image"/>
             <result property="quantity" column="quantity"/>
+            <result property="paidAmount" column="paid_amount"/>
             <result property="serviceCode" column="service_code"/>
             <result property="serviceStatus" column="service_status"/>
         </collection>
