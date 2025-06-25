@@ -1,7 +1,8 @@
 // src/modules/chat/services/websocket.service.js
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
-import { useAuthStore } from "@/modules/auth/stores/auth"; // auth store import 추가
+import { useAuthStore } from "@/modules/auth/stores/auth";
+import {wsBaseURL} from "@/api/axios"; // auth store import 추가
 
 class WebSocketService {
   constructor() {
@@ -46,7 +47,7 @@ class WebSocketService {
       return;
     }
 
-    const socket = new SockJS("http://localhost:8080/connect");
+    const socket = new SockJS(`${wsBaseURL}/connect`);
     this.stompClient = Stomp.over(socket);
 
     // 인증 헤더 설정
