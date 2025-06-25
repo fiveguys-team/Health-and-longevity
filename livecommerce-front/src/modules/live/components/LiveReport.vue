@@ -104,10 +104,9 @@
 <script setup>
 import {ref, computed, onBeforeMount} from 'vue'
 import {useRoute} from "vue-router";
-import axios from "axios";
+import axiosInstance from "@/api/axios";
 
 const route = useRoute();
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/';
 const vendorId = route.params.vendorId;
 
 // 상태 관리
@@ -161,8 +160,8 @@ const getReportList = async () => {
   loading.value = true
   error.value = ''
   try {
-    const response = await axios.get(
-      `${APPLICATION_SERVER_URL}api/sessions/${vendorId}/report`,
+    const response = await axiosInstance.get(
+      `/api/sessions/${vendorId}/report`,
       {headers: {'Content-Type': 'application/json'}}
     )
     reports.value = response.data

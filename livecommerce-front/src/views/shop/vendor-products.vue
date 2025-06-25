@@ -114,7 +114,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from '@/utils/axios'
+import axiosInstance from '@/api/axios'
 
 import NavbarOne from '@/components/navbar/navbar-one.vue'
 import FooterOne from '@/components/footer/footer-one.vue'
@@ -132,7 +132,7 @@ onMounted(() => {
 
 async function fetchVendorProducts() {
   try {
-    const res = await axios.get(`/product/company/${vendorId}/products`)
+    const res = await axiosInstance.get(`/api/product/company/${vendorId}/products`)
     productList.value = res.data.map(product => ({
       ...product,
       reviewCount: product.reviewCount || 0,

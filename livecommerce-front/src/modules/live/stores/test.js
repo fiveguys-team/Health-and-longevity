@@ -39,10 +39,9 @@
  */
 
 import { defineStore } from 'pinia'
-import axios from 'axios'
 import { ref } from 'vue'
+import axiosInstance from "@/api/axios";
 
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/'
 
 export const useLiveStreamingStore = defineStore('liveStreaming', () => {
   // 현재 진행 중인 모든 라이브 방송 목록
@@ -63,7 +62,7 @@ export const useLiveStreamingStore = defineStore('liveStreaming', () => {
 
       // 실제 API 호출이 실패하면 임시 데이터 사용
       try {
-        const response = await axios.get(`${APPLICATION_SERVER_URL}api/streams`)
+        const response = await axiosInstance.get(`/api/streams`)
         activeStreams.value = response.data
         console.log('방송 목록 조회 성공:', activeStreams.value)
         return response.data
@@ -85,7 +84,7 @@ export const useLiveStreamingStore = defineStore('liveStreaming', () => {
   // const createStream = async (streamData) => {
   //   try {
   //     isLoading.value = true
-  //     const response = await axios.post(
+  //     const response = await axiosInstance.post(
   //       `${APPLICATION_SERVER_URL}api/streams`,
   //       streamData,
   //       {
@@ -116,7 +115,7 @@ export const useLiveStreamingStore = defineStore('liveStreaming', () => {
 
   //     // 실제 API 호출이 실패하면 임시 데이터 생성
   //     try {
-  //       const response = await axios.post(
+  //       const response = await axiosInstance.post(
   //         `${APPLICATION_SERVER_URL}api/streams/start`,
   //         streamData,
   //         {
@@ -165,7 +164,7 @@ export const useLiveStreamingStore = defineStore('liveStreaming', () => {
   //     console.log('스트림 종료 요청:', streamId)
 
   //     try {
-  //       await axios.post(
+  //       await axiosInstance.post(
   //         `${APPLICATION_SERVER_URL}api/streams/${streamId}/end`
   //       )
   //     } catch (apiError) {
@@ -197,7 +196,7 @@ export const useLiveStreamingStore = defineStore('liveStreaming', () => {
   //     console.log('방송 참여 요청:', streamId)
 
   //     try {
-  //       const response = await axios.post(
+  //       const response = await axiosInstance.post(
   //         `${APPLICATION_SERVER_URL}api/streams/${streamId}/join`
   //       )
   //       currentStream.value = response.data
@@ -228,7 +227,7 @@ export const useLiveStreamingStore = defineStore('liveStreaming', () => {
   //     console.log('방송 나가기 요청:', streamId)
 
   //     try {
-  //       await axios.post(
+  //       await axiosInstance.post(
   //         `${APPLICATION_SERVER_URL}api/streams/${streamId}/leave`
   //       )
   //     } catch (apiError) {
@@ -244,16 +243,12 @@ export const useLiveStreamingStore = defineStore('liveStreaming', () => {
   //   }
   // }
 
-  // 채팅 메시지 추가
-  const addChatMessage = (message) => {
-    // Implementation needed
-  }
 
   // 좋아요 증가
   const increaseLike = async (streamId) => {
     try {
-      await axios.post(
-          `${APPLICATION_SERVER_URL}api/streams/${streamId}/like`
+      await axiosInstance.post(
+          `api/streams/${streamId}/like`
       )
       // Implementation needed
     } catch (error) {
@@ -281,11 +276,6 @@ export const useLiveStreamingStore = defineStore('liveStreaming', () => {
     error,
     isLoading,
     fetchLiveStreams,
-    createStream,
-    startStream,
-    endStream,
-    joinStream,
-    leaveStream,
     addChatMessage,
     increaseLike,
     updateViewerCount,

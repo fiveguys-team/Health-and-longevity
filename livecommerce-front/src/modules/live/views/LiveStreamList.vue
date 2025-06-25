@@ -56,11 +56,10 @@
 <script setup>
 import {ref, onMounted, computed, watch, nextTick, onBeforeUnmount} from 'vue';
 import {useRouter} from 'vue-router';
-import axios from 'axios';
-import NavbarOne from "@/components/navbar/navbar-one.vue";
 
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+import NavbarOne from "@/components/navbar/navbar-one.vue";
+import axiosInstance from "@/api/axios";
+
 
 const router = useRouter();
 const searchQuery = ref('');
@@ -140,7 +139,7 @@ const loadMore = async () => {
 
 const fetchLiveStreams = async () => {
   try {
-    const response = await axios.get(`${APPLICATION_SERVER_URL}api/sessions`, {
+    const response = await axiosInstance.get(`/api/sessions`, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Accept': 'application/json; charset=utf-8'

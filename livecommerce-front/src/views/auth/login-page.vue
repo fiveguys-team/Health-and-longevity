@@ -80,7 +80,7 @@ const memberLogin = async () => {
       password: password.value
     };
 
-    await axiosInstance.post("/member/doLogin", loginData);
+    await axiosInstance.post("/api/member/doLogin", loginData);
 
     // 로그인 성공 후 사용자 정보 초기화 요청 (쿠키 기반)
     const authStore = useAuthStore()
