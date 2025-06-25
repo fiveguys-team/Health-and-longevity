@@ -64,6 +64,9 @@ dependencies {
 
 	//spring ai
 	implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+
+	//thumbnail 라이브러리 의존성 추가
+	implementation 'net.coobird:thumbnailator:0.4.14'
 }
 
 dependencyManagement {
