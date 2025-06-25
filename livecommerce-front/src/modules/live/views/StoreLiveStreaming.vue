@@ -225,12 +225,11 @@
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import { ref, onBeforeUnmount, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios';
+
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '@/modules/live/components/UserVideo.vue';
+import axiosInstance from "@/api/axios";
 
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-  : 'http://localhost:8080/';
 
 // OpenVidu 관련 상태
 const OV = ref(undefined);
@@ -291,8 +290,8 @@ const displayElapsed = computed(() => {
 //입점업체 상품 가져오기
 const productList = async () => {
   try {
-    const response = await axios.get(
-      `${APPLICATION_SERVER_URL}api/sessions/${vendorId}/productList`,
+    const response = await axiosInstance.get(
+      `/api/sessions/${vendorId}/productList`,
       { headers: { 'Content-Type': 'application/json' } }
     );
     availableProducts.value = response.data;
@@ -388,8 +387,8 @@ const enterBroadcast = async () => {
 const notifyServerStreamEnded = async (sessionId) => {
   // 종료 시간 알림
   try {
-    await axios.delete(
-      `${APPLICATION_SERVER_URL}api/sessions/${sessionId}`,
+    await axiosInstance.delete(
+      `/api/sessions/${sessionId}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -447,8 +446,8 @@ const getToken = async () => {
  */
 const createChatRoom = async (liveId) => {
   try {
-    const response = await axios.post(
-      `${APPLICATION_SERVER_URL}api/chat/room/auto-create`,
+    const response = await axiosInstance.post(
+      `/api/chat/room/auto-create`,
       { liveId },
       { headers: { 'Content-Type': 'application/json' } }
     );
@@ -482,8 +481,7 @@ const createSession = async () => {
   formData.append('category', category.value);
 
   // 1단계: 라이브 세션 생성
-  const response = await axios.post(
-    APPLICATION_SERVER_URL + 'api/sessions',
+  const response = await axiosInstance.post('api/sessions',
     formData,
     {
       headers: {
@@ -520,8 +518,8 @@ const createSession = async () => {
 // 세션ID를 통해 토큰 생성 API를 호출하면 
 // 백엔드에서 토큰을 생성하고 반환한다. 
 const createToken = async (sessionId) => {
-  const response = await axios.post(
-    APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+  const response = await axiosInstance.post(
+      '/api/sessions/' + sessionId + '/connections',
     {},
     { headers: { 'Content-Type': 'application/json' } }
   );

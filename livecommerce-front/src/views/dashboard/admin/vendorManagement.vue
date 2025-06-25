@@ -81,7 +81,7 @@ const vendors = ref([]);
 
 const fetchVendors = async () => {
   try {
-    const res = await axiosInstance.get('/admin/vendor-all');
+    const res = await axiosInstance.get('/api/admin/vendor-all');
     vendors.value = res.data;
   } catch (err) {
     console.error('Failed to load vendors:', err);
@@ -133,7 +133,7 @@ const updateVendorStatus = async (status) => {
       payload.address = parsedPermitInfo.value.주소;
     }
 
-    await axiosInstance.post('/admin/vendor-update', payload);
+    await axiosInstance.post('/api/admin/vendor-update', payload);
     modalVisible.value = false;
     fetchVendors();
   } catch (err) {

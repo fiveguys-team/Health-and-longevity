@@ -1,9 +1,7 @@
 <script setup>
-import axios from "axios";
-import {onMounted, ref} from "vue";
 
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+import {onMounted, ref} from "vue";
+import axiosInstance from "@/api/axios";
 
 const vendorData = ref([]);
 const loading = ref(true);
@@ -20,7 +18,7 @@ const dummyData = [
 const fetchVendorMaxViewers = async () => {
   try {
     loading.value = true;
-    const response = await axios.get(`${APPLICATION_SERVER_URL}api/admin/vendors/max-viewers`);
+    const response = await axiosInstance.get(`/api/admin/vendors/max-viewers`);
     
     // 데이터가 없거나 빈 배열인 경우 더미 데이터 사용
     if (!response.data || response.data.length === 0) {

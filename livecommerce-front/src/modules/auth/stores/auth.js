@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
         vendorId.value = null
 
         try {
-            await axiosInstance.post('/member/logout')
+            await axiosInstance.post('/api/member/logout')
         } catch (e) {
             console.warn('서버 로그아웃 실패:', e)
         }
@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const initFromServer = async () => {
         try {
-            const res = await axiosInstance.get('/member/info')
+            const res = await axiosInstance.get('api/member/info')
             const user = res.data
             role.value = user.role
             name.value = user.name

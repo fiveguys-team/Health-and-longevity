@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:8080', // 또는 import.meta.env.VITE_API_BASE_URL
+    // baseURL:
     withCredentials: true,            // 쿠키 포함해서 보내려면 이거 꼭 필요
 });
 

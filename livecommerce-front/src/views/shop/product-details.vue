@@ -145,7 +145,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+import axiosInstance from '@/api/axios'
 import NavbarOne from '@/components/navbar/navbar-one.vue'
 import IncDec from '@/components/inc-dec.vue'
 import DetailTab from '@/components/product/detail-tab.vue'
@@ -172,7 +172,7 @@ onMounted(async () => {
   const productId = route.params.id
 
   try {
-    const res = await axios.get(`http://localhost:8080/product/detail/${productId}`)
+    const res = await axiosInstance.get(`/api/product/detail/${productId}`)
 
     if (typeof res.data !== 'object' || !res.data.id) {
       console.warn('⚠️ 올바르지 않은 데이터 응답:', res.data)
@@ -274,7 +274,7 @@ async function buyNow() {
   try {
     console.log('[✅ 호출 시작] productId:', productId.value, 'quantity:', quantity.value)
 
-    const response = await axios.get('http://localhost:8080/api/order', {
+    const response = await axiosInstance.get('/api/order', {
       params: {
         productId: productId.value,
         quantity: quantity.value
