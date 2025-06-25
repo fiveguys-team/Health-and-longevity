@@ -51,7 +51,8 @@
         order_id,
         product_id,
         quantity,
-        created_at
+        created_at,
+        paid_amount
         )
         VALUES
         <foreach collection="list" item="item" separator=",">
@@ -60,7 +61,8 @@
             #{item.orderId},
             #{item.productId},
             #{item.quantity},
-            #{item.createdAt}
+            #{item.createdAt},
+            #{item.paidAmount}
             )
         </foreach>
     </insert>
@@ -99,6 +101,7 @@
             oi.order_item_id,
             oi.product_id,
             oi.quantity,
+            oi.paid_amount,
 
             pr.name AS product_name,
             pr.product_image,
@@ -130,9 +133,12 @@
             <result property="productName" column="product_name"/>
             <result property="productImage" column="product_image"/>
             <result property="quantity" column="quantity"/>
+            <result property="paidAmount" column="paid_amount"/>
             <result property="serviceCode" column="service_code"/>
             <result property="serviceStatus" column="service_status"/>
         </collection>
     </resultMap>
+
+
 
 </mapper>

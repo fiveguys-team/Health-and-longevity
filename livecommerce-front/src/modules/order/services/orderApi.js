@@ -116,3 +116,21 @@ export async function getOrderHistoryByUserId(userId) {
     });
 }
 
+/**
+ * 교환/환불 요청 API 호출
+ * @param {Object} payload - 요청 데이터
+ * @param {string} payload.orderItemId - 주문 상세 항목 ID
+ * @param {number} payload.userId - 사용자 ID
+ * @param {string} payload.serviceCode - 요청 종류 ('REFD' | 'EXCH')
+ * @param {string} payload.reason - 요청 사유
+ * @param {string} payload.img - 첨부 이미지 URL
+ * @returns {Promise} - Axios 응답 프로미스
+ */
+export async function requestService(payload) {
+    return axios.post(`${API_BASE_URL}/service/request`, payload, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
+

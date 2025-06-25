@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.livecommerce_server.service.mapper.ServiceMapper">
+    <insert id="insertServiceRequest" parameterType="com.example.livecommerce_server.service.dto.ServiceRequestDTO">
+        INSERT INTO service_m (
+            service_id,
+            order_item_id,
+            service_code,
+            status_code,
+            reason,
+            img,
+            refund_amount,
+            update_at,
+            created_at
+        ) VALUES (
+                     #{serviceId},
+                     #{orderItemId},
+                     #{serviceCode},
+                     'REQ',
+                     #{reason},
+                     #{img},
+                     #{refundAmount},
+                     #{updateAt},
+                     #{createdAt}
+                 )
+    </insert>
+
+    <select id="selectPaidAmountByOrderItemId" resultType="int" parameterType="string">
+        SELECT paid_amount
+        FROM order_item_d
+        WHERE order_item_id = #{orderItemId}
+    </select>
+
+
+
+
+</mapper>
