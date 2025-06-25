@@ -12,9 +12,11 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         if (error.response?.status === 401) {
             console.warn('토큰 만료 or 인증 실패. 로그아웃 처리 예정');
-
             // TODO: refresh token 처리 또는 자동 로그아웃 로직
             // 예시: router.push('/login') or store.logout()
+            const { useAuthStore } = await import('@/modules/auth/stores/auth');
+            const authStore = useAuthStore();
+            authStore.logout();
 
             // 예시용 로그 출력만:
             console.error('요청 실패:', error.response);

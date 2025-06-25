@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.livecommerce_server.vendor.mapper.AdminVendorManagementMapper">
     <select id="readAllVendor" resultType="com.example.livecommerce_server.vendor.dto.VendorInfoDto">
-        select u.name, u.email, v.user_id, v.business_number, v.permit_number, v.status
+        select u.name, u.email, v.user_id, v.business_number, v.permit_number, v.status, v.b_img, v.p_img
         from VENDOR_M v join USER_M u
         where v.user_id = u.user_id;
     </select>

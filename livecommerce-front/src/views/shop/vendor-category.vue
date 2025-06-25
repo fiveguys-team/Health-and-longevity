@@ -47,7 +47,7 @@
           >
             <router-link :to="`/vendor/${vendor.vendorId}/products`">
               <img
-                  src="/no-image.png"
+                  :src="vendor.vendorImg"
                   alt="업체 이미지"
                   class="w-full h-40 object-cover rounded mb-4"
               />

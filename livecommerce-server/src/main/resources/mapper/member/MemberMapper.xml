@@ -21,7 +21,8 @@
     </update>
 
     <insert id="createVendor" parameterType="com.example.livecommerce_server.member.dto.VendorRegistrationDto">
-        insert into VENDOR_M (user_id, business_number, permit_number) values (#{userId}, #{businessNumber}, #{permitNumber})
+        insert into VENDOR_M (user_id, name, address, business_number, permit_number, vendor_img, b_img, p_img)
+        values (#{userId}, #{name}, #{address}, #{businessNumber}, #{permitNumber}, #{vendorImg}, #{bImg}, #{pImg})
     </insert>
 
     <update id="updateUserRole" parameterType="map">

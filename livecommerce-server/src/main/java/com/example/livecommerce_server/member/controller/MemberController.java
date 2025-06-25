@@ -23,12 +23,10 @@ import java.util.Optional;
 public class MemberController {
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final VendorService vendorService;
 
-    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider, VendorService vendorService) {
+    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
         this.memberService = memberService;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.vendorService = vendorService;
     }
 
     @PostMapping("/create")
@@ -92,6 +90,7 @@ public class MemberController {
 
     @PostMapping("/vendor-registration")
     public ResponseEntity<?> createVendor(@RequestBody VendorRegistrationDto vendorRegistrationDto) {
+        System.out.println(vendorRegistrationDto.toString());
         memberService.createVendor(vendorRegistrationDto);
         return ResponseEntity.ok().build();
     }

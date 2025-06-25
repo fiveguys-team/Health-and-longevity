@@ -69,6 +69,6 @@ public class KakaoOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
         jwtCookie.setMaxAge(60 * 60);
         response.addCookie(jwtCookie);
 
-        response.sendRedirect("http://localhost:3000/oauth-success");
+        response.sendRedirect("http://localhost:3000");
     }
 }

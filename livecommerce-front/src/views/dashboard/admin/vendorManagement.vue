@@ -36,7 +36,7 @@
 
   <!-- 상세 정보 모달 -->
   <div v-if="modalVisible" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-    <div class="bg-white dark:bg-dark-secondary p-8 rounded-lg max-w-2xl w-full shadow-xl">
+    <div class="bg-white dark:bg-dark-secondary p-8 rounded-lg shadow-xl w-full max-w-[600px] max-h-[80vh] overflow-y-auto">
       <h3 class="text-xl font-bold mb-4">입점업체 상세정보</h3>
       <p><strong>이름:</strong> {{ selectedVendor?.name }}</p>
       <p><strong>이메일:</strong> {{ selectedVendor?.email }}</p>
@@ -60,6 +60,9 @@
         </div>
         <div v-else class="text-sm text-gray-500">정보 없음</div>
       </div>
+
+      <img :src="selectedVendor?.bImg" alt="vendor image" class="w-full h-auto">
+      <img :src="selectedVendor?.pImg" alt="vendor image" class="w-full h-auto">
 
       <div class="mt-6 text-right space-x-2">
         <template v-if="selectedVendor?.status !== 'APPROVED' && selectedVendor?.status !== 'REJECTED'">

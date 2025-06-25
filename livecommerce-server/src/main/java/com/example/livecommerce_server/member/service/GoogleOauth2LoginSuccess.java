@@ -63,6 +63,6 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         response.addCookie(jwtCookie);
 
         // 클라이언트 redirect 방식으로 token 전달
-        response.sendRedirect("http://localhost:3000/oauth-success");
+        response.sendRedirect("http://localhost:3000");
     }
 }

@@ -9,4 +9,5 @@ import lombok.Setter;
 public class VendorDTO {
     private Long vendorId;
     private String name;
+    private String vendorImg;
 }
