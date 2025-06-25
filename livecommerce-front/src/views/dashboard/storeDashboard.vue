@@ -44,6 +44,15 @@
               <span class="mx-3">상품 등록 현황</span>
             </router-link>
           </li>
+          <li>
+            <router-link
+                to="/vendor-dashboard/order/history"
+                class="flex items-center px-6 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-light"
+                :class="{ 'bg-gray-100 dark:bg-dark-light border-l-4 border-indigo-500': $route.path === '/vendor-dashboard/order/history' }"
+            >
+              <span class="mx-3">주문내역</span>
+            </router-link>
+          </li>
         </ul>
       </nav>
     </div>

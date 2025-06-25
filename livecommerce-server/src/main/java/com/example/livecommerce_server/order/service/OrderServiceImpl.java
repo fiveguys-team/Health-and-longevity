@@ -180,6 +180,11 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.findOrderHistoryByUserId(userId);
     }
 
+    @Override
+    public List<VendorOrderHistoryDTO> findOrderHistoryByVendorUserId(Integer userId) {
+        return orderMapper.selectOrderHistoryByVendorUserId(userId);
+    }
+
 
     private String nowCompactString() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));

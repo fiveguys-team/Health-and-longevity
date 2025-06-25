@@ -59,7 +59,6 @@ import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue"
 import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue"
 import CartView from "@/modules/order/views/CartView.vue"
 import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
-import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
 import test from "@/modules/live/views/testView.vue";
 import OAuthSuccess from "@/modules/auth/views/OAuthSuccess.vue";
@@ -195,7 +194,6 @@ const routes = [
   },
   {path: '/order-confirmation',component: OrderConfirmationView},
   {path: '/order-history',component: OrderHistoryView},
-  {path: '/partner/order-history',component: PartnerOrderHistoryView},
   {path: '/partner/return-request',component: PartnerReturnRequestView},
   {path: '/cart',component: CartView},
   {path: '/cart-checkout',component: CheckoutCartView},
@@ -261,6 +259,11 @@ const routes = [
         path: "product/detail/:id",
         name: "VendorProductDetail",
         component: () => import("@/modules/product/views/ProductStatus.vue"),
+      },
+      {
+        path: "order/history", // ✅ 이 줄 추가
+        name: "VendorOrderHistory",
+        component: () => import("@/modules/order/views/PartnerOrderHistoryView.vue"),
       }
     ],
   },

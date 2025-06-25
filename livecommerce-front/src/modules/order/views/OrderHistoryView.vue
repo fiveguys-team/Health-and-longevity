@@ -127,7 +127,8 @@ function formatStatus(serviceCode, serviceStatus) {
 
   const statusLabelMap = {
     'REQ': '요청',
-    'COMP': '완료'
+    'COMP': '완료',
+    'RJCT': '반려'   // 🔥 반려 추가
   }
 
   const label = codeLabelMap[serviceCode] || '요청'
@@ -135,6 +136,7 @@ function formatStatus(serviceCode, serviceStatus) {
 
   return `${label} ${status}`
 }
+
 
 function formatDate(yyyymmddhhmmss) {
   if (!yyyymmddhhmmss) return ''

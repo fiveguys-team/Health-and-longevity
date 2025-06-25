@@ -89,3 +89,7 @@ Content-Type: application/json
   "reason": "상품에 이상이 있어요",
   "img": "https://your-ncp-bucket-url.com/path/to/image.jpg"
 }
+
+### 입점업체 주문내역 조회 테스트
+GET http://localhost:8080/api/order/vendor-orders?userId=3
+Accept: application/json

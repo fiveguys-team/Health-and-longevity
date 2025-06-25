@@ -135,3 +135,35 @@ export async function requestService(payload) {
     });
 }
 
+/**
+ * 입점업체 주문 내역 조회 API 호출
+ * @param {number|string} userId - 입점업체의 사용자 ID
+ * @returns {Promise} - Axios 응답 프로미스
+ */
+export async function getVendorOrdersByUserId(userId) {
+    return axios.get(`${API_BASE_URL}/order/vendor-orders`, {
+        params: { userId },
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
+
+/**
+ * 교환/환불 승인 또는 반려 처리 API 호출
+ * @param {string} orderItemId - 주문 상세 항목 ID
+ * @param {string} statusCode - 변경할 상태 코드 ('COMP' | 'RJCT')
+ * @returns {Promise} - Axios 응답 프로미스
+ */
+export async function updateServiceStatus(orderItemId, statusCode) {
+    return axios.put(`${API_BASE_URL}/service/status`, null, {
+        params: {
+            orderItemId,
+            statusCode
+        },
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
+

@@ -4,7 +4,7 @@
 
 <mapper namespace="com.example.livecommerce_server.service.mapper.ServiceMapper">
     <insert id="insertServiceRequest" parameterType="com.example.livecommerce_server.service.dto.ServiceRequestDTO">
-        INSERT INTO service_m (
+        INSERT INTO SERVICE_M (
             service_id,
             order_item_id,
             service_code,
@@ -33,7 +33,10 @@
         WHERE order_item_id = #{orderItemId}
     </select>
 
-
-
+    <update id="updateServiceStatus" parameterType="map">
+        UPDATE service_m
+        SET status_code = #{statusCode}
+        WHERE order_item_id = #{orderItemId}
+    </update>
 
 </mapper>
