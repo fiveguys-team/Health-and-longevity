@@ -15,7 +15,7 @@ public class OrderHistoryItemDTO {
     private String productName;
     private String productImage;
     private int quantity;
-
+    private int paidAmount;
     private String serviceCode;      // 'REFD' or 'EXCH'
     private String serviceStatus;    // 'REQ', 'DONE', 등
 }

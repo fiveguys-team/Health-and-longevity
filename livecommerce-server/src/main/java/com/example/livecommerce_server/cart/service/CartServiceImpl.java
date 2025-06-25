@@ -17,19 +17,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
     private final CartMapper cartMapper;
-    @Override
-    public CartDTO findCartByUserId(CartDTO cartDTO) {
-        return cartMapper.selectCartByUserId(cartDTO);
-    }
-
-    @Override
-    public void addCart(CartDTO cartDTO) {
-        if (cartDTO.getCartId() == null || cartDTO.getCartId().isEmpty()) {
-            cartDTO.setCartId(UUID.randomUUID().toString());
-            cartDTO.setCreatedAt(nowCompactString());
-        }
-        cartMapper.insertCart(cartDTO);
-    }
 
     @Override
     public void addCartItem(CartItemDTO cartItemDTO) {
