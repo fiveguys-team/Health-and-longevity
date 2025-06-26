@@ -1,5 +1,6 @@
 import axios from 'axios';
 // 서버 URL 설정 (배포 시 이 부분만 변경하면 됨)
+// const SERVER_BASE_URL = 'https://healthy-and-longevity.shop/';
 const SERVER_BASE_URL = 'http://localhost:8080';
 const axiosInstance = axios.create({
   baseURL: SERVER_BASE_URL, // HTTP API 요청용

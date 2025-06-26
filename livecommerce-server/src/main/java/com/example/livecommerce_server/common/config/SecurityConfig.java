@@ -67,7 +67,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:3000",           // 로컬 개발용
+                "http://healthy-and-longevity.shop", // 운영용
+                "https://healthy-and-longevity.shop" // SSL 적용 후
+        ));
         corsConfiguration.setAllowedMethods(Arrays.asList("*")); // 모든 http 메서드 허용
         corsConfiguration.setAllowedHeaders(Arrays.asList("*")); // 모든 header 값 허용
         corsConfiguration.setAllowCredentials(true); // 자격증명허용

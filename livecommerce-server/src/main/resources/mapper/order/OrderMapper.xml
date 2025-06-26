@@ -68,15 +68,15 @@
     </insert>
 
     <update id="updateOrderStatusByOrderId" parameterType="com.example.livecommerce_server.order.dto.OrderStatusUpdateDTO">
-        UPDATE orders_m
+        UPDATE ORDERS_M
         SET order_status_code = #{status}
         WHERE order_id = #{orderId}
     </update>
 
     <update id="updateStockCountByOrderId" parameterType="string">
-        UPDATE product p
-            JOIN order_item_d oid ON p.product_id = oid.product_id
-            JOIN orders_m o ON o.order_id = oid.order_id
+        UPDATE PRODUCT p
+            JOIN ORDER_ITEM_D oid ON p.product_id = oid.product_id
+            JOIN ORDERS_M o ON o.order_id = oid.order_id
             SET p.stock_count = p.stock_count - oid.quantity
         WHERE o.order_id = #{orderId}
           AND o.order_status_code = 'DONE'
@@ -85,8 +85,8 @@
 
     <select id="selectDiscountRateByProductIdIfLiveOn" parameterType="string" resultType="int">
         SELECT lp.discountRate
-        FROM live_product_j lp
-                 JOIN live_m lm ON lp.live_id = lm.live_id
+        FROM LIVE_PRODUCT_J lp
+                 JOIN LIVE_M lm ON lp.live_id = lm.live_id
         WHERE lp.product_id = #{productId}
           AND lm.status_cd = 'ON'
     </select>
@@ -109,11 +109,11 @@
             s.service_code,
             s.status_code AS service_status
 
-        FROM orders_m o
-                 JOIN payment_d p ON o.payments_id = p.payments_id
-                 JOIN order_item_d oi ON o.order_id = oi.order_id
-                 JOIN product pr ON oi.product_id = pr.product_id
-                 LEFT JOIN service_m s ON oi.order_item_id = s.order_item_id
+        FROM ORDERS_M o
+                 JOIN PAYMENT_D p ON o.payments_id = p.payments_id
+                 JOIN ORDER_ITEM_D oi ON o.order_id = oi.order_id
+                 JOIN PRODUCT pr ON oi.product_id = pr.product_id
+                 LEFT JOIN SERVICE_M s ON oi.order_item_id = s.order_item_id
 
         WHERE o.user_id = #{userId}
           AND o.order_status_code = 'DONE'
