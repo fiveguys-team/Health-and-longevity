@@ -57,9 +57,9 @@ spring:
             user-name-attribute: id
 
 jwt:
-  # 32 글자 인코딩 된 문자열 : oauthserversecretaccesstokeoauthserversecretaccesstokenoauthserversecretaccesstoken
-  secret: b2F1dGhzZXJ2ZXJzZWNyZXRhY2Nlc3N0b2tlb2F1dGhzZXJ2ZXJzZWNyZXRhY2Nlc3N0b2tlbm9hdXRoc2VydmVyc2VjcmV0YWNjZXNzdG9rZW4=
-  expiration: 3000 # 분 단위
+  secret: ${JWT_SECRET} # JWT 비밀 키
+  expiration: 5 # 분 단위
+  refresh-expiration: 10080 # 분 단위
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml

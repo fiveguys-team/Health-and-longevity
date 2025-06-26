@@ -8,8 +8,8 @@
         values (#{email}, #{password}, #{name}, #{interest}, #{socialId}, #{socialType}, #{emailVerified})
     </insert>
 
-    <select id="findBySocialId" resultType="com.example.livecommerce_server.member.domain.Member">
-        select * from USER_M where social_id = #{socialId}
+    <select id="findById" resultType="com.example.livecommerce_server.member.domain.Member">
+        select * from USER_M where user_id = #{userId}
     </select>
 
     <select id="findByEmail" resultType="com.example.livecommerce_server.member.domain.Member">

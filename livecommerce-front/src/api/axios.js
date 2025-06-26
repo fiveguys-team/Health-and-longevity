@@ -1,25 +1,56 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080', // 또는 import.meta.env.VITE_API_BASE_URL
-    withCredentials: true,            // 쿠키 포함해서 보내려면 이거 꼭 필요
+    baseURL: 'http://localhost:8080',
+    withCredentials: true,
 });
 
+// 리프레시 요청을 위한 별도의 인스턴스 (인터셉터 없음)
+const axiosRefreshInstance = axios.create({
+    baseURL: 'http://localhost:8080',
+    withCredentials: true,
+});
 
-// 응답 에러 처리 (401 등)
+let isRefreshing = false;
+let lastRefreshAttempt = 0;
+const REFRESH_COOLDOWN = 5000;
+
 axiosInstance.interceptors.response.use(
     response => response,
     async (error) => {
-        if (error.response?.status === 401) {
-            console.warn('토큰 만료 or 인증 실패. 로그아웃 처리 예정');
-            // TODO: refresh token 처리 또는 자동 로그아웃 로직
-            // 예시: router.push('/login') or store.logout()
-            const { useAuthStore } = await import('@/modules/auth/stores/auth');
-            const authStore = useAuthStore();
-            authStore.logout();
+        const originalRequest = error.config;
+        const currentTime = Date.now();
 
-            // 예시용 로그 출력만:
-            console.error('요청 실패:', error.response);
+        if (error.response?.status === 401 && !isRefreshing &&
+            !originalRequest._retry &&
+            originalRequest.url !== '/member/token/refresh' &&
+            currentTime - lastRefreshAttempt > REFRESH_COOLDOWN) {
+
+            originalRequest._retry = true;
+            isRefreshing = true;
+            lastRefreshAttempt = currentTime;
+
+            try {
+                console.log('토큰 갱신 시도');
+                // 중요: 인터셉터가 없는 별도의 인스턴스 사용
+                const refreshResponse = await axiosRefreshInstance.post('/member/token/refresh', {});
+                console.log('토큰 갱신 응답:', refreshResponse.data);
+
+                isRefreshing = false;
+                return axiosInstance(originalRequest);
+            } catch (refreshError) {
+                console.error('토큰 갱신 실패:', refreshError.response?.status);
+                isRefreshing = false;
+
+                // 로그아웃 처리
+                try {
+                    const { useAuthStore } = await import('@/modules/auth/stores/auth');
+                    const authStore = useAuthStore();
+                    authStore.logout();
+                } catch (e) {
+                    console.error('로그아웃 처리 실패:', e);
+                }
+            }
         }
         return Promise.reject(error);
     }

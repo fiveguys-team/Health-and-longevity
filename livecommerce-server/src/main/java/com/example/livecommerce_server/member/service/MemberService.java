@@ -1,15 +1,12 @@
 package com.example.livecommerce_server.member.service;
 
-import com.example.livecommerce_server.common.config.CustomUserDetails;
 import com.example.livecommerce_server.member.domain.Member;
-import com.example.livecommerce_server.member.domain.Role;
 import com.example.livecommerce_server.member.dto.MemberCreateDto;
 import com.example.livecommerce_server.member.dto.MemberLoginDto;
 import com.example.livecommerce_server.member.dto.VendorRegistrationDto;
 import com.example.livecommerce_server.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +14,10 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
-        this.memberRepository = memberRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public Member create(MemberCreateDto memberCreateDto) {
         String rawPassword = memberCreateDto.getPassword();
@@ -58,6 +51,11 @@ public class MemberService {
         } else {
             return member;
         }
+    }
+
+    public Member findById(String userId) {
+        return memberRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
     }
 
     public void createVendor(VendorRegistrationDto vendorRegistrationDto) {

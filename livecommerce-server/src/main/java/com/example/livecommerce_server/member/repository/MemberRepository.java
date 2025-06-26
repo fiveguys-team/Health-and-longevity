@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface MemberRepository {
     void create(Member member);
     Optional<Member> findByEmail(@Param("email") String email);
-    Optional<Member> findBySocialId(@Param("socialId") String socialId);
+    Optional<Member> findById(@Param("userId") String userId);
     void update(Member member);
     void createVendor(VendorRegistrationDto vendorRegistrationDto);
     void updateUserRole(@Param("userId") String userId, @Param("role") Role role);

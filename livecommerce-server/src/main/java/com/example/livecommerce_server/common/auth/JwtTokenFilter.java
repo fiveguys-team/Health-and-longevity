@@ -72,6 +72,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
+        String path = servletRequest.getRequestURI();
+        if (path.equals("/member/token/refresh")) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
         String token = null;
 
         if (httpRequest.getCookies() != null) {
@@ -112,9 +118,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
             filterChain.doFilter(servletRequest, servletResponse);
-
         } catch (Exception e) {
             e.printStackTrace();
             httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());

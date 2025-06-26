@@ -4,11 +4,12 @@ import com.example.livecommerce_server.common.auth.JwtTokenProvider;
 import com.example.livecommerce_server.member.domain.Member;
 import com.example.livecommerce_server.member.dto.*;
 import com.example.livecommerce_server.member.service.MemberService;
-import com.example.livecommerce_server.product.service.VendorService;
+import com.example.livecommerce_server.member.service.RefreshTokenService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +21,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/member")
+@RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
-
-    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
-        this.memberService = memberService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/create")
     public ResponseEntity<?> memberCreate(@RequestBody MemberCreateDto memberCreateDto) {
@@ -43,28 +41,130 @@ public class MemberController {
         // 일치할 경우 jwt accesstoken 생성
         String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(), member.getName(), member.getUserId().toString());
 
+        // Refresh Token 생성 및 Redis에 저장
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getUserId().toString());
+        refreshTokenService.saveRefreshToken(member.getUserId().toString(), refreshToken);
+
         Cookie tokenCookie = new Cookie("token", jwtToken);
         tokenCookie.setHttpOnly(true);
 //        tokenCookie.setSecure(true);
         tokenCookie.setPath("/");
         tokenCookie.setMaxAge(60 * 60);
 
+        // Refresh token 쿠키
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7);
+
         response.addCookie(tokenCookie);
+        response.addCookie(refreshTokenCookie);
 
         return ResponseEntity.ok(Map.of("success", true));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         Cookie tokenCookie = new Cookie("token", null);
         tokenCookie.setPath("/");
         tokenCookie.setHttpOnly(true);
         tokenCookie.setMaxAge(0); // 즉시 만료
 
+        // Refresh token 쿠키도 만료 처리
+        Cookie refreshTokenCookie = new Cookie("refresh_token", null);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge(0); // 즉시 만료
+
         // 다른 쿠키들도 필요하면 여기에 추가
         response.addCookie(tokenCookie);
+        response.addCookie(refreshTokenCookie);
+
+        // 현재 사용자 ID 가져오기
+        String token = getTokenFromCookie(request, "token");
+        if (token != null) {
+            try {
+                String userId = jwtTokenProvider.getUserIdFromToken(token);
+                // Redis에서 Refresh Token 삭제
+                refreshTokenService.deleteRefreshToken(userId);
+            } catch (Exception e) {
+                // 토큰이 이미 만료되었거나 유효하지 않은 경우 처리
+            }
+        }
 
         return ResponseEntity.ok().body("로그아웃 완료");
+    }
+
+    @PostMapping("/token/refresh")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        // Refresh Token 쿠키에서 추출
+        String refreshToken = getTokenFromCookie(request, "refresh_token");
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "success", false,
+                "message", "리프레시 토큰이 없습니다."
+            ));
+        }
+
+        try {
+            // Refresh Token 검증
+            if (!jwtTokenProvider.validateToken(refreshToken)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "success", false,
+                    "message", "리프레시 토큰이 만료되었습니다."
+                ));
+            }
+
+            // 사용자 ID 추출
+            String userId = jwtTokenProvider.getUserIdFromToken(refreshToken);
+
+            // Redis에 저장된 토큰과 비교
+            if (!refreshTokenService.validateRefreshToken(userId, refreshToken)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "success", false,
+                    "message", "유효하지 않은 리프레시 토큰입니다."
+                ));
+            }
+
+            // 사용자 정보 조회
+            Member member = memberService.findById(userId);
+
+            // 새 Access Token 발급
+            String newAccessToken = jwtTokenProvider.createToken(
+                    member.getEmail(),
+                    member.getRole().toString(),
+                    member.getName(),
+                    userId
+            );
+
+            // Access Token 쿠키 새로 설정
+            Cookie accessTokenCookie = new Cookie("token", newAccessToken);
+            accessTokenCookie.setHttpOnly(true);
+            accessTokenCookie.setPath("/");
+            accessTokenCookie.setMaxAge(60 * 60);
+            response.addCookie(accessTokenCookie);
+
+            // 응답에 새 토큰 정보 포함
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "tokenRefreshed", true,
+                "expiresIn", 3600
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "success", false,
+                "message", "토큰 갱신에 실패했습니다: " + e.getMessage()
+            ));
+        }
+    }
+
+    // 쿠키에서 토큰 추출 유틸리티 메소드
+    private String getTokenFromCookie(HttpServletRequest request, String cookieName) {
+        return Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
+                .filter(c -> c.getName().equals(cookieName))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
     }
 
     @GetMapping("/info")

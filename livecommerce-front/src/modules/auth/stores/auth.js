@@ -51,6 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const initFromServer = async () => {
         try {
+            // 기존 사용자 정보 요청
             const res = await axiosInstance.get('/member/info')
             const user = res.data
             role.value = user.role
@@ -58,12 +59,14 @@ export const useAuthStore = defineStore('auth', () => {
             id.value = user.id
             email.value = user.email
 
-            // VENDOR일 경우, vendorId도 미리 가져옵니다.
             if (role.value === 'VENDOR') {
                 await fetchVendorId();
             }
         } catch (e) {
-            logout()
+            console.error('사용자 정보 요청 실패:', e.response?.status);
+
+            // axios.js에서 토큰 갱신을 처리하도록 하고 여기서는 로그아웃만 수행
+            logout();
         }
     }
 

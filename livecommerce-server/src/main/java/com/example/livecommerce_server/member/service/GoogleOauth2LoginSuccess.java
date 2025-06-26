@@ -20,10 +20,12 @@ import java.io.IOException;
 public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandler {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
-    public GoogleOauth2LoginSuccess(MemberRepository memberRepository, JwtTokenProvider jwtTokenProvider) {
+    public GoogleOauth2LoginSuccess(MemberRepository memberRepository, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -60,7 +62,17 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
 //        jwtCookie.setSecure(true);
         jwtCookie.setPath("/"); // 모든 경로에서 쿠키 사용가능
         jwtCookie.setMaxAge(60 * 60);
+
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getUserId().toString());
+        refreshTokenService.saveRefreshToken(member.getUserId().toString(), refreshToken);
+
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 7일 동안 유효
+
         response.addCookie(jwtCookie);
+        response.addCookie(refreshTokenCookie);
 
         // 클라이언트 redirect 방식으로 token 전달
         response.sendRedirect("http://localhost:3000");
