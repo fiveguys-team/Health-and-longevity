@@ -103,7 +103,33 @@
                     <p class="mt-3">회원님의 관심사와 선호도를 바탕으로 엄선된 제품을 추천해드립니다.</p>
                 </div>
                 <div data-aos="fade-up" data-aos-delay="100">
-                    <LayoutOne :productList="productList.slice(0,4)" :classList="'max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8'"/>
+                    <!-- 로그인하지 않은 경우 -->
+                    <div v-if="!authStore.id" class="max-w-[1720px] mx-auto text-center py-12">
+                        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-8">
+                            <i class="mdi mdi-account-circle text-6xl text-gray-400 mb-4"></i>
+                            <h4 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">로그인이 필요합니다</h4>
+                            <p class="text-gray-600 dark:text-gray-400">로그인 후 설문에 참여하시면 맞춤 상품을 추천해드려요!</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 로그인했지만 설문 미참여인 경우 -->
+                    <div v-else-if="authStore.id && !recommendationStore.recommendations.length" class="max-w-[1720px] mx-auto text-center py-12">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-8">
+                            <i class="mdi mdi-clipboard-text text-6xl text-blue-500 mb-4"></i>
+                            <h4 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">설문에 참여해보세요</h4>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">간단한 설문에 참여하시면 맞춤 상품을 추천해드려요!</p>
+                            <button @click="showSurvey = true" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors">
+                                설문 참여하기
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 설문 참여 후 추천 상품이 있는 경우 -->
+                    <LayoutOne
+                        v-else
+                        :productList="recommendationStore.recommendations"
+                        :classList="'max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8'"
+                    />
                 </div>
             </div>
         </div>
@@ -118,48 +144,7 @@
                     <p class="mt-3">지금 가장 많은 관심을 받고 있는 인기 제품을 만나보세요.</p>
                 </div>
                 <div class="max-w-[1720px] mx-auto flex gap-5 sm:gap-8 flex-col lg:flex-row" data-aos="fade-up" data-aos-delay="100">
-                    <LayoutOne :productList="productList.slice(4,8)" :classList="'grid sm:grid-cols-2 gap-5 sm:gap-8 lg:max-w-[766px] w-full'"/>
-                    <div class="grid sm:grid-cols-2 gap-5 sm:gap-8 lg:max-w-[925px] w-full">
-                        <div class="group flex flex-col">
-                            <div class="relative overflow-hidden flex-1">
-                                <router-link to="/product-details">
-                                    <img class="w-full transform group-hover:scale-110 duration-300 h-full object-cover" :src="product1" alt="product-card"/>
-                                </router-link>
-                                <div class="absolute z-10 top-[50%] right-3 transform -translate-y-[40%] opacity-0 duration-300 transition-all group-hover:-translate-y-1/2 group-hover:opacity-100 flex flex-col items-end gap-3">
-                                    <router-link to="#" class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon">
-                                        <i class="mdi mdi-cards-heart-outline dark:text-white text-[24px]"></i>                                                                     
-                                        <span class="mt-1">찜하기</span>
-                                    </router-link>
-                                    <router-link to="#" class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon">
-                                        <i class="mdi mdi-shopping-outline dark:text-white text-[24px]"></i>    
-                                        <span class="mt-1">장바구니 담기</span>
-                                    </router-link>
-                                    <button class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon quick-view">
-                                        <i class="mdi mdi-eye-outline dark:text-white text-[24px]"></i>                                      
-                                        <span class="mt-1">미리보기</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="lg:pt-6 pt-5 flex gap-3 md:gap-4 flex-col">
-                                <h4 class="font-medium leading-none dark:text-white text-lg">78,000원 <span class="text-title/50 line-through pl-2 inline-block">98,000원</span></h4>
-                                <div>
-                                    <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
-                                        <router-link to="/product-details" class="text-underline">
-                                            프리미엄 루테인 지아잔틴
-                                        </router-link>
-                                    </h5>
-                                    <ul class="flex items-center gap-2 mt-1">
-                                        <li><i class="fa-solid fa-star text-[#EE9818] text-[14px]"></i></li>
-                                        <li><i class="fa-solid fa-star text-[#EE9818] text-[14px]"></i></li>
-                                        <li><i class="fa-solid fa-star text-[#EE9818] text-[14px]"></i></li>
-                                        <li><i class="fa-solid fa-star text-[#EE9818] text-[14px]"></i></li>
-                                        <li><i class="fa-solid fa-star text-slate-300 text-[14px]"></i></li>
-                                        <li class="dark:text-gray-100">( 1,230 )</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <LayoutOne :productList="mainProducts.slice(0,8)" :classList="'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-8 w-full'"/>
                 </div>
             </div>
         </div>
@@ -197,7 +182,7 @@
         </div>
      <FooterThree/>
       <ScrollToTop/>
-      <SurveyModal v-if="showSurvey" @close="showSurvey = false"/>
+      <SurveyModal v-if="showSurvey" :showModal="showSurvey" @close="showSurvey = false" @recommend="recommendationStore.setRecommendations"/>
     </div>
 </template>
 
@@ -211,7 +196,7 @@ import multivitamin from '@/assets/img/home-v1/multivitamin.png'
 import sofa from '@/assets/img/svg/sofa.svg'
 import like from "@/assets/img/svg/like.svg"
 
-import product1 from '@/assets/img/home-v1/ftur-pdct-01.jpg'
+// import product1 from '@/assets/img/home-v1/ftur-pdct-01.jpg'
 import hand from "@/assets/img/svg/hand.png"
 
 // 컴포넌트 imports
@@ -229,6 +214,8 @@ import 'swiper/swiper-bundle.css';
 // 데이터 imports
 import { productList } from '@/data/data';
 import { useAuthStore } from "@/modules/auth/stores/auth";
+import { useRecommendationStore } from "@/modules/recommendation/stores/recommendation";
+import axiosInstance from '@/api/axios';
 
 // AOS 애니메이션
 import Aos from 'aos';
@@ -236,25 +223,63 @@ import 'aos/dist/aos.css';
 
 const showSurvey = ref(false);
 const authStore = useAuthStore();
+const recommendationStore = useRecommendationStore();
+
+// 메인 페이지 상품 상태
+const mainProducts = ref([]);
+
+// 메인 페이지 상품 불러오기
+async function fetchMainProducts() {
+  try {
+    const response = await axiosInstance.get('/product/main-products');
+    mainProducts.value = response.data.map(item => ({
+      id: item.productId,
+      name: item.productName,
+      image: item.productImage,
+      price: item.price,
+      stockCount: item.stockCount,
+      vendor: item.vendorName || '',
+      discountRate: 0,
+      discountedPrice: item.price,
+    }));
+  } catch (error) {
+    console.error('메인 상품 불러오기 실패:', error);
+    // 에러 시 기존 productList 사용
+    mainProducts.value = productList;
+  }
+}
 
 // 페이지 진입 시 사용자 정보 초기화
 onMounted(async () => {
   Aos.init();
-  await authStore.initFromServer(); // 추가된 초기화 코드
+  await authStore.initFromServer();
+  await fetchMainProducts(); // 메인 상품 불러오기
   handleLoginSuccess();
 });
 
 // 로그인 상태 감시
-watch(() => authStore.id, (newId) => {
-  if (newId) {
-    showSurvey.value = true;
+watch(() => authStore.id, async (newId, oldId) => {
+  if (newId && !oldId) {
+    // 로그인 시: 설문 모달 표시 여부 확인
+    const hasShownSurvey = sessionStorage.getItem(`surveyShown_${newId}`);
+    if (!hasShownSurvey) {
+      showSurvey.value = true;
+    }
+  } else if (!newId && oldId) {
+    // 로그아웃 시: 추천 상품과 설문 상태 초기화
+    recommendationStore.clearRecommendations();
+    sessionStorage.removeItem(`surveyShown_${oldId}`);
+    showSurvey.value = false;
   }
 });
 
 // 로그인 성공 처리
 function handleLoginSuccess() {
   if (authStore.id !== null) {
-    showSurvey.value = true;
+    const hasShownSurvey = sessionStorage.getItem(`surveyShown_${authStore.id}`);
+    if (!hasShownSurvey) {
+      showSurvey.value = true;
+    }
   }
 }
 </script>

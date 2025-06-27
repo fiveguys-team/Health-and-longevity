@@ -1,7 +1,7 @@
 <template>
-  <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg max-w-md w-full">
-      <template v-if="!result">
+  <div v-if="props.showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg max-w-md w-full max-h-[90vh] flex flex-col">
+      <template v-if="!result.length">
         <h2 class="text-2xl font-bold mb-4 dark:text-white">건강 설문 조사</h2>
         <form @submit.prevent="submitSurvey" class="space-y-4">
           <div>
@@ -62,16 +62,6 @@
         </form>
       </template>
 
-<!--      <template v-else>-->
-<!--        <h2 class="text-2xl font-bold mb-4 dark:text-white">추천 상품</h2>-->
-<!--        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded mb-4">-->
-<!--          <pre class="whitespace-pre-wrap">{{ result }}</pre>-->
-<!--        </div>-->
-<!--        <button @click="closeModal"-->
-<!--                class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark w-full">-->
-<!--          닫기-->
-<!--        </button>-->
-<!--      </template>-->
       <template v-else>
         <!-- 헤더 부분 -->
         <div class="sticky top-0 bg-white dark:bg-gray-800 pb-4 z-10">
@@ -86,33 +76,31 @@
           <p class="text-sm text-gray-500 dark:text-gray-400">설문을 기반으로 추천드립니다</p>
         </div>
 
-        <!-- 결과 카드 - 더 컴팩트하게 변경 -->
-        <div class="space-y-4 mt-2">
-          <div v-for="(product, index) in parsedProducts" :key="index"
-               class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-800 p-4 rounded-lg border border-blue-100 dark:border-gray-700">
-            <div class="flex items-start">
-              <div class="bg-white dark:bg-gray-800 p-2 rounded-md shadow-sm mr-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                </svg>
+        <!-- 결과 카드 - 이미지, 이름, 가격, 주요기능, 복용법, 주의사항 -->
+        <div class="space-y-4 mt-2 overflow-y-auto flex-1 pr-2" style="max-height:40vh;">
+          <div v-for="product in parsedProducts" :key="product.productId"
+               class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-800 p-4 rounded-lg border border-blue-100 dark:border-gray-700 flex gap-4">
+            <!-- 이미지 -->
+            <img :src="product.productImage" alt="상품 이미지" class="w-24 h-24 object-cover rounded-md border" v-if="product.productImage" />
+            <!-- 상품 정보 -->
+            <div class="flex-1">
+              <div class="flex items-center">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{ product.name }}</h3>
+                <span class="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                  추천
+                </span>
               </div>
-
-              <div class="flex-1">
-                <div class="flex items-center">
-                  <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{ product.name }}</h3>
-                  <span class="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
-                    추천
-                  </span>
-                </div>
-
-                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">{{ product.description }}</p>
-
-                <div class="mt-2 flex flex-wrap gap-1">
-                  <span v-for="(benefit, idx) in product.benefits" :key="idx"
-                        class="bg-blue-50 text-blue-800 text-xs px-2 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
-                    {{ benefit }}
-                  </span>
-                </div>
+              <div class="text-sm text-gray-600 dark:text-gray-300 mt-1" v-if="product.price">
+                가격: <b>{{ product.price.toLocaleString() }}원</b>
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1" v-if="product.mainFunction">
+                <b>주요기능:</b> {{ product.mainFunction }}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1" v-if="product.howToTake">
+                <b>복용법:</b> {{ product.howToTake }}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1" v-if="product.precautions">
+                <b>주의사항:</b> {{ product.precautions }}
               </div>
             </div>
           </div>
@@ -134,12 +122,19 @@
 </template>
 
 <script setup>
-import {ref, onMounted, defineEmits, computed} from 'vue'
+import {ref, defineEmits, computed, defineProps} from 'vue'
 import axiosInstance from "@/api/axios";
+import { useAuthStore } from '@/modules/auth/stores/auth';
 
-const emit = defineEmits(['close']); // 이벤트 추가
+const props = defineProps({
+  showModal: {
+    type: Boolean,
+    default: false
+  }
+});
 
-const showModal = ref(false)
+const authStore = useAuthStore();
+const emit = defineEmits(['close', 'recommend']);
 const isSubmitting = ref(false)
 const form = ref({
   gender: '',
@@ -148,53 +143,22 @@ const form = ref({
   form: '',
   allergy: ''
 })
-const result = ref('')
+const result = ref([])
 
 // 결과 텍스트를 파싱하여 구조화된 데이터로 변환
 const parsedProducts = computed(() => {
-  if (!result.value) return [];
-
-  try {
-    // 텍스트에서 각 제품 분리
-    const productStrings = result.value.split('\n').filter(p => p.trim());
-
-    return productStrings.map(productStr => {
-      // 제품명과 설명 분리
-      const match = productStr.match(/\[(.*?)\]\s*-\s*(.*?)\s*-\s*(.*)/);
-
-      if (match && match.length >= 4) {
-        return {
-          name: match[1],
-          benefits: match[2].split(' 및 '), // 혜택 분리
-          description: match[3]
-        };
-      }
-
-      // 파싱 실패 시 원본 텍스트 반환
-      return {
-        name: "추천 상품",
-        benefits: ["건강 혜택"],
-        description: productStr
-      };
-    });
-  } catch (e) {
-    console.error("결과 파싱 오류:", e);
-    return [{
-      name: "추천 상품",
-      benefits: ["건강 혜택"],
-      description: result.value
-    }];
-  }
+  // result.value가 배열이면 그대로 반환
+  if (Array.isArray(result.value)) return result.value;
+  return [];
 });
 
-onMounted(() => {
-  showModal.value = true
-})
-
 const closeModal = () => {
-  showModal.value = false
-  result.value = ''
-  emit('close'); // 부모 컴포넌트에 닫기 이벤트 전달
+  result.value = '';
+  // 세션 스토리지에 설문 표시 여부 저장 (로그아웃 전까지 유지)
+  if (authStore.id) {
+    sessionStorage.setItem(`surveyShown_${authStore.id}`, 'true');
+  }
+  emit('close');
 }
 
 const submitSurvey = async () => {
@@ -203,33 +167,21 @@ const submitSurvey = async () => {
     alert('성별, 나이, 관심 분야는 필수 입력 항목입니다.');
     return;
   }
-
-  // 2. 숫자 유효성 검사
   if (isNaN(form.value.age)) {
     alert('나이는 숫자로 입력해주세요.');
     return;
   }
-
-  // 3. 제출 상태 업데이트
   isSubmitting.value = true;
-
   try {
-    console.log('API 요청 시작', form.value);
-
-    // 4. API 호출
     const response = await axiosInstance.post('/api/recommendations', form.value);
-
-    console.log('API 응답:', response);
-
-    // 5. 응답 처리
     result.value = response.data;
-
+    // 세션 스토리지에 설문 표시 여부 저장 (로그아웃 전까지 유지)
+    if (authStore.id) {
+      sessionStorage.setItem(`surveyShown_${authStore.id}`, 'true');
+    }
+    emit('recommend', result.value);
   } catch (error) {
-    console.error('추천 요청 실패:', error);
-
-    // 7. 상세한 에러 메시지
     let errorMessage = '추천 요청에 실패했습니다.';
-
     if (error.response) {
       errorMessage += `\n상태 코드: ${error.response.status}`;
       if (error.response.data) {
@@ -240,10 +192,8 @@ const submitSurvey = async () => {
     } else {
       errorMessage += `\n${error.message}`;
     }
-
     alert(errorMessage);
   } finally {
-    // 8. 제출 상태 초기화
     isSubmitting.value = false;
   }
 }

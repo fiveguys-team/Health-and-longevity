@@ -367,9 +367,64 @@
     GROUP BY p.product_id, p.name, p.price, p.product_image, p.stock_count, v.name
   </select>
 
+  <select id="selectAiProduct" resultType="com.example.livecommerce_server.product.dto.AiProduct">
+    SELECT
+      p.product_id as productId,
+      p.category_id as categoryId,
+      p.name as productName,
+      v.name as vendorName,
+      p.price as price,
+      p.stock_count as stockCount,
+      p.status as status,
+      p.product_image as productImage,
+      d.how_to_take as howToTake,
+      d.main_function as mainFunction,
+      d.precautions as precautions,
+      d.ingredients as ingredients
+    FROM PRODUCT p
+           JOIN PRODUCT_DETAIL d ON p.product_id = d.product_id
+           JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
+    WHERE p.status = 'APPROVED'
+    </select>
 
+  <select id="selectAiProductsByNames" parameterType="list" resultType="com.example.livecommerce_server.product.dto.AiProduct">
+    SELECT
+      p.product_id as productId,
+      p.category_id as categoryId,
+      p.name as productName,
+      v.name as vendorName,
+      p.price as price,
+      p.stock_count as stockCount,
+      p.status as status,
+      p.product_image as productImage,
+      d.how_to_take as howToTake,
+      d.main_function as mainFunction,
+      d.precautions as precautions,
+      d.ingredients as ingredients
+    FROM PRODUCT p
+        JOIN PRODUCT_DETAIL d ON p.product_id = d.product_id
+        JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
+    WHERE p.status = 'APPROVED'
+    AND p.name IN
+    <foreach collection="names" item="name" open="(" separator="," close=")">
+      #{name}
+    </foreach>
+  </select>
 
-
-
-
+  <select id="selectMainPageProducts" parameterType="com.example.livecommerce_server.product.dto.MainPageProduct">
+    SELECT
+      p.product_id as productId,
+      p.category_id as categoryId,
+      p.name as productName,
+      v.name as vendorName,
+      p.price as price,
+      p.stock_count as stockCount,
+      p.status as status,
+      p.product_image as productImage
+    FROM PRODUCT p
+           JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
+    WHERE p.status = 'APPROVED'
+    ORDER BY RAND()
+    LIMIT 8
+  </select>
 </mapper>

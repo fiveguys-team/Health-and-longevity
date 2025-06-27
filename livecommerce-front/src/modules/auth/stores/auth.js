@@ -26,6 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
         id.value = null
         email.value = null
         vendorId.value = null
+        localStorage.removeItem('surveyModalDismissed')
 
         try {
             await axiosInstance.post('/member/logout')

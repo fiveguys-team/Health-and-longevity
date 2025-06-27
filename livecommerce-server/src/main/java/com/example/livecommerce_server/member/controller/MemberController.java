@@ -147,8 +147,7 @@ public class MemberController {
             // 응답에 새 토큰 정보 포함
             return ResponseEntity.ok(Map.of(
                 "success", true,
-                "tokenRefreshed", true,
-                "expiresIn", 3600
+                "tokenRefreshed", true
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
