@@ -178,8 +178,8 @@
         bImg: bizImageUrl.value,
         pImg: onlineImageUrl.value
       };
-      console.log('registrationData:', registrationData); 
-      await axiosInstance.post("/member/vendor-registration", registrationData);
+
+      await axiosInstance.post("/api/member/vendor-registration", registrationData);
     };
 
     const fetchBizInfo = async () => {

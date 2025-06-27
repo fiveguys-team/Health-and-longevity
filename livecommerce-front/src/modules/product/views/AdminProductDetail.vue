@@ -65,7 +65,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from '@/utils/axios'
+import axiosInstance from '@/api/axios'
 
 const route = useRoute()
 const router = useRouter()
@@ -75,7 +75,7 @@ const product = ref(null)
 
 const fetchProduct = async () => {
   try {
-    const res = await axios.get(`/admin/products/detail/${productId}`)
+    const res = await axiosInstance.get(`/api/admin/products/detail/${productId}`)
     product.value = res.data
   } catch (err) {
     console.error(err)
@@ -85,7 +85,7 @@ const fetchProduct = async () => {
 
 const handleApprove = async () => {
   try {
-    await axios.post(`/admin/products/approve/${productId}`)
+    await axiosInstance.post(`/api/admin/products/approve/${productId}`)
     alert('상품이 승인되었습니다.')
     router.push('/admin/products')
   } catch (err) {
@@ -95,7 +95,7 @@ const handleApprove = async () => {
 
 const handleReject = async () => {
   try {
-    await axios.post(`/admin/products/reject/${productId}`)
+    await axiosInstance.post(`/api/admin/products/reject/${productId}`)
     alert('상품이 반려되었습니다.')
     router.push('/admin/products')
   } catch (err) {

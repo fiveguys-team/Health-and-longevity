@@ -1,9 +1,8 @@
 <script setup>
-import axios from "axios";
-import {onMounted, ref, computed} from "vue";
 
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+import {onMounted, ref, computed} from "vue";
+import axiosInstance from "@/api/axios";
+
 
 const categoryData = ref([]);
 const loading = ref(true);
@@ -54,7 +53,7 @@ const formatCurrency = (amount) => {
 const fetchCategoryRevenue = async () => {
   try {
     loading.value = true;
-    const response = await axios.get(`${APPLICATION_SERVER_URL}api/admin/revenues/category`);
+    const response = await axiosInstance.get(`/api/admin/revenues/category`);
     
     // 데이터가 없거나 빈 배열인 경우 더미 데이터 사용
     if (!response.data || response.data.length === 0) {

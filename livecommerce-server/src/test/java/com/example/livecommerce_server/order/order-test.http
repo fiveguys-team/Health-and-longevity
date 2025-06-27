@@ -77,3 +77,19 @@ Content-Disposition: form-data; name="userId"
 
 ### 주문 내역 조회 호출
 GET http://localhost:8080/api/order/history?userId=7
+
+### 교환/환불 요청 등록
+POST http://localhost:8080/api/service/request
+Content-Type: application/json
+
+{
+  "orderItemId": "5aba3695-a129-42e1-b1f6-f1160d78c5b9",
+  "userId": 7,
+  "serviceCode": "REFD",
+  "reason": "상품에 이상이 있어요",
+  "img": "https://your-ncp-bucket-url.com/path/to/image.jpg"
+}
+
+### 입점업체 주문내역 조회 테스트
+GET http://localhost:8080/api/order/vendor-orders?userId=3
+Accept: application/json

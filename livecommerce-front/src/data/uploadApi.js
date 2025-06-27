@@ -1,5 +1,7 @@
 // src/modules/upload/api/uploadApi.js
-import axiosInstance from '@/api/axios'
+
+
+import axiosInstance from "@/api/axios";
 
 export async function uploadFileToNcp(file, userId) {
     const formData = new FormData()

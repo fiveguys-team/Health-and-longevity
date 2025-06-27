@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/admin/products")
-@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/admin/products")
 public class AdminProductController {
 
     private final ProductService productService;

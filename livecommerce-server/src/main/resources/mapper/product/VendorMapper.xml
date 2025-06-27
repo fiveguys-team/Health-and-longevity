@@ -7,7 +7,7 @@
 
   <select id="findAllVendors" resultType="com.example.livecommerce_server.product.dto.VendorDTO">
     SELECT vendor_id, name, vendor_img
-    FROM vendor_m
+    FROM VENDOR_M
     WHERE status = 'APPROVED'
   </select>
 
@@ -30,10 +30,10 @@
     ELSE p.price
     END AS discountedPrice
 
-    FROM product p
-    JOIN vendor_m v ON p.vendor_id = v.vendor_id
-    LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
-    LEFT JOIN live_m l ON lp.live_id = l.live_id
+    FROM PRODUCT p
+    JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
+    LEFT JOIN LIVE_PRODUCT_J lp ON p.product_id = lp.product_id
+    LEFT JOIN LIVE_M l ON lp.live_id = l.live_id
     AND l.status_cd = 'ON'
     AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
     AND (l.end_cd IS NULL OR l.end_cd = '')

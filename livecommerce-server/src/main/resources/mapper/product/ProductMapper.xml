@@ -5,7 +5,7 @@
 <mapper namespace="com.example.livecommerce_server.product.repository.ProductMapper">
 
   <insert id="insertProduct">
-    INSERT INTO product (
+    INSERT INTO PRODUCT (
       product_id,
       category_id,
       vendor_id,
@@ -27,7 +27,7 @@
   </insert>
 
   <update id="updateProduct">
-    UPDATE product
+    UPDATE PRODUCT
     SET
       name = #{name},
       price = #{price},
@@ -39,7 +39,7 @@
   </update>
 
   <update id="updateStatus">
-    UPDATE product
+    UPDATE PRODUCT
     SET status = #{status}
     WHERE product_id = #{id}
   </update>
@@ -51,8 +51,8 @@
       p.name AS name,
       v.name AS vendor,
       p.status AS status
-    FROM product p
-           JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    FROM PRODUCT p
+           JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
   </select>
 
   <select id="selectProductsByStatus" resultType="ProductListDTO">
@@ -65,9 +65,9 @@
     p.product_image AS image,
     c.name AS category,
     v.name AS vendor
-    FROM product p
-    JOIN category c ON p.category_id = c.category_id
-    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    FROM PRODUCT p
+    JOIN CATEGORY c ON p.category_id = c.category_id
+    JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
     WHERE p.status = #{status}
   </select>
 
@@ -94,9 +94,9 @@
       d.standard         AS standard,
       d.ingredients      AS ingredients,
       p.category_id      AS categoryId
-    FROM product p
-           JOIN product_detail d ON p.product_id = d.product_id
-           JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    FROM PRODUCT p
+           JOIN PRODUCT_DETAIL d ON p.product_id = d.product_id
+           JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
     WHERE p.product_id = #{productId}
   </select>
 
@@ -121,9 +121,9 @@
       d.standard         AS standard,
       d.ingredients      AS ingredients,
       p.category_id      AS categoryId
-    FROM product p
-           JOIN product_detail d ON p.product_id = d.product_id
-           JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    FROM PRODUCT p
+           JOIN PRODUCT_DETAIL d ON p.product_id = d.product_id
+           JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
     WHERE d.cert_no = #{certNo}
   </select>
 
@@ -135,8 +135,8 @@
       p.stock_count AS stockCount,
       p.status,
       v.name AS vendor
-    FROM product p
-           JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    FROM PRODUCT p
+           JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
     WHERE p.vendor_id = #{vendorId}
   </select>
 
@@ -149,8 +149,8 @@
     p.stock_count AS stockCount,
     p.status,
     v.name AS vendor
-    FROM product p
-    JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    FROM PRODUCT p
+    JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
     WHERE p.vendor_id = #{vendorId}
     AND p.status = #{status}
   </select>
@@ -185,9 +185,9 @@
       p.price AS price,
       p.stock_count AS stockCount,
       p.status AS status
-    FROM product p
-           JOIN category c ON p.category_id = c.category_id
-           JOIN vendor_m v ON p.vendor_id = v.vendor_id
+    FROM PRODUCT p
+           JOIN CATEGORY c ON p.category_id = c.category_id
+           JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
     WHERE p.status = 'APPROVED'
   </select>
 
@@ -212,11 +212,11 @@
     ELSE p.price
     END AS discountedPrice
 
-    FROM product p
-    JOIN category c ON p.category_id = c.category_id
-    JOIN vendor_m v ON p.vendor_id = v.vendor_id
-    LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
-    LEFT JOIN live_m l ON lp.live_id = l.live_id
+    FROM PRODUCT p
+    JOIN CATEGORY c ON p.category_id = c.category_id
+    JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
+    LEFT JOIN LIVE_PRODUCT_J lp ON p.product_id = lp.product_id
+    LEFT JOIN LIVE_M l ON lp.live_id = l.live_id
     AND l.status_cd = 'ON'
     AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
     AND (l.end_cd IS NULL OR l.end_cd = '')
@@ -288,12 +288,12 @@
     ELSE p.price
     END AS discounted_price
 
-    FROM product p
-    JOIN product_detail pd ON p.product_id = pd.product_id
-    JOIN vendor_m v ON p.vendor_id = v.vendor_id
-    JOIN category c ON p.category_id = c.category_id
-    LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
-    LEFT JOIN live_m l ON lp.live_id = l.live_id
+    FROM PRODUCT p
+    JOIN PRODUCT_DETAIL pd ON p.product_id = pd.product_id
+    JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
+    JOIN CATEGORY c ON p.category_id = c.category_id
+    LEFT JOIN LIVE_PRODUCT_J lp ON p.product_id = lp.product_id
+    LEFT JOIN LIVE_M l ON lp.live_id = l.live_id
     AND l.status_cd = 'ON'
     AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
     AND (l.end_cd IS NULL OR l.end_cd = '')
@@ -317,11 +317,11 @@
     p.stock_count AS stockCount,
     p.product_image AS productImage,
     v.name AS vendor,
-    (SELECT COUNT(*) FROM review r WHERE r.product_id = p.product_id) AS reviewCount,
-    (SELECT COALESCE(ROUND(AVG(r.rating), 1), 0.0) FROM review r WHERE r.product_id = p.product_id) AS averageRating
-    FROM product p
-    JOIN vendor_m v ON p.vendor_id = v.vendor_id
-    JOIN category c ON p.category_id = c.category_id
+    (SELECT COUNT(*) FROM REVIEW r WHERE r.product_id = p.product_id) AS reviewCount,
+    (SELECT COALESCE(ROUND(AVG(r.rating), 1), 0.0) FROM REVIEW r WHERE r.product_id = p.product_id) AS averageRating
+    FROM PRODUCT p
+    JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
+    JOIN CATEGORY c ON p.category_id = c.category_id
     WHERE p.status = #{status}
     <if test="category != null and category != ''">
       AND c.name = #{category}
@@ -333,8 +333,8 @@
 
   <select id="countProductsByCategoryAndStatus" resultType="int">
     SELECT COUNT(*)
-    FROM product p
-    JOIN category c ON p.category_id = c.category_id
+    FROM PRODUCT p
+    JOIN CATEGORY c ON p.category_id = c.category_id
     WHERE p.status = #{status}
     <if test="category != null and category != ''">
       AND c.name = #{category}
@@ -356,10 +356,10 @@
       p.product_image,
       p.stock_count,
       v.name AS vendor
-    FROM product p
-           JOIN vendor_m v ON p.vendor_id = v.vendor_id
-           LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
-           LEFT JOIN live_m l ON lp.live_id = l.live_id 
+    FROM PRODUCT p
+           JOIN VENDOR_M v ON p.vendor_id = v.vendor_id
+           LEFT JOIN LIVE_PRODUCT_J lp ON p.product_id = lp.product_id
+           LEFT JOIN LIVE_M l ON lp.live_id = l.live_id 
            AND l.status_cd = 'ON'
            AND <![CDATA[STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW()]]>
            AND (l.end_cd IS NULL OR l.end_cd = '')

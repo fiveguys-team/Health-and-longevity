@@ -15,4 +15,5 @@ public class OrderItemInsertDTO {
     private String productId;
     private Integer quantity;
     private String createdAt;
+    private int paidAmount;
 }

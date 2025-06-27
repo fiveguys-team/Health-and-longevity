@@ -40,7 +40,7 @@
 
     const handlePingTest = async () => {
         try {
-            const res = await axiosInstance.get('/test/ping');
+            const res = axiosInstance.get('/test/ping');
             responseMessage.value = res.data.message;
             console.log(res.data);
         } catch (err) {

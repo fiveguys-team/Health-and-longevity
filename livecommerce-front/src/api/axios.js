@@ -1,15 +1,21 @@
 import axios from 'axios';
-
+// 서버 URL 설정 (배포 시 이 부분만 변경하면 됨)
+// export const SERVER_BASE_URL = 'https://healthy-and-longevity.shop/';
+const SERVER_BASE_URL = 'http://localhost:8080';
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: SERVER_BASE_URL,
     withCredentials: true,
 });
 
 // 리프레시 요청을 위한 별도의 인스턴스 (인터셉터 없음)
 const axiosRefreshInstance = axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: SERVER_BASE_URL,
     withCredentials: true,
 });
+// WebSocket 연결용 URL (같은 서버 사용)
+// export const WS_BASE_URL = 'https://healthy-and-longevity.shop';
+export const WS_BASE_URL = 'http://localhost:8080';
+// 응답 에러 처리 (401 등)
 
 let isRefreshing = false;
 let lastRefreshAttempt = 0;
@@ -55,5 +61,4 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-
 export default axiosInstance;
