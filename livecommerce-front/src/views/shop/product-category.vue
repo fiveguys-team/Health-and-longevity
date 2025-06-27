@@ -3,10 +3,8 @@
     <NavbarOne />
 
     <!-- 배경 이미지 + 타이틀 -->
-    <div
-        class="flex items-center gap-4 flex-wrap bg-overlay py-16 sm:py-20 before:bg-title before:bg-opacity-70"
-        :style="{ backgroundImage: 'url(' + bg + ')' }"
-    >
+    <div class="flex items-center gap-4 flex-wrap bg-overlay py-16 sm:py-20 before:bg-title before:bg-opacity-70"
+      :style="{ backgroundImage: 'url(' + bg + ')' }">
       <div class="text-center w-full">
         <h2 class="text-white text-4xl md:text-5xl font-semibold leading-none">
           {{ decodeURIComponent(categoryTitle) }}
@@ -33,11 +31,9 @@
           </div>
 
           <!-- 상품 카드 -->
-          <LayoutOne
-              v-if="productList.length > 0"
-              :classList="'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8'"
-              :productList="paginatedProductList"
-          />
+          <LayoutOne v-if="productList.length > 0"
+            :classList="'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8'"
+            :productList="paginatedProductList" />
 
           <div v-else class="text-center text-gray-400 text-lg mt-20">
             해당 카테고리의 상품이 없습니다 😥
@@ -45,31 +41,20 @@
 
           <!-- 페이지네이션 -->
           <div class="mt-14 flex items-center justify-center gap-2" v-if="totalPages > 1">
-            <button
-                :disabled="currentPage === 1"
-                @click="changePage(currentPage - 1)"
-                class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black"
-            >
+            <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)"
+              class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black">
               &lt;
             </button>
 
-            <button
-                v-for="n in visiblePages"
-                :key="n"
-                @click="changePage(n)"
-                :class="[
-                'w-10 h-10 flex items-center justify-center border rounded',
-                currentPage === n ? 'bg-black text-white' : 'text-gray-700 hover:bg-gray-200'
-              ]"
-            >
+            <button v-for="n in visiblePages" :key="n" @click="changePage(n)" :class="[
+              'w-10 h-10 flex items-center justify-center border rounded',
+              currentPage === n ? 'bg-black text-white' : 'text-gray-700 hover:bg-gray-200'
+            ]">
               {{ String(n).padStart(2, '0') }}
             </button>
 
-            <button
-                :disabled="currentPage === totalPages"
-                @click="changePage(currentPage + 1)"
-                class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black"
-            >
+            <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)"
+              class="w-10 h-10 flex items-center justify-center border rounded text-gray-500 hover:text-black">
               &gt;
             </button>
           </div>
@@ -206,4 +191,3 @@ watch(() => route.params.category, () => {
   fetchProductList()
 })
 </script>
-

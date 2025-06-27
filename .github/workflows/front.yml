@@ -1,0 +1,44 @@
+name: Front CI/CD
+
+on:
+  push:
+    branches: [ main, dev ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          cd livecommerce-front
+          npm ci
+
+      - name: Build
+        run: |
+          cd livecommerce-front
+          npm run build
+
+      - name: 🔍 Debug SSH key presence
+        run: echo "${{ secrets.FRONT_SSH_KEY }}" | head -n 5
+
+      - name: Deploy to Nginx server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.FRONT_SSH_HOST }}
+          username: ${{ secrets.FRONT_SSH_USER }}
+          key: ${{ secrets.FRONT_SSH_KEY }}
+          source: "livecommerce-front/dist/*"
+          target: "/var/www/health/dist"  # nginx의 dist 폴더 경로
+
+      - name: Reload Nginx
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.FRONT_SSH_HOST }}
+          username: ${{ secrets.FRONT_SSH_USER }}
+          key: ${{ secrets.FRONT_SSH_KEY }}
+          script: |
+            sudo systemctl reload nginx

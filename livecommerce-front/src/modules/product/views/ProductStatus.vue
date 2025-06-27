@@ -86,6 +86,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import axiosInstance from '@/api/axios'
+import { useAuthStore } from "@/modules/auth/stores/auth";
 
 const products = ref([])
 const currentStatus = ref('')
@@ -124,7 +125,8 @@ const getStatusClass = (status) => {
 
 const fetchProducts = async () => {
   try {
-    const vendorId = 1 // TODO: 로그인된 사용자 ID로 교체
+    const authStore = useAuthStore()
+    const vendorId = authStore.vendorId // TODO: 로그인된 사용자 ID로 교체
     const url = currentStatus.value
         ? `/api/product/vendor/${vendorId}/products?status=${currentStatus.value}`
         : `/api/product/vendor/${vendorId}/products`
