@@ -6,7 +6,7 @@
 
   <!-- 1. 상세 정보 저장 -->
   <insert id="insertProductDetail">
-    INSERT INTO product_detail (
+    INSERT INTO PRODUCT_DETAIL (
       product_id,
       cert_no,
       product_name,
@@ -49,7 +49,7 @@
       storage_method AS storageMethod,
       standard       AS standard,
       ingredients    AS ingredients
-    FROM product_detail
+    FROM PRODUCT_DETAIL
     WHERE product_id = #{productId}
   </select>
 
@@ -70,14 +70,14 @@
       d.standard       AS standard,
       d.ingredients    AS ingredients,
       p.status         AS status
-    FROM product_detail d
-           JOIN product p ON d.product_id = p.product_id
+    FROM PRODUCT_DETAIL d
+           JOIN PRODUCT p ON d.product_id = p.product_id
     WHERE d.cert_no = #{certNo}
   </select>
 
   <!-- 4. 상세 정보 수정 -->
   <update id="updateProductDetail">
-    UPDATE product_detail
+    UPDATE PRODUCT_DETAIL
     SET
       product_name   = #{productName},
       expiry_date    = #{expiryDate},

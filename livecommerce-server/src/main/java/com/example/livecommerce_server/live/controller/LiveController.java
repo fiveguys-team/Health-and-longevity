@@ -52,9 +52,9 @@ import org.springframework.web.filter.CorsFilter;
 import com.example.livecommerce_server.product.dto.ProductDTO;
 import com.example.livecommerce_server.product.service.ProductService;
 
-@CrossOrigin(origins = {"http://localhost:5174", "http://localhost:5173",
-		"http://localhost:3000"}, allowedHeaders = "*", methods = {RequestMethod.GET,
-		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+//@CrossOrigin(origins = {"http://localhost:5174", "http://localhost:5173",
+//		"http://localhost:3000"}, allowedHeaders = "*", methods = {RequestMethod.GET,
+//		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 
 @Slf4j
 @RestController
@@ -86,18 +86,18 @@ public class LiveController {
 		this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 	}
 
-	@Bean
-	public CorsFilter corsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("http://localhost:5174", "http://localhost:5173",
-				"http://localhost:5175", "http://localhost:3000"));
-		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		config.setAllowedHeaders(Arrays.asList("*"));
-		config.setAllowCredentials(true);
-		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
-	}
+//	@Bean
+//	public CorsFilter corsFilter() {
+//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//		CorsConfiguration config = new CorsConfiguration();
+//		config.setAllowedOrigins(Arrays.asList("http://localhost:5174", "http://localhost:5173",
+//				"http://localhost:5175", "http://localhost:3000"));
+//		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//		config.setAllowedHeaders(Arrays.asList("*"));
+//		config.setAllowCredentials(true);
+//		source.registerCorsConfiguration("/**", config);
+//		return new CorsFilter(source);
+//	}
 
 	/**
 	 * 현재 활성화된 모든 세션 목록을 반환합니다.

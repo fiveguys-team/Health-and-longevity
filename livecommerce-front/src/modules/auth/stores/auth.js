@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const initFromServer = async () => {
         try {
-            const res = await axiosInstance.get('api/member/info')
+            const res = await axiosInstance.get('/api/member/info')
             const user = res.data
             role.value = user.role
             name.value = user.name

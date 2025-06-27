@@ -2,8 +2,7 @@
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 import { useAuthStore } from "@/modules/auth/stores/auth";
-import {wsBaseURL} from "@/api/axios"; // auth store import 추가
-
+import { WS_BASE_URL } from "@/api/axios";
 class WebSocketService {
   constructor() {
     this.stompClient = null;
@@ -47,7 +46,7 @@ class WebSocketService {
       return;
     }
 
-    const socket = new SockJS(`${wsBaseURL}/connect`);
+    const socket = new SockJS(`${WS_BASE_URL}/connect`);
     this.stompClient = Stomp.over(socket);
 
     // 인증 헤더 설정

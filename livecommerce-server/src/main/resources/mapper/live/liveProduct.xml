@@ -7,7 +7,7 @@
 
 <!--	라이브 방송 중 판매하는 상품 정보 저장-->
 	<insert id="insertLiveProduct" parameterType="java.util.List">
-		INSERT INTO live_product_j (live_id, product_id, discountRate)
+		INSERT INTO LIVE_PRODUCT_J (live_id, product_id, discountRate)
 		VALUES
 		<foreach collection="list" item="detail" separator=",">
 			(
