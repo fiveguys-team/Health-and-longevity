@@ -33,7 +33,7 @@ public class StompEventListener {
     private final SimpMessagingTemplate messagingTemplate;
 
     /**
-     * 🆕 세션 추적 기반 채팅방 구독 이벤트 처리
+     * 세션 추적 기반 채팅방 구독 이벤트 처리
      */
     @EventListener
     public void handleSessionSubscribe(SessionSubscribeEvent event) {
@@ -61,25 +61,25 @@ public class StompEventListener {
             sessionRoomMap.put(sessionId, roomId);
             sessionUserMap.put(sessionId, userId);
 
-            // 4. 🆕 세션 추적 기반 참여자 수 증가 처리
+            // 4. 세션 추적 기반 참여자 수 증가 처리
             int updatedCount = chatService.increaseParticipantCount(roomId, userId, sessionId);
             if (updatedCount == -1) {
-                log.error("❌ 참여자 수 증가 실패 - roomId: {}, userId: {}, sessionId: {}",
+                log.error("참여자 수 증가 실패 - roomId: {}, userId: {}, sessionId: {}",
                         roomId, userId, sessionId);
                 return;
             }
 
-            // 🎯 세션 추적 성공 로그
-            log.info("🔥 세션 추적 참여 - roomId: {}, userId: {}, sessionId: {}, 실제 사용자: {}명",
+            //  세션 추적 성공 로그
+            log.info(" 세션 추적 참여 - roomId: {}, userId: {}, sessionId: {}, 실제 사용자: {}명",
                     roomId, userId, sessionId, updatedCount);
 
             // 5. 참여자 수 브로드캐스트
             messagingTemplate.convertAndSend("/topic/room." + roomId + ".participants", updatedCount);
 
         } catch (NumberFormatException e) {
-            log.error("❌ roomId 파싱 실패 - sessionId: {}", sessionId);
+            log.error(" roomId 파싱 실패 - sessionId: {}", sessionId);
         } catch (Exception e) {
-            log.error("❌ 구독 처리 오류 - sessionId: {}", sessionId, e);
+            log.error(" 구독 처리 오류 - sessionId: {}", sessionId, e);
         }
     }
 
@@ -113,7 +113,7 @@ public class StompEventListener {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
 
-        log.info("📤 구독 해제 - sessionId: {}", sessionId);
+        log.info(" 구독 해제 - sessionId: {}", sessionId);
         processLeave(sessionId);
     }
 
@@ -130,7 +130,7 @@ public class StompEventListener {
     }
 
     /**
-     * 🆕 세션 추적 기반 참여자 수 감소 처리 (공통 로직)
+     * 세션 추적 기반 참여자 수 감소 처리 (공통 로직)
      */
     private void processLeave(String sessionId) {
         Long roomId = sessionRoomMap.remove(sessionId);
@@ -146,7 +146,7 @@ public class StompEventListener {
             int updatedCount = chatService.decreaseParticipantCount(roomId, userId, sessionId);
 
             //  세션 추적 퇴장 로그
-            log.info("🔥 세션 추적 퇴장 - roomId: {}, userId: {}, sessionId: {}, 실제 사용자: {}명",
+            log.info(" 세션 추적 퇴장 - roomId: {}, userId: {}, sessionId: {}, 실제 사용자: {}명",
                     roomId, userId, sessionId, updatedCount);
 
             messagingTemplate.convertAndSend("/topic/room." + roomId + ".participants", updatedCount);
