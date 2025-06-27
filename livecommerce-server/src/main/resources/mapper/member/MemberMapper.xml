@@ -36,4 +36,11 @@
         order by vendor_id desc
         limit 1
     </select>
+
+    <select id="findVendorInfoByUserId" resultType="com.example.livecommerce_server.vendor.dto.VendorInfoDto">
+        select u.name, u.email, v.user_id, v.business_number, v.permit_number, v.status, v.b_img, v.p_img
+        from VENDOR_M v join USER_M u
+        where v.user_id = u.user_id
+        and v.user_id = #{userId}
+    </select>
 </mapper>

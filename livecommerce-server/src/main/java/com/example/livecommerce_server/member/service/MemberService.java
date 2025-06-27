@@ -5,6 +5,7 @@ import com.example.livecommerce_server.member.dto.MemberCreateDto;
 import com.example.livecommerce_server.member.dto.MemberLoginDto;
 import com.example.livecommerce_server.member.dto.VendorRegistrationDto;
 import com.example.livecommerce_server.member.repository.MemberRepository;
+import com.example.livecommerce_server.vendor.dto.VendorInfoDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -64,5 +65,9 @@ public class MemberService {
 
     public Optional<String> getVendorStatus(String userId) {
         return memberRepository.findVendorStatusByUserId(userId);
+    }
+
+    public VendorInfoDto getVendorInfo(String userId) {
+        return memberRepository.findVendorInfoByUserId(userId);
     }
 }

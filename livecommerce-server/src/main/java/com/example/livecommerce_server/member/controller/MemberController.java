@@ -5,6 +5,7 @@ import com.example.livecommerce_server.member.domain.Member;
 import com.example.livecommerce_server.member.dto.*;
 import com.example.livecommerce_server.member.service.MemberService;
 import com.example.livecommerce_server.member.service.RefreshTokenService;
+import com.example.livecommerce_server.vendor.dto.VendorInfoDto;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -198,5 +199,15 @@ public class MemberController {
     public ResponseEntity<?> getVendorStatus(@RequestParam String userId) {
         Optional<String> status = memberService.getVendorStatus(userId);
         return ResponseEntity.ok(status.orElse(null));
+    }
+
+    @GetMapping("/vendor-info")
+    public ResponseEntity<?> getVendorInfo(@RequestParam String userId) {
+        try {
+            VendorInfoDto vendorInfo = memberService.getVendorInfo(userId);
+            return ResponseEntity.ok(vendorInfo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("입점업체 정보 조회 실패: " + e.getMessage());
+        }
     }
 }

@@ -259,11 +259,20 @@ onMounted(async () => {
 
 // 로그인 상태 감시
 watch(() => authStore.id, async (newId, oldId) => {
+  console.log('로그인 상태 변경 감지:', { newId, oldId, role: authStore.role });
   if (newId && !oldId) {
-    // 로그인 시: 설문 모달 표시 여부 확인
-    const hasShownSurvey = sessionStorage.getItem(`surveyShown_${newId}`);
-    if (!hasShownSurvey) {
-      showSurvey.value = true;
+    // 로그인 시: 권한이 'USER'이고 설문 모달 표시 여부 확인
+    if (authStore.role === 'USER') {
+      const hasShownSurvey = sessionStorage.getItem(`surveyShown_${newId}`);
+      console.log('설문 표시 여부 확인:', { hasShownSurvey, userId: newId });
+      if (!hasShownSurvey) {
+        console.log('설문 모달 표시');
+        showSurvey.value = true;
+      } else {
+        console.log('이미 설문을 완료한 사용자');
+      }
+    } else {
+      console.log('USER 권한이 아닌 사용자:', authStore.role);
     }
   } else if (!newId && oldId) {
     // 로그아웃 시: 추천 상품과 설문 상태 초기화
@@ -275,9 +284,12 @@ watch(() => authStore.id, async (newId, oldId) => {
 
 // 로그인 성공 처리
 function handleLoginSuccess() {
-  if (authStore.id !== null) {
+  console.log('handleLoginSuccess 호출:', { id: authStore.id, role: authStore.role });
+  if (authStore.id !== null && authStore.role === 'USER') {
     const hasShownSurvey = sessionStorage.getItem(`surveyShown_${authStore.id}`);
+    console.log('초기 로드 시 설문 표시 여부 확인:', { hasShownSurvey, userId: authStore.id });
     if (!hasShownSurvey) {
+      console.log('초기 로드 시 설문 모달 표시');
       showSurvey.value = true;
     }
   }
