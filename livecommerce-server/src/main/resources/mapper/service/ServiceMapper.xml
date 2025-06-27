@@ -3,6 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.livecommerce_server.service.mapper.ServiceMapper">
+
     <insert id="insertServiceRequest" parameterType="com.example.livecommerce_server.service.dto.ServiceRequestDTO">
         INSERT INTO SERVICE_M (
             service_id,
@@ -29,12 +30,12 @@
 
     <select id="selectPaidAmountByOrderItemId" resultType="int" parameterType="string">
         SELECT paid_amount
-        FROM order_item_d
+        FROM ORDER_ITEM_D
         WHERE order_item_id = #{orderItemId}
     </select>
 
     <update id="updateServiceStatus" parameterType="map">
-        UPDATE service_m
+        UPDATE SERVICE_M
         SET status_code = #{statusCode}
         WHERE order_item_id = #{orderItemId}
     </update>
