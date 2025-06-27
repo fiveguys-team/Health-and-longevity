@@ -14,4 +14,6 @@ public class VendorInfoDto {
     public String businessNumber;
     public String permitNumber;
     public Status status;
+    public String bImg;
+    public String pImg;
 }

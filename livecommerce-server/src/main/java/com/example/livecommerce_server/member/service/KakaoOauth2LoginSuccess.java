@@ -21,10 +21,12 @@ import java.util.Map;
 public class KakaoOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandler {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
-    public KakaoOauth2LoginSuccess(MemberRepository memberRepository, JwtTokenProvider jwtTokenProvider) {
+    public KakaoOauth2LoginSuccess(MemberRepository memberRepository, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -67,8 +69,18 @@ public class KakaoOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
 //        jwtCookie.setSecure(true);
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(60 * 60);
-        response.addCookie(jwtCookie);
 
-        response.sendRedirect("http://localhost:3000/oauth-success");
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getUserId().toString());
+        refreshTokenService.saveRefreshToken(member.getUserId().toString(), refreshToken);
+
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 7일 동안 유효
+
+        response.addCookie(jwtCookie);
+        response.addCookie(refreshTokenCookie);
+
+        response.sendRedirect("http://localhost:3000");
     }
 }

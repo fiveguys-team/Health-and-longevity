@@ -1,11 +1,6 @@
 package com.example.livecommerce_server.product.controller;
 
-import com.example.livecommerce_server.product.dto.DiscountedProductDTO;
-import com.example.livecommerce_server.product.dto.ProductDTO;
-import com.example.livecommerce_server.product.dto.ProductDetailDTO;
-import com.example.livecommerce_server.product.dto.ProductDetailUserDTO;
-import com.example.livecommerce_server.product.dto.ProductRegisterRequestDTO;
-import com.example.livecommerce_server.product.dto.UserProductListDTO;
+import com.example.livecommerce_server.product.dto.*;
 import com.example.livecommerce_server.product.service.ProductService;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,5 +104,9 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-
+    @GetMapping("/main-products")
+    public ResponseEntity<List<MainPageProduct>> getMainPageProducts() {
+        List<MainPageProduct> products = productService.getMainPageProducts();
+        return ResponseEntity.ok(products);
+    }
 }
