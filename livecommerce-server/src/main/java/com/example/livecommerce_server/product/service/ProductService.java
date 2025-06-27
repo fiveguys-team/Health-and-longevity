@@ -1,13 +1,7 @@
 package com.example.livecommerce_server.product.service;
 
-import com.example.livecommerce_server.product.dto.AdminProductDetailDTO;
-import com.example.livecommerce_server.product.dto.DiscountedProductDTO;
-import com.example.livecommerce_server.product.dto.ProductDTO;
-import com.example.livecommerce_server.product.dto.ProductDetailDTO;
-import com.example.livecommerce_server.product.dto.ProductDetailUserDTO;
-import com.example.livecommerce_server.product.dto.ProductListDTO;
-import com.example.livecommerce_server.product.dto.ProductRegisterRequestDTO;
-import com.example.livecommerce_server.product.dto.UserProductListDTO;
+import com.example.livecommerce_server.product.dto.*;
+
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,4 +24,7 @@ public interface ProductService {
     List<DiscountedProductDTO> getDiscountedProducts();
     List<UserProductListDTO> getUserProductsByCategoryAndStatus(String category, String status, int size, int offset);
     ProductDTO getProductById(String productId);
+    List<AiProduct> getAiProducts();
+    List<AiProduct> findAiProductsByNames(List<String> names);
+    List<MainPageProduct> getMainPageProducts();
 }

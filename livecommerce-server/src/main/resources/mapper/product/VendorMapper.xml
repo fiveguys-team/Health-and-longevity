@@ -6,7 +6,7 @@
 <mapper namespace="com.example.livecommerce_server.product.repository.VendorMapper">
 
   <select id="findAllVendors" resultType="com.example.livecommerce_server.product.dto.VendorDTO">
-    SELECT vendor_id, name
+    SELECT vendor_id, name, vendor_img
     FROM VENDOR_M
     WHERE status = 'APPROVED'
   </select>

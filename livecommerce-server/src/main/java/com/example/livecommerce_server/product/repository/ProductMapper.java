@@ -1,11 +1,7 @@
 package com.example.livecommerce_server.product.repository;
 
-import com.example.livecommerce_server.product.dto.AdminProductDetailDTO;
-import com.example.livecommerce_server.product.dto.DiscountedProductDTO;
-import com.example.livecommerce_server.product.dto.ProductDTO;
-import com.example.livecommerce_server.product.dto.ProductDetailUserDTO;
-import com.example.livecommerce_server.product.dto.ProductListDTO;
-import com.example.livecommerce_server.product.dto.UserProductListDTO;
+import com.example.livecommerce_server.product.dto.*;
+
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -53,4 +49,7 @@ public interface ProductMapper {
 
     ProductDTO findProductById(@Param("productId") String productId);
 
+    List<AiProduct> selectAiProduct();
+    List<AiProduct> selectAiProductsByNames(@Param("names") List<String> names);
+    List<MainPageProduct> selectMainPageProducts();
 }

@@ -20,29 +20,63 @@
                        <ProfileTab/>
                     </div>
                     <div class="w-full md:w-auto md:flex-1 overflow-auto">
-
-                        <div class="w-full max-w-[951px] bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px]">
+                        <div class="w-full max-w-[951px] bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px] rounded-xl shadow-md">
+                          <template v-if="loading">
+                            <div>로딩 중...</div>
+                          </template>
+                          <template v-else-if="error">
+                            <div class="text-red-500">{{ error }}</div>
+                          </template>
+                          <template v-else-if="vendorInfo">
+                            <div class="mb-8">
+                              <h3 class="text-xl font-bold mb-4 text-primary">사용자 정보</h3>
+                              <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col sm:flex-row gap-6 items-center">
+                                <div class="flex-1">
+                                  <div class="mb-2"><span class="font-semibold text-gray-700 dark:text-gray-200">이름:</span> {{ vendorInfo.name }}</div>
+                                  <div><span class="font-semibold text-gray-700 dark:text-gray-200">이메일:</span> {{ vendorInfo.email }}</div>
+                                </div>
+                              </div>
+                            </div>
                             <div>
-                                <h3 class="font-semibold leading-none">Kathlene Roser</h3>
-                                <span class="leading-none mt-3">Product Designer</span>
+                              <h3 class="text-xl font-bold mb-4 text-primary">입점 신청 정보</h3>
+                              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col gap-2">
+                                  <span class="text-gray-500 dark:text-gray-400 text-sm">사업자번호</span>
+                                  <span class="font-semibold text-lg">{{ vendorInfo.businessNumber }}</span>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col gap-2">
+                                  <span class="text-gray-500 dark:text-gray-400 text-sm">통신판매번호</span>
+                                  <span class="font-semibold text-lg">{{ vendorInfo.permitNumber }}</span>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col gap-2">
+                                  <span class="text-gray-500 dark:text-gray-400 text-sm">상태</span>
+                                  <span class="font-semibold text-lg">
+                                    <span v-if="vendorInfo.status === 'APPROVED'" class="text-green-600">승인</span>
+                                    <span v-else-if="vendorInfo.status === 'PENDING'" class="text-yellow-600">심사중</span>
+                                    <span v-else-if="vendorInfo.status === 'REJECTED'" class="text-red-600">반려</span>
+                                    <span v-else>{{ vendorInfo.status }}</span>
+                                  </span>
+                                </div>
+                                <div v-if="vendorInfo.bImg" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col gap-2 items-center">
+                                  <span class="text-gray-500 dark:text-gray-400 text-sm">사업자등록증</span>
+                                  <a :href="vendorInfo.bImg" target="_blank">
+                                    <img :src="vendorInfo.bImg" alt="사업자등록증" class="w-24 h-24 object-contain rounded border" />
+                                    <span class="block mt-2 text-blue-500 underline text-xs">이미지 보기</span>
+                                  </a>
+                                </div>
+                                <div v-if="vendorInfo.pImg" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col gap-2 items-center">
+                                  <span class="text-gray-500 dark:text-gray-400 text-sm">통신판매증</span>
+                                  <a :href="vendorInfo.pImg" target="_blank">
+                                    <img :src="vendorInfo.pImg" alt="통신판매증" class="w-24 h-24 object-contain rounded border" />
+                                    <span class="block mt-2 text-blue-500 underline text-xs">이미지 보기</span>
+                                  </a>
+                                </div>
+                              </div>
                             </div>
-                            <p class="text-base sm:text-lg mt-5 sm:mt-8 md:mt-10 text-justify">
-                                All the Lorem Ipsum generators on the Internet tend to repeat predefined on the Internet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non, lobortis in in tortor lectus iaculis viverra. Adipiscing lobortis interdum fringilla euismod odio vitae nam pulvinar elementum. Nibh purus integer elementum in. Tellus vulputate habitasse ut vulputate posuere habitant vel tempor varius. 
-                            </p>
-                            <div class="mt-5 sm:mt-8 md:mt-10 grid gap-4 sm:gap-6">
-                                <router-link to="#" class="flex items-center gap-2">
-                                    <i class="fa-solid fa-phone text-[#BB976D]"></i>
-                                    <span class="leading-none font-medium text-base sm:text-lg">+111 - (1234 5678 99)</span>
-                                </router-link>
-                                <router-link to="#" class="flex items-center gap-2">
-                                    <i class="fa-solid fa-envelope text-[#BB976D]"></i>
-                                    <span class="leading-none font-medium text-base sm:text-lg">furnixar123@gmail.com</span>
-                                </router-link>
-                                <router-link to="#" class="flex items-center gap-2">
-                                    <i class="fa-solid fa-location-dot text-[#BB976D]"></i>
-                                    <span class="leading-none font-medium text-base sm:text-lg">23/ A Lake Side , New Arizona , USA</span>
-                                </router-link>
-                            </div>
+                          </template>
+                          <template v-else>
+                            <div>입점 신청 정보가 없습니다.</div>
+                          </template>
                         </div>
                     </div>
                 </div>
@@ -59,15 +93,34 @@
 <script setup>
 import NavbarOne from '@/components/navbar/navbar-one.vue';
 import bg from '@/assets/img/shortcode/breadcumb.jpg'
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import Aos from 'aos';
 import ProfileTab from '@/components/profile-tab.vue';
 import FooterOne from '@/components/footer/footer-one.vue';
 import ScrollToTop from '@/components/scroll-to-top.vue';
+import { useAuthStore } from '@/modules/auth/stores/auth';
+import axiosInstance from '@/api/axios';
 
-onMounted(()=>{
-    Aos.init()
-})
+const authStore = useAuthStore();
+const vendorInfo = ref(null);
+const loading = ref(true);
+const error = ref('');
 
-
+onMounted(async () => {
+  Aos.init();
+  if (authStore.id) {
+    try {
+      const { data } = await axiosInstance.get('/api/member/vendor-info', {
+        params: { userId: authStore.id }
+      });
+      vendorInfo.value = data;
+    } catch (e) {
+      error.value = '입점업체 정보 조회 실패';
+    } finally {
+      loading.value = false;
+    }
+  } else {
+    loading.value = false;
+  }
+});
 </script>

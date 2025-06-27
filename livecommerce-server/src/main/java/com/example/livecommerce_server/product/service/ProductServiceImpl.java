@@ -1,14 +1,7 @@
 package com.example.livecommerce_server.product.service;
 
 
-import com.example.livecommerce_server.product.dto.AdminProductDetailDTO;
-import com.example.livecommerce_server.product.dto.DiscountedProductDTO;
-import com.example.livecommerce_server.product.dto.ProductDetailDTO;
-import com.example.livecommerce_server.product.dto.ProductDTO;
-import com.example.livecommerce_server.product.dto.ProductDetailUserDTO;
-import com.example.livecommerce_server.product.dto.ProductListDTO;
-import com.example.livecommerce_server.product.dto.ProductRegisterRequestDTO;
-import com.example.livecommerce_server.product.dto.UserProductListDTO;
+import com.example.livecommerce_server.product.dto.*;
 import com.example.livecommerce_server.product.repository.ProductDetailMapper;
 import com.example.livecommerce_server.product.repository.ProductMapper;
 import java.util.List;
@@ -218,5 +211,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO getProductById(String productId) {
         return productMapper.findProductById(productId);
+    }
+
+    @Override
+    public List<AiProduct> getAiProducts() {
+        return productMapper.selectAiProduct();
+    }
+
+    @Override
+    public List<AiProduct> findAiProductsByNames(List<String> names) {
+        return productMapper.selectAiProductsByNames(names);
+    }
+
+    @Override
+    public List<MainPageProduct> getMainPageProducts() {
+       return productMapper.selectMainPageProducts();
     }
 }
