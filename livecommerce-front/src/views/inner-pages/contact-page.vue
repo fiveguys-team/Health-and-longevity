@@ -161,7 +161,7 @@
       }
 
       // 서버에서 현재 사용자의 입점 상태 확인
-      const { data: vendorStatus } = await axiosInstance.get(`/member/vendor-status?userId=${authStore.id}`);
+      const { data: vendorStatus } = await axiosInstance.get(`/api/member/vendor-status?userId=${authStore.id}`);
       console.log('userId:', authStore.id, 'vendorStatus:', vendorStatus);
       if (vendorStatus && vendorStatus !== "REJECTED") {
         alert("이미 입점 신청 중이거나 승인된 업체입니다.");

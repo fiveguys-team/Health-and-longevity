@@ -110,7 +110,7 @@ onMounted(async () => {
   Aos.init();
   if (authStore.id) {
     try {
-      const { data } = await axiosInstance.get('/member/vendor-info', {
+      const { data } = await axiosInstance.get('/api/member/vendor-info', {
         params: { userId: authStore.id }
       });
       vendorInfo.value = data;

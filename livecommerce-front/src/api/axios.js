@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
 
         if (error.response?.status === 401 && !isRefreshing &&
             !originalRequest._retry &&
-            originalRequest.url !== '/member/token/refresh' &&
+            originalRequest.url !== '/api/member/token/refresh' &&
             currentTime - lastRefreshAttempt > REFRESH_COOLDOWN) {
 
             originalRequest._retry = true;
@@ -39,7 +39,7 @@ axiosInstance.interceptors.response.use(
             try {
                 console.log('토큰 갱신 시도');
                 // 중요: 인터셉터가 없는 별도의 인스턴스 사용
-                const refreshResponse = await axiosRefreshInstance.post('/member/token/refresh', {});
+                const refreshResponse = await axiosRefreshInstance.post('/api/member/token/refresh', {});
                 console.log('토큰 갱신 응답:', refreshResponse.data);
 
                 isRefreshing = false;

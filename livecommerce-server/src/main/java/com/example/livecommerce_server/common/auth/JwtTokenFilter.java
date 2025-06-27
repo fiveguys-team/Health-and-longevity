@@ -73,7 +73,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
         String path = servletRequest.getRequestURI();
-        if (path.equals("/member/token/refresh")) {
+        if (path.equals("/api/member/token/refresh")) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }

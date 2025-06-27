@@ -231,7 +231,7 @@ const mainProducts = ref([]);
 // 메인 페이지 상품 불러오기
 async function fetchMainProducts() {
   try {
-    const response = await axiosInstance.get('/product/main-products');
+    const response = await axiosInstance.get('/api/product/main-products');
     mainProducts.value = response.data.map(item => ({
       id: item.productId,
       name: item.productName,
