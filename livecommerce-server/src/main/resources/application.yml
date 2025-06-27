@@ -1,3 +1,4 @@
+# application.yml (서버 배포용)
 spring:
   ai:
     openai:
@@ -31,13 +32,13 @@ spring:
             client-id: ${GOOGLE_ID}
             client-secret: ${GOOGLE_SECRET}
             scope: openid, email, profile
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            redirect-uri: https://healthy-and-longevity.shop/login/oauth2/code/google
             authorization-grant-type: authorization_code
           kakao:
             client-id: ${KAKAO_ID}
             client-secret: ${KAKAO_SECRET}
             client-authentication-method: client_secret_post
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: https://healthy-and-longevity.shop/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             client-name: kakao
             scope:
@@ -55,23 +56,19 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-
 jwt:
   # 32 글자 인코딩 된 문자열 : oauthserversecretaccesstokeoauthserversecretaccesstokenoauthserversecretaccesstoken
   secret: b2F1dGhzZXJ2ZXJzZWNyZXRhY2Nlc3N0b2tlb2F1dGhzZXJ2ZXJzZWNyZXRhY2Nlc3N0b2tlbm9hdXRoc2VydmVyc2VjcmV0YWNjZXNzdG9rZW4=
   expiration: 3000 # 분 단위
-
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.example.livecommerce_server   # resultType, parameterType 등에서 패키지명을 생략하고 클래스 이름만 사용 가능하게 해주는 설정
-                                                          # 이 패키지 아래에 있는 DTO/VO 클래스들이 자동으로 별칭 등록됨
+  # 이 패키지 아래에 있는 DTO/VO 클래스들이 자동으로 별칭 등록됨
   configuration:                         # DB 컬럼명이 user_id처럼 snake_case인 경우,
     map-underscore-to-camel-case: true  # 자바 필드명이 userId처럼 camelCase여도 자동으로 매핑해주는 설정
-
 openvidu:
   url: ${OPENVIDU_URL}
   secret: ${OPENVIDU_SECRET}
-
 ncp:
   object-storage:
     endpoint: https://kr.object.ncloudstorage.com

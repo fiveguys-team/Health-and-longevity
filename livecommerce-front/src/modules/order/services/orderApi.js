@@ -127,7 +127,7 @@ export async function getOrderHistoryByUserId(userId) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function requestService(payload) {
-    return axiosInstance.post(`api/service/request`, payload, {
+    return axiosInstance.post(`/api/service/request`, payload, {
         headers: {
             'Content-Type': 'application/json',
         }
@@ -140,7 +140,7 @@ export async function requestService(payload) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function getVendorOrdersByUserId(userId) {
-    return axiosInstance.get(`api/order/vendor-orders`, {
+    return axiosInstance.get(`/api/order/vendor-orders`, {
         params: { userId },
         headers: {
             'Content-Type': 'application/json',
@@ -155,7 +155,7 @@ export async function getVendorOrdersByUserId(userId) {
  * @returns {Promise} - Axios 응답 프로미스
  */
 export async function updateServiceStatus(orderItemId, statusCode) {
-    return axiosInstance.put(`api/service/status`, null, {
+    return axiosInstance.put(`/api/service/status`, null, {
         params: {
             orderItemId,
             statusCode
