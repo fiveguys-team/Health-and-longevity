@@ -17,4 +17,8 @@
 		SELECT name FROM vendor_m WHERE vendor_id = #{vendorId}
 	</select>
 
+	<select id="selectVendorId" resultType="Integer">
+		SELECT vendor_id FROM vendor_m WHERE user_id = #{userId}
+	</select>
+
 </mapper>

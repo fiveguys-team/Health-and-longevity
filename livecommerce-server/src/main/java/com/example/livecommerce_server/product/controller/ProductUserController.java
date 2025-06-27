@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 // ProductUserController.java
 @RestController
 @RequestMapping("/api/products")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ProductUserController {
 
     private final ProductService productService;

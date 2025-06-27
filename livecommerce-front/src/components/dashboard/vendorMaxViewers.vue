@@ -1,26 +1,24 @@
 <script setup>
-import axios from "axios";
-import {onMounted, ref} from "vue";
 
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+import {onMounted, ref} from "vue";
+import axiosInstance from "@/api/axios";
 
 const vendorData = ref([]);
 const loading = ref(true);
 
 // 더미 데이터
 const dummyData = [
-  { vendorName: '정관장', maxViewers: 1250 },
-  { vendorName: '롯데제과', maxViewers: 980 },
-  { vendorName: 'CJ제일제당', maxViewers: 750 },
-  { vendorName: '동원F&B', maxViewers: 520 },
-  { vendorName: '농심', maxViewers: 420 }
+  { vendorName: '오펠라헬스케어코리아', maxViewers: 1250 },
+  { vendorName: '브리드케어', maxViewers: 980 },
+  { vendorName: '네츄럴헬스코리아', maxViewers: 750 },
+  { vendorName: '미성뉴트리션', maxViewers: 520 },
+  { vendorName: '영메디케어', maxViewers: 420 }
 ];
 
 const fetchVendorMaxViewers = async () => {
   try {
     loading.value = true;
-    const response = await axios.get(`${APPLICATION_SERVER_URL}api/admin/vendors/max-viewers`);
+    const response = await axiosInstance.get(`/api/admin/vendors/max-viewers`);
     
     // 데이터가 없거나 빈 배열인 경우 더미 데이터 사용
     if (!response.data || response.data.length === 0) {

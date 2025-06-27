@@ -85,7 +85,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from '@/utils/axios'
+import axiosInstance from '@/api/axios'
 import Aos from 'aos'
 
 import NavbarOne from '@/components/navbar/navbar-one.vue'
@@ -172,7 +172,7 @@ async function fetchProductList() {
     }
 
     // 👇 전체 데이터를 받아오자 (page, size 제거)
-    const res = await axios.get('/products', {
+    const res = await axiosInstance.get('/api/products', {
       params: {
         status: 'APPROVED',
         category: korCategory

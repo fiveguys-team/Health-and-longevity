@@ -85,7 +85,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from '@/utils/axios'
+import axiosInstance from '@/api/axios'
 
 const products = ref([])
 const currentStatus = ref('')
@@ -126,10 +126,10 @@ const fetchProducts = async () => {
   try {
     const vendorId = 1 // TODO: 로그인된 사용자 ID로 교체
     const url = currentStatus.value
-        ? `/product/vendor/${vendorId}/products?status=${currentStatus.value}`
-        : `/product/vendor/${vendorId}/products`
+        ? `/api/product/vendor/${vendorId}/products?status=${currentStatus.value}`
+        : `/api/product/vendor/${vendorId}/products`
 
-    const res = await axios.get(url)
+    const res = await axiosInstance.get(url)
     products.value = res.data
   } catch (err) {
     console.error('상품 목록 조회 실패', err)
@@ -146,7 +146,7 @@ const toggleProductDetail = async (productId) => {
 
   try {
     console.log('상세조회 요청:', `/product/detail/${productId}`)
-    const res = await axios.get(`/product/detail/${productId}`)
+    const res = await axiosInstance.get(`/api/product/detail/${productId}`)
     selectedProductId.value = productId
     selectedDetail.value = res.data
   } catch (err) {

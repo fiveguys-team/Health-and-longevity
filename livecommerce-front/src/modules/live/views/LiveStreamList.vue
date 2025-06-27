@@ -56,11 +56,10 @@
 <script setup>
 import {ref, onMounted, computed, watch, nextTick, onBeforeUnmount} from 'vue';
 import {useRouter} from 'vue-router';
-import axios from 'axios';
-import NavbarOne from "@/components/navbar/navbar-one.vue";
 
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? ''
-    : 'http://localhost:8080/';
+import NavbarOne from "@/components/navbar/navbar-one.vue";
+import axiosInstance from "@/api/axios";
+
 
 const router = useRouter();
 const searchQuery = ref('');
@@ -140,66 +139,19 @@ const loadMore = async () => {
 
 const fetchLiveStreams = async () => {
   try {
-    const response = await axios.get(`${APPLICATION_SERVER_URL}api/sessions`, {
+    const response = await axiosInstance.get(`/api/sessions`, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Accept': 'application/json; charset=utf-8'
       }
     });
-
     if (response.data && Array.isArray(response.data)) {
       streams.value = response.data;
       console.log(streams.value);
-    } else {
-      // 테스트용 더미 데이터로 초기화 (더 많은 데이터 추가)
-      streams.value = [
-        {sessionId: '1', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', title: '방송 제목1', category: '혈압'},
-        {sessionId: '2', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', title: '방송 제목2', category: '눈'},
-        {sessionId: '3', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체3', title: '방송 제목3', category: '뼈/관절/연골'},
-        {sessionId: '4', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', title: '방송 제목4', category: '장건강'},
-        {sessionId: '5', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', title: '방송 제목5', category: '영양보충'},
-        {sessionId: '6', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', title: '방송 제목6', category: '혈압'},
-        {sessionId: '7', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체7', title: '방송 제목7', category: '눈'},
-        {sessionId: '8', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체8', title: '방송 제목8', category: '뼈/관절/연골'},
-        {sessionId: '9', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체9', title: '방송 제목9', category: '장건강'},
-        {sessionId: '10', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체10', title: '방송 제목10', category: '영양보충'},
-        {sessionId: '11', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체11', title: '방송 제목11', category: '혈압'},
-        {sessionId: '12', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체12', title: '방송 제목12', category: '눈'},
-        {sessionId: '13', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체13', title: '방송 제목13', category: '뼈/관절/연골'},
-        {sessionId: '14', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체14', title: '방송 제목14', category: '장건강'},
-        {sessionId: '15', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체15', title: '방송 제목15', category: '영양보충'},
-        {sessionId: '16', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체16', title: '방송 제목16', category: '혈압'},
-        {sessionId: '17', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체17', title: '방송 제목17', category: '눈'},
-        {sessionId: '18', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체18', title: '방송 제목18', category: '뼈/관절/연골'},
-        {sessionId: '19', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체19', title: '방송 제목19', category: '장건강'},
-        {sessionId: '20', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체20', title: '방송 제목20', category: '영양보충'}
-      ];
     }
   } catch (error) {
     console.error('라이브 스트림 목록 조회 실패:', error);
-    // 에러 시 테스트용 더미 데이터로 초기화
-    streams.value = [
-      {sessionId: '1', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체1', title: '방송 제목1', category: '혈압'},
-      {sessionId: '2', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체2', title: '방송 제목2', category: '눈'},
-      {sessionId: '3', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체3', title: '방송 제목3', category: '뼈/관절/연골'},
-      {sessionId: '4', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체4', title: '방송 제목4', category: '장건강'},
-      {sessionId: '5', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체5', title: '방송 제목5', category: '영양보충'},
-      {sessionId: '6', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체6', title: '방송 제목6', category: '혈압'},
-      {sessionId: '7', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체7', title: '방송 제목7', category: '눈'},
-      {sessionId: '8', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체8', title: '방송 제목8', category: '뼈/관절/연골'},
-      {sessionId: '9', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체9', title: '방송 제목9', category: '장건강'},
-      {sessionId: '10', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체10', title: '방송 제목10', category: '영양보충'},
-      {sessionId: '11', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체11', title: '방송 제목11', category: '혈압'},
-      {sessionId: '12', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체12', title: '방송 제목12', category: '눈'},
-      {sessionId: '13', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체13', title: '방송 제목13', category: '뼈/관절/연골'},
-      {sessionId: '14', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체14', title: '방송 제목14', category: '장건강'},
-      {sessionId: '15', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체15', title: '방송 제목15', category: '영양보충'},
-      {sessionId: '16', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체16', title: '방송 제목16', category: '혈압'},
-      {sessionId: '17', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체17', title: '방송 제목17', category: '눈'},
-      {sessionId: '18', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체18', title: '방송 제목18', category: '뼈/관절/연골'},
-      {sessionId: '19', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체19', title: '방송 제목19', category: '장건강'},
-      {sessionId: '20', thumbnail: 'https://via.placeholder.com/400x300', vendorName: '입점업체20', title: '방송 제목20', category: '영양보충'}
-    ];
+    // 에러 시 더미데이터 사용하지 않음
   } finally {
     checkHasMore();
   }

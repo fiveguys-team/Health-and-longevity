@@ -59,12 +59,12 @@ import PaymentSuccessView from "@/modules/payment/views/PaymentSuccessView.vue"
 import PaymentFailureView from "@/modules/payment/views/PaymentFailureView.vue"
 import CartView from "@/modules/order/views/CartView.vue"
 import OrderHistoryView from "@/modules/order/views/OrderHistoryView.vue"
-import PartnerOrderHistoryView from "@/modules/order/views/PartnerOrderHistoryView.vue"
 import PartnerReturnRequestView from "@/modules/order/views/PartnerReturnRequestView.vue"
 import test from "@/modules/live/views/testView.vue";
 import OAuthSuccess from "@/modules/auth/views/OAuthSuccess.vue";
 import CheckoutCartView from "@/modules/order/views/CheckoutCartView.vue";
 import PaymentCartSuccessView from "@/modules/payment/views/PaymentCartSuccessView.vue";
+
 
 const routes = [
   {path: '/',component: IndexOne},
@@ -194,7 +194,6 @@ const routes = [
   },
   {path: '/order-confirmation',component: OrderConfirmationView},
   {path: '/order-history',component: OrderHistoryView},
-  {path: '/partner/order-history',component: PartnerOrderHistoryView},
   {path: '/partner/return-request',component: PartnerReturnRequestView},
   {path: '/cart',component: CartView},
   {path: '/cart-checkout',component: CheckoutCartView},
@@ -214,16 +213,38 @@ const routes = [
 
   // 입점업체 대시보드 라우트입니다.
   {
-    path: "/vendor",
+    path: "/vendor-dashboard",
     component: () => import("@/views/dashboard/storeDashboard.vue"),
     meta: { requiresAuth: true, roles: ['VENDOR'] },
+    // beforeEnter 가드를 사용하여 비동기 vendorId 로드를 처리
+    beforeEnter: async (to, from, next) => {
+      const auth = useAuthStore();
+      
+      // auth 스토어의 fetchVendorId 액션을 호출하여 vendorId를 가져옵니다.
+      // 이 함수는 내부적으로 vendorId가 이미 있으면 API를 다시 호출하지 않습니다.
+      const vendorId = await auth.fetchVendorId();
+      
+      if (vendorId) {
+        // 사용자가 /vendor 경로로 직접 들어온 경우에만 리다이렉트합니다.
+        // 자식 경로(예: /vendor/product/register)로 바로 접근하는 경우는 그대로 둡니다.
+        if (to.path === '/vendor-dashboard') {
+          return next({ path: `/vendor-dashboard/live/reportList/${vendorId}` });
+        }
+      } else {
+        // vendorId를 가져올 수 없는 경우 (오류 등), 에러 페이지나 로그인 페이지로 보낼 수 있습니다.
+        // 여기서는 일단 접근을 막기 위해 홈으로 보냅니다.
+        return next('/');
+      }
+      
+      // 다른 모든 경우 (이미 올바른 자식 경로로 가는 경우 등)는 그대로 진행합니다.
+      return next();
+    },
     children: [
       {
         path: "live/reportList/:vendorId",
         name: "reportList",
         component: () => import("@/modules/live/components/LiveReport.vue"),
       },
-
       {
         path: "product/register",
         name: "VendorProductRegister",
@@ -238,8 +259,12 @@ const routes = [
         path: "product/detail/:id",
         name: "VendorProductDetail",
         component: () => import("@/modules/product/views/ProductStatus.vue"),
+      },
+      {
+        path: "order/history", // ✅ 이 줄 추가
+        name: "VendorOrderHistory",
+        component: () => import("@/modules/order/views/PartnerOrderHistoryView.vue"),
       }
-
     ],
   },
 

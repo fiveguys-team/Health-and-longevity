@@ -214,4 +214,9 @@ public class ProductServiceImpl implements ProductService {
     public List<UserProductListDTO> getUserProductsByCategoryAndStatus(String category, String status, int size, int offset) {
         return productMapper.findUserProductsByCategoryAndStatus(category, status, size, offset);
     }
+
+    @Override
+    public ProductDTO getProductById(String productId) {
+        return productMapper.findProductById(productId);
+    }
 }

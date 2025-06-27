@@ -29,5 +29,5 @@ public interface ProductService {
     int countProducts(String category, String status);
     List<DiscountedProductDTO> getDiscountedProducts();
     List<UserProductListDTO> getUserProductsByCategoryAndStatus(String category, String status, int size, int offset);
-
+    ProductDTO getProductById(String productId);
 }

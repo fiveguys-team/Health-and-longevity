@@ -204,19 +204,11 @@
     p.status,
 
     -- ✅ 할인 조건: live가 ON이고 시작했으며 종료되지 않은 경우만 할인 적용
-    CASE
-    WHEN l.status_cd = 'ON'
-    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
-    AND (l.end_cd IS NULL OR l.end_cd = '')
-    THEN COALESCE(lp.discountRate, 0)
-    ELSE 0
-    END AS discountRate,
+    COALESCE(MAX(lp.discountRate), 0) AS discountRate,
 
     CASE
-    WHEN l.status_cd = 'ON'
-    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
-    AND (l.end_cd IS NULL OR l.end_cd = '')
-    THEN FLOOR(p.price * (100 - lp.discountRate) / 100)
+    WHEN MAX(lp.discountRate) IS NOT NULL AND MAX(lp.discountRate) > 0
+    THEN FLOOR(p.price * (100 - MAX(lp.discountRate)) / 100)
     ELSE p.price
     END AS discountedPrice
 
@@ -225,11 +217,15 @@
     JOIN vendor_m v ON p.vendor_id = v.vendor_id
     LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
     LEFT JOIN live_m l ON lp.live_id = l.live_id
+    AND l.status_cd = 'ON'
+    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+    AND (l.end_cd IS NULL OR l.end_cd = '')
 
     WHERE p.status = #{status}
     <if test="category != null and category != ''">
       AND c.name = #{category}
     </if>
+    GROUP BY p.product_id, p.name, c.name, v.name, p.product_image, p.price, p.stock_count, p.status
   </select>
 
 
@@ -283,20 +279,12 @@
     pd.product_name     AS product_name,
 
     -- ✅ 할인율 조건부 계산
-    CASE
-    WHEN l.status_cd = 'ON'
-    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
-    AND (l.end_cd IS NULL OR l.end_cd = '')
-    THEN COALESCE(lp.discountRate, 0)
-    ELSE 0
-    END AS discount_rate,
+    COALESCE(MAX(lp.discountRate), 0) AS discount_rate,
 
     -- ✅ 할인가 조건부 계산
     CASE
-    WHEN l.status_cd = 'ON'
-    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
-    AND (l.end_cd IS NULL OR l.end_cd = '')
-    THEN FLOOR(p.price * (100 - lp.discountRate) / 100)
+    WHEN MAX(lp.discountRate) IS NOT NULL AND MAX(lp.discountRate) > 0
+    THEN FLOOR(p.price * (100 - MAX(lp.discountRate)) / 100)
     ELSE p.price
     END AS discounted_price
 
@@ -305,9 +293,15 @@
     JOIN vendor_m v ON p.vendor_id = v.vendor_id
     JOIN category c ON p.category_id = c.category_id
     LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
-    LEFT JOIN live_m l ON lp.live_id = l.live_id  <!-- ✅ 수정 포인트: 조건 제거 -->
+    LEFT JOIN live_m l ON lp.live_id = l.live_id
+    AND l.status_cd = 'ON'
+    AND <![CDATA[ STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW() ]]>
+    AND (l.end_cd IS NULL OR l.end_cd = '')
 
     WHERE p.product_id = #{id}
+    GROUP BY p.product_id, p.name, v.name, p.price, p.stock_count, p.product_image, c.name,
+             pd.cert_no, pd.expiry_date, pd.approval_date, pd.how_to_take, pd.main_function,
+             pd.precautions, pd.storage_method, pd.standard, pd.ingredients, pd.product_name
   </select>
 
 
@@ -353,18 +347,24 @@
       p.product_id,
       p.name,
       p.price,
-      lp.discountRate,
-      FLOOR(p.price * (100 - lp.discountRate) / 100) AS discountedPrice,
+      MAX(lp.discountRate) AS discountRate,
+      CASE
+      WHEN MAX(lp.discountRate) IS NOT NULL AND MAX(lp.discountRate) > 0
+      THEN FLOOR(p.price * (100 - MAX(lp.discountRate)) / 100)
+      ELSE p.price
+      END AS discountedPrice,
       p.product_image,
       p.stock_count,
       v.name AS vendor
     FROM product p
            JOIN vendor_m v ON p.vendor_id = v.vendor_id
            LEFT JOIN live_product_j lp ON p.product_id = lp.product_id
-           LEFT JOIN live_m l ON lp.live_id = l.live_id AND l.status_cd = 'ON'
+           LEFT JOIN live_m l ON lp.live_id = l.live_id 
+           AND l.status_cd = 'ON'
+           AND <![CDATA[STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW()]]>
+           AND (l.end_cd IS NULL OR l.end_cd = '')
     WHERE p.status = 'APPROVED'
-      AND <![CDATA[STR_TO_DATE(l.start_at, '%Y-%m-%d %H:%i:%s') <= NOW()]]>
-      AND (l.end_cd IS NULL OR l.end_cd = '')
+    GROUP BY p.product_id, p.name, p.price, p.product_image, p.stock_count, v.name
   </select>
 
 

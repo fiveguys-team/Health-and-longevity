@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-
 <mapper namespace="com.example.livecommerce_server.order.mapper.OrderMapper">
     <select id="findOrderPageByProductId" resultType="OrderPageDTO">
         SELECT p.product_id,
@@ -30,19 +29,19 @@
                               basic_address,
                               detail_address)
         VALUES (
-        #{orderId},
-        #{paymentId},
-        #{userId},
-        #{orderStatusCode},
-        #{discountAmount},
-        #{orderDate},
-        #{totalAmount},
-        #{shippingReq},
-        #{createdAt},
-        #{postalCode},
-        #{basicAddress},
-        #{detailAddress}
-        )
+                   #{orderId},
+                   #{paymentId},
+                   #{userId},
+                   #{orderStatusCode},
+                   #{discountAmount},
+                   #{orderDate},
+                   #{totalAmount},
+                   #{shippingReq},
+                   #{createdAt},
+                   #{postalCode},
+                   #{basicAddress},
+                   #{detailAddress}
+               )
     </insert>
 
     <insert id="insertOrderItems" parameterType="java.util.List">
@@ -51,7 +50,8 @@
         order_id,
         product_id,
         quantity,
-        created_at
+        created_at,
+        paid_amount
         )
         VALUES
         <foreach collection="list" item="item" separator=",">
@@ -60,21 +60,22 @@
             #{item.orderId},
             #{item.productId},
             #{item.quantity},
-            #{item.createdAt}
+            #{item.createdAt},
+            #{item.paidAmount}
             )
         </foreach>
     </insert>
 
     <update id="updateOrderStatusByOrderId" parameterType="com.example.livecommerce_server.order.dto.OrderStatusUpdateDTO">
-        UPDATE orders_m
+        UPDATE ORDERS_M
         SET order_status_code = #{status}
         WHERE order_id = #{orderId}
     </update>
 
     <update id="updateStockCountByOrderId" parameterType="string">
-        UPDATE product p
-            JOIN order_item_d oid ON p.product_id = oid.product_id
-            JOIN orders_m o ON o.order_id = oid.order_id
+        UPDATE PRODUCT p
+            JOIN ORDER_ITEM_D oid ON p.product_id = oid.product_id
+            JOIN ORDERS_M o ON o.order_id = oid.order_id
             SET p.stock_count = p.stock_count - oid.quantity
         WHERE o.order_id = #{orderId}
           AND o.order_status_code = 'DONE'
@@ -83,8 +84,8 @@
 
     <select id="selectDiscountRateByProductIdIfLiveOn" parameterType="string" resultType="int">
         SELECT lp.discountRate
-        FROM live_product_j lp
-                 JOIN live_m lm ON lp.live_id = lm.live_id
+        FROM LIVE_PRODUCT_J lp
+                 JOIN LIVE_M lm ON lp.live_id = lm.live_id
         WHERE lp.product_id = #{productId}
           AND lm.status_cd = 'ON'
     </select>
@@ -99,6 +100,7 @@
             oi.order_item_id,
             oi.product_id,
             oi.quantity,
+            oi.paid_amount,
 
             pr.name AS product_name,
             pr.product_image,
@@ -106,11 +108,11 @@
             s.service_code,
             s.status_code AS service_status
 
-        FROM orders_m o
-                 JOIN payment_d p ON o.payments_id = p.payments_id
-                 JOIN order_item_d oi ON o.order_id = oi.order_id
-                 JOIN product pr ON oi.product_id = pr.product_id
-                 LEFT JOIN service_m s ON oi.order_item_id = s.order_item_id
+        FROM ORDERS_M o
+                 JOIN PAYMENT_D p ON o.payments_id = p.payments_id
+                 JOIN ORDER_ITEM_D oi ON o.order_id = oi.order_id
+                 JOIN PRODUCT pr ON oi.product_id = pr.product_id
+                 LEFT JOIN SERVICE_M s ON oi.order_item_id = s.order_item_id
 
         WHERE o.user_id = #{userId}
           AND o.order_status_code = 'DONE'
@@ -130,9 +132,59 @@
             <result property="productName" column="product_name"/>
             <result property="productImage" column="product_image"/>
             <result property="quantity" column="quantity"/>
+            <result property="paidAmount" column="paid_amount"/>
             <result property="serviceCode" column="service_code"/>
             <result property="serviceStatus" column="service_status"/>
         </collection>
     </resultMap>
 
+    <select id="selectOrderHistoryByVendorUserId" parameterType="int" resultMap="VendorOrderHistoryResultMap">
+        SELECT
+            o.order_id,
+            o.order_date,
+            o.total_amount,
+
+            oi.order_item_id,
+            oi.product_id,
+            oi.quantity,
+            oi.paid_amount,
+
+            pr.name AS product_name,
+            pr.product_image,
+
+            s.service_code,
+            s.status_code AS service_status,
+            s.reason,
+            s.img
+
+        FROM ORDERS_M o
+                 JOIN ORDER_ITEM_D oi ON o.order_id = oi.order_id
+                 JOIN PRODUCT pr ON oi.product_id = pr.product_id
+                 JOIN VENDOR_M v ON pr.vendor_id = v.vendor_id
+                 LEFT JOIN SERVICE_M s ON oi.order_item_id = s.order_item_id
+
+        WHERE o.order_status_code = 'DONE'
+          AND v.user_id = #{userId}
+
+        ORDER BY o.order_date DESC
+    </select>
+
+    <resultMap id="VendorOrderHistoryResultMap" type="VendorOrderHistoryDTO">
+        <id property="orderId" column="order_id"/>
+        <result property="orderDate" column="order_date"/>
+        <result property="totalAmount" column="total_amount"/>
+
+        <collection property="items" ofType="VendorOrderItemDTO">
+            <id property="orderItemId" column="order_item_id"/>
+            <result property="productId" column="product_id"/>
+            <result property="productName" column="product_name"/>
+            <result property="productImage" column="product_image"/>
+            <result property="quantity" column="quantity"/>
+            <result property="paidAmount" column="paid_amount"/>
+            <result property="serviceCode" column="service_code"/>
+            <result property="serviceStatus" column="service_status"/>
+            <result property="reason" column="reason"/>
+            <result property="img" column="img"/>
+        </collection>
+    </resultMap>
 </mapper>
