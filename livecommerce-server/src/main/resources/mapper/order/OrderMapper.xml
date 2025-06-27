@@ -88,6 +88,7 @@
                  JOIN LIVE_M lm ON lp.live_id = lm.live_id
         WHERE lp.product_id = #{productId}
           AND lm.status_cd = 'ON'
+            LIMIT 1
     </select>
 
     <select id="findOrderHistoryByUserId" parameterType="int" resultMap="OrderHistoryResultMap">
