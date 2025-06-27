@@ -49,14 +49,14 @@ class WebSocketService {
     const socket = new SockJS(`${WS_BASE_URL}/connect`);
     this.stompClient = Stomp.over(socket);
 
-    // 인증 헤더 설정
-    const headers = {
-      Authorization: userInfo.token ? `Bearer ${userInfo.token}` : "",
-      userId: userInfo.userId.toString(),
-    };
+    // // 인증 헤더 설정
+    // const headers = {
+    //   Authorization: userInfo.token ? `Bearer ${userInfo.token}` : "",
+    //   userId: userInfo.userId.toString(),
+    // };
 
     this.stompClient.connect(
-      headers,
+      {},
       () => {
         this.connected = true;
         this.currentUserId = userInfo.userId;
