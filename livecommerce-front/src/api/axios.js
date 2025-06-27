@@ -7,7 +7,8 @@ const axiosInstance = axios.create({
   withCredentials: true,            // 쿠키 포함해서 보내려면 이거 꼭 필요
 });
 // WebSocket 연결용 URL (같은 서버 사용)
-export const WS_BASE_URL = 'https://healthy-and-longevity.shop';
+// export const WS_BASE_URL = 'https://healthy-and-longevity.shop';
+export const WS_BASE_URL = 'http://localhost:8080';
 // 응답 에러 처리 (401 등)
 axiosInstance.interceptors.response.use(
     response => response,
