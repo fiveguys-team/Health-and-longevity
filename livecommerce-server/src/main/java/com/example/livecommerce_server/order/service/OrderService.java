@@ -1,9 +1,6 @@
 package com.example.livecommerce_server.order.service;
 
-import com.example.livecommerce_server.order.dto.OrderHistoryDTO;
-import com.example.livecommerce_server.order.dto.OrderPageDTO;
-import com.example.livecommerce_server.order.dto.OrderPrepareRequestDTO;
-import com.example.livecommerce_server.order.dto.OrderPrepareResponseDTO;
+import com.example.livecommerce_server.order.dto.*;
 
 import java.util.List;
 
@@ -19,5 +16,13 @@ public interface OrderService {
      * @return 주문 내역 리스트
      */
     List<OrderHistoryDTO> findOrderHistoryByUserId(int userId);
-    
+
+    /**
+     * 입점업체(userId)가 등록한 상품의 주문내역을 조회한다.
+     *
+     * @param userId 로그인한 입점업체의 사용자 ID
+     * @return 주문내역 리스트 (환불/교환 요청 정보 포함)
+     */
+    List<VendorOrderHistoryDTO> findOrderHistoryByVendorUserId(Integer userId);
+
 }

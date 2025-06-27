@@ -74,12 +74,9 @@
                 END) / 100)) AS discounted_price
         FROM
             CART_ITEM_D ci
-                JOIN
-            PRODUCT p ON ci.product_id = p.product_id
-                LEFT JOIN
-            LIVE_PRODUCT_J lp ON ci.product_id = lp.product_id
-                LEFT JOIN
-            LIVE_M lm ON lp.live_id = lm.live_id
+                JOIN PRODUCT p ON ci.product_id = p.product_id
+                LEFT JOIN LIVE_PRODUCT_J lp ON ci.product_id = lp.product_id
+                LEFT JOIN LIVE_M lm ON lp.live_id = lm.live_id
         WHERE
             ci.cart_id = #{cartId}
     </select>

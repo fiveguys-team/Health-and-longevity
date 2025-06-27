@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -37,6 +39,12 @@ public class ServiceServiceImpl implements ServiceService {
         // service_status는 MyBatis XML에서 'REQ'로 처리함
         serviceMapper.insertServiceRequest(requestDTO);
     }
+
+    @Override
+    public void updateServiceStatus(String orderItemId, String statusCode) {
+        serviceMapper.updateServiceStatus(orderItemId, statusCode);
+    }
+
 
 
     private String nowCompactString() {

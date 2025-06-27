@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-
 <mapper namespace="com.example.livecommerce_server.order.mapper.OrderMapper">
     <select id="findOrderPageByProductId" resultType="OrderPageDTO">
         SELECT p.product_id,
@@ -30,19 +29,19 @@
                               basic_address,
                               detail_address)
         VALUES (
-        #{orderId},
-        #{paymentId},
-        #{userId},
-        #{orderStatusCode},
-        #{discountAmount},
-        #{orderDate},
-        #{totalAmount},
-        #{shippingReq},
-        #{createdAt},
-        #{postalCode},
-        #{basicAddress},
-        #{detailAddress}
-        )
+                   #{orderId},
+                   #{paymentId},
+                   #{userId},
+                   #{orderStatusCode},
+                   #{discountAmount},
+                   #{orderDate},
+                   #{totalAmount},
+                   #{shippingReq},
+                   #{createdAt},
+                   #{postalCode},
+                   #{basicAddress},
+                   #{detailAddress}
+               )
     </insert>
 
     <insert id="insertOrderItems" parameterType="java.util.List">
@@ -139,6 +138,53 @@
         </collection>
     </resultMap>
 
+    <select id="selectOrderHistoryByVendorUserId" parameterType="int" resultMap="VendorOrderHistoryResultMap">
+        SELECT
+            o.order_id,
+            o.order_date,
+            o.total_amount,
 
+            oi.order_item_id,
+            oi.product_id,
+            oi.quantity,
+            oi.paid_amount,
 
+            pr.name AS product_name,
+            pr.product_image,
+
+            s.service_code,
+            s.status_code AS service_status,
+            s.reason,
+            s.img
+
+        FROM ORDERS_M o
+                 JOIN ORDER_ITEM_D oi ON o.order_id = oi.order_id
+                 JOIN PRODUCT pr ON oi.product_id = pr.product_id
+                 JOIN VENDOR_M v ON pr.vendor_id = v.vendor_id
+                 LEFT JOIN SERVICE_M s ON oi.order_item_id = s.order_item_id
+
+        WHERE o.order_status_code = 'DONE'
+          AND v.user_id = #{userId}
+
+        ORDER BY o.order_date DESC
+    </select>
+
+    <resultMap id="VendorOrderHistoryResultMap" type="VendorOrderHistoryDTO">
+        <id property="orderId" column="order_id"/>
+        <result property="orderDate" column="order_date"/>
+        <result property="totalAmount" column="total_amount"/>
+
+        <collection property="items" ofType="VendorOrderItemDTO">
+            <id property="orderItemId" column="order_item_id"/>
+            <result property="productId" column="product_id"/>
+            <result property="productName" column="product_name"/>
+            <result property="productImage" column="product_image"/>
+            <result property="quantity" column="quantity"/>
+            <result property="paidAmount" column="paid_amount"/>
+            <result property="serviceCode" column="service_code"/>
+            <result property="serviceStatus" column="service_status"/>
+            <result property="reason" column="reason"/>
+            <result property="img" column="img"/>
+        </collection>
+    </resultMap>
 </mapper>
