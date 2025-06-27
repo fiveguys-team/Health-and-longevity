@@ -24,4 +24,8 @@ public interface OrderMapper {
     Integer selectDiscountRateByProductIdIfLiveOn(String productId);
 
     List<OrderHistoryDTO> findOrderHistoryByUserId(@Param("userId") int userId);
+
+    // Mapper
+    List<VendorOrderHistoryDTO> selectOrderHistoryByVendorUserId(@Param("userId") Integer userId);
+
 }

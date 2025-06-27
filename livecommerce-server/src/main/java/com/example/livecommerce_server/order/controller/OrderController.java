@@ -1,9 +1,6 @@
 package com.example.livecommerce_server.order.controller;
 
-import com.example.livecommerce_server.order.dto.OrderHistoryDTO;
-import com.example.livecommerce_server.order.dto.OrderPageDTO;
-import com.example.livecommerce_server.order.dto.OrderPrepareRequestDTO;
-import com.example.livecommerce_server.order.dto.OrderPrepareResponseDTO;
+import com.example.livecommerce_server.order.dto.*;
 import com.example.livecommerce_server.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -43,5 +40,10 @@ public class OrderController {
     @GetMapping("/history")
     public List<OrderHistoryDTO> getOrderHistory(@RequestParam("userId") int userId) {
         return orderService.findOrderHistoryByUserId(userId);
+    }
+
+    @GetMapping("/vendor-orders")
+    public List<VendorOrderHistoryDTO> getVendorOrders(@RequestParam("userId") Integer userId) {
+        return orderService.findOrderHistoryByVendorUserId(userId);
     }
 }
