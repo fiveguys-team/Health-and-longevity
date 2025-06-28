@@ -52,10 +52,6 @@ import org.springframework.web.filter.CorsFilter;
 import com.example.livecommerce_server.product.dto.ProductDTO;
 import com.example.livecommerce_server.product.service.ProductService;
 
-//@CrossOrigin(origins = {"http://localhost:5174", "http://localhost:5173",
-//		"http://localhost:3000"}, allowedHeaders = "*", methods = {RequestMethod.GET,
-//		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -86,18 +82,6 @@ public class LiveController {
 		this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 	}
 
-//	@Bean
-//	public CorsFilter corsFilter() {
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		CorsConfiguration config = new CorsConfiguration();
-//		config.setAllowedOrigins(Arrays.asList("http://localhost:5174", "http://localhost:5173",
-//				"http://localhost:5175", "http://localhost:3000"));
-//		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//		config.setAllowedHeaders(Arrays.asList("*"));
-//		config.setAllowCredentials(true);
-//		source.registerCorsConfiguration("/**", config);
-//		return new CorsFilter(source);
-//	}
 
 	/**
 	 * 현재 활성화된 모든 세션 목록을 반환합니다.
@@ -246,12 +230,10 @@ public class LiveController {
 			@PathVariable("sessionId") String sessionId,
 			@PathVariable("userId") String userId) {
 		try {
-			log.info("방송 퇴장 호출됨 - sessionId: {}, userId: {}", sessionId, userId);
+			log.info("방송 퇴장 호출됨");
 			LiveDTO liveDTO = activeSessions.get(sessionId);
 			if (liveDTO == null) {
-				log.warn("세션을 찾을 수 없음: {}", sessionId);
-				// 세션이 이미 종료된 경우에도 정상 처리
-				return new ResponseEntity<>(HttpStatus.OK);
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 			liveStatisticsService.saveViewerLeave(liveDTO.getLiveId(), userId);
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -273,9 +255,7 @@ public class LiveController {
 		try {
 			LiveDTO liveDTO = activeSessions.get(sessionId);
 			if (liveDTO == null) {
-				log.warn("세션을 찾을 수 없음: {}", sessionId);
-				// 세션이 종료된 경우 0 반환
-				return new ResponseEntity<>(0, HttpStatus.OK);
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 			int viewerCount = liveStatisticsService.selectCurrentViewerCount(liveDTO.getLiveId());
 			return new ResponseEntity<>(viewerCount, HttpStatus.OK);
@@ -293,17 +273,12 @@ public class LiveController {
 	 */
 	@DeleteMapping("/api/sessions/{sessionId}")
 	public ResponseEntity<?> closeSession(@PathVariable("sessionId") String sessionId) {
-		log.info("session 종료 API 호출됨 - sessionId: {}", sessionId);
+		log.info("session 종료 API 호출됨");
 		try {
 			// OpenVidu 서버에서 세션 찾기
 			Session session = openvidu.getActiveSession(sessionId);
-			if (session == null) {
-				log.warn("OpenVidu에서 세션을 찾을 수 없음: {}", sessionId);
-				// 세션이 이미 종료된 경우에도 정상 처리
-				return new ResponseEntity<>("Session already closed", HttpStatus.OK);
-			}
-			
-			log.info("세션 종료 시작 - sessionId: {}", session.getSessionId());
+			log.info("sessionId: " + sessionId);
+			log.info("sessionId: " + session.getSessionId());
 
 			// 세션의 모든 연결 종료
 			session.close();
@@ -323,12 +298,8 @@ public class LiveController {
 
 			return new ResponseEntity<>("Session closed", HttpStatus.OK);
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
-			log.error("Error closing session: {}", e.getMessage());
+			e.printStackTrace();
 			return new ResponseEntity<>("Error closing session: " + e.getMessage(),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			log.error("Unexpected error during session close: {}", e.getMessage());
-			return new ResponseEntity<>("Unexpected error: " + e.getMessage(),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
