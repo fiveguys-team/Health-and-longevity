@@ -246,10 +246,12 @@ public class LiveController {
 			@PathVariable("sessionId") String sessionId,
 			@PathVariable("userId") String userId) {
 		try {
-			log.info("방송 퇴장 호출됨");
+			log.info("방송 퇴장 호출됨 - sessionId: {}, userId: {}", sessionId, userId);
 			LiveDTO liveDTO = activeSessions.get(sessionId);
 			if (liveDTO == null) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				log.warn("세션을 찾을 수 없음: {}", sessionId);
+				// 세션이 이미 종료된 경우에도 정상 처리
+				return new ResponseEntity<>(HttpStatus.OK);
 			}
 			liveStatisticsService.saveViewerLeave(liveDTO.getLiveId(), userId);
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -271,7 +273,9 @@ public class LiveController {
 		try {
 			LiveDTO liveDTO = activeSessions.get(sessionId);
 			if (liveDTO == null) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				log.warn("세션을 찾을 수 없음: {}", sessionId);
+				// 세션이 종료된 경우 0 반환
+				return new ResponseEntity<>(0, HttpStatus.OK);
 			}
 			int viewerCount = liveStatisticsService.selectCurrentViewerCount(liveDTO.getLiveId());
 			return new ResponseEntity<>(viewerCount, HttpStatus.OK);
@@ -289,12 +293,17 @@ public class LiveController {
 	 */
 	@DeleteMapping("/api/sessions/{sessionId}")
 	public ResponseEntity<?> closeSession(@PathVariable("sessionId") String sessionId) {
-		log.info("session 종료 API 호출됨");
+		log.info("session 종료 API 호출됨 - sessionId: {}", sessionId);
 		try {
 			// OpenVidu 서버에서 세션 찾기
 			Session session = openvidu.getActiveSession(sessionId);
-			log.info("sessionId: " + sessionId);
-			log.info("sessionId: " + session.getSessionId());
+			if (session == null) {
+				log.warn("OpenVidu에서 세션을 찾을 수 없음: {}", sessionId);
+				// 세션이 이미 종료된 경우에도 정상 처리
+				return new ResponseEntity<>("Session already closed", HttpStatus.OK);
+			}
+			
+			log.info("세션 종료 시작 - sessionId: {}", session.getSessionId());
 
 			// 세션의 모든 연결 종료
 			session.close();
@@ -304,14 +313,22 @@ public class LiveController {
 			if (liveDTO != null) {
 				// 라이브 종료 후 종료 시간, 상태 변경
 				liveService.saveLiveInfo(sessionId);
+
+				// 라이브 종료 후 시청자 퇴장 시간 null 값 종료 처리
+				liveService.saveViewerLeave(sessionId);
+
 				// 통계 계산 및 저장
 				liveStatisticsService.calculateAndSaveStatistics(liveDTO.getLiveId());
 			}
 
 			return new ResponseEntity<>("Session closed", HttpStatus.OK);
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
-			e.printStackTrace();
+			log.error("Error closing session: {}", e.getMessage());
 			return new ResponseEntity<>("Error closing session: " + e.getMessage(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			log.error("Unexpected error during session close: {}", e.getMessage());
+			return new ResponseEntity<>("Unexpected error: " + e.getMessage(),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

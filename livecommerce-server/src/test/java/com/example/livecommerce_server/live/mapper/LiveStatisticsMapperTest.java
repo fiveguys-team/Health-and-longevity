@@ -87,14 +87,14 @@ class LiveStatisticsMapperTest {
 	@Test
 	@DisplayName("주문 건 수")
 	void selectTotalOrders() {
-		int orders = liveStatisticsMapper.selectTotalOrders("0bf69ae2-516b-4509-b887-a34b79f0b40a");
+		int orders = liveStatisticsMapper.selectTotalOrders("03818ffb-1d5f-4db8-b4c6-4d6dccedce99");
 		log.info(String.valueOf(orders));
 	}
 
 	@Test
 	@DisplayName("구매 전환율")
 	void selectPurchaseRatio() {
-		int ratio = liveStatisticsMapper.selectPurchaseRatio("0bf69ae2-516b-4509-b887-a34b79f0b40a");
+		int ratio = liveStatisticsMapper.selectPurchaseRatio("03818ffb-1d5f-4db8-b4c6-4d6dccedce99");
 		log.info(String.valueOf(ratio));
 	}
 }

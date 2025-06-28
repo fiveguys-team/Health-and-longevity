@@ -97,4 +97,13 @@ public class LiveServiceImpl implements LiveService {
 	public int findVendorId(int userId) {
 		return liveMapper.selectVendorId(userId);
 	}
+
+	/**
+	 * 시청자 퇴장 로그 기록
+	 * @param sessionId
+	 */
+	@Override
+	public void saveViewerLeave(String sessionId) {
+		liveMapper.updateViewerLeave(sessionId, Instant.now().toString());
+	}
 }

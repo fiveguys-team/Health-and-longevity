@@ -68,7 +68,6 @@
 
 <!--	총 매출액 조회-->
 	<select id="selectTotalRevenue" resultType="Integer" parameterType="string">
-
 		SELECT COALESCE(SUM(m.total_amount), 0)
 		from PAYMENT_D p, LIVE_M l, LIVE_PRODUCT_J j, PRODUCT pr, ORDER_ITEM_D o, ORDERS_M m, PAYMENT_D
 		where l.live_id = #{liveId} and l.live_id = j.live_id and j.product_id = pr.product_id and o.product_id = pr.product_id
@@ -110,7 +109,7 @@
 	<select id="selectPurchaseRatio" resultType="Integer" parameterType="string">
 		SELECT IFNULL(ROUND((COUNT(DISTINCT o.user_id) / COUNT(DISTINCT lvl.user_id)) * 100, 2), 0) as conversion_rate
 		FROM LIVE_M l, LIVE_VIEWER_LOG lvl, ORDERS_M o
-		WHERE  l.live_id = #{liveId} and  l.live_id = lvl.live_id
+		WHERE  lvl.live_id = #{liveId} and  l.live_id = lvl.live_id
 		  and o.order_date BETWEEN
 			DATE_FORMAT(
 				STR_TO_DATE(
