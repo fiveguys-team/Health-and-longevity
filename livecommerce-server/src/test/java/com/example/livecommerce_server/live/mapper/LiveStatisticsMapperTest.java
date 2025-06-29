@@ -87,7 +87,7 @@ class LiveStatisticsMapperTest {
 	@Test
 	@DisplayName("주문 건 수")
 	void selectTotalOrders() {
-		int orders = liveStatisticsMapper.selectTotalOrders("03818ffb-1d5f-4db8-b4c6-4d6dccedce99");
+		int orders = liveStatisticsMapper.selectTotalOrders("b9cf8faf-4484-4331-b026-54f216b9fcfe");
 		log.info(String.valueOf(orders));
 	}
 
