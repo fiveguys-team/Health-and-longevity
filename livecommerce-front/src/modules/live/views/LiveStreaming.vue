@@ -207,7 +207,7 @@ const handleStreamDestroyed = (event) => {
 const handleSessionDisconnected = (event) => {
   console.log('Session disconnected event:', event);
   cleanupSession();
-  loadingMessage.value = '세션이 종료되었습니다.';
+  loadingMessage.value = '방송이 종료되었습니다. 시청해주셔서 감사합니다.';
   setTimeout(() => {
     router.push('/');
   }, 2000);
