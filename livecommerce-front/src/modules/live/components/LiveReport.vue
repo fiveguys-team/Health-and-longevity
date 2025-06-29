@@ -206,12 +206,15 @@ const filteredreports = computed(() => {
   let filtered = reports.value;
   if (searchDate.value) {
     filtered = filtered.filter(item => {
-      const itemDate = new Date(item.streamDate).toISOString().split('T')[0];
+      if (!item.streamDate || item.streamDate.length !== 14) return false;
+      const y = item.streamDate.slice(0, 4);
+      const m = item.streamDate.slice(4, 6);
+      const d = item.streamDate.slice(6, 8);
+      const itemDate = `${y}-${m}-${d}`;
       return itemDate.includes(searchDate.value);
     });
   }
-  // 최신순 정렬 (streamDate 내림차순)
-  return filtered.slice().sort((a, b) => new Date(b.streamDate) - new Date(a.streamDate));
+  return filtered.slice().sort((a, b) => b.streamDate.localeCompare(a.streamDate));
 })
 
 // 페이징
