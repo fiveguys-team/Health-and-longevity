@@ -18,4 +18,6 @@ public interface LiveService {
 	String findVendorName(String vendorId);
 
 	int findVendorId(int userId);
+
+	void saveViewerLeave(String sessionId);
 }

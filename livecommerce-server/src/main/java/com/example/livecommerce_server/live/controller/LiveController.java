@@ -52,10 +52,6 @@ import org.springframework.web.filter.CorsFilter;
 import com.example.livecommerce_server.product.dto.ProductDTO;
 import com.example.livecommerce_server.product.service.ProductService;
 
-//@CrossOrigin(origins = {"http://localhost:5174", "http://localhost:5173",
-//		"http://localhost:3000"}, allowedHeaders = "*", methods = {RequestMethod.GET,
-//		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -86,18 +82,6 @@ public class LiveController {
 		this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 	}
 
-//	@Bean
-//	public CorsFilter corsFilter() {
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		CorsConfiguration config = new CorsConfiguration();
-//		config.setAllowedOrigins(Arrays.asList("http://localhost:5174", "http://localhost:5173",
-//				"http://localhost:5175", "http://localhost:3000"));
-//		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//		config.setAllowedHeaders(Arrays.asList("*"));
-//		config.setAllowCredentials(true);
-//		source.registerCorsConfiguration("/**", config);
-//		return new CorsFilter(source);
-//	}
 
 	/**
 	 * 현재 활성화된 모든 세션 목록을 반환합니다.
@@ -304,6 +288,10 @@ public class LiveController {
 			if (liveDTO != null) {
 				// 라이브 종료 후 종료 시간, 상태 변경
 				liveService.saveLiveInfo(sessionId);
+
+				// 라이브 종료 후 시청자 퇴장 시간 null 값 종료 처리
+				liveService.saveViewerLeave(sessionId);
+
 				// 통계 계산 및 저장
 				liveStatisticsService.calculateAndSaveStatistics(liveDTO.getLiveId());
 			}

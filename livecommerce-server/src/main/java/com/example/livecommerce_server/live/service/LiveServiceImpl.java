@@ -9,6 +9,8 @@ import com.example.livecommerce_server.live.mapper.LiveProductMapper;
 import com.example.livecommerce_server.live.vo.LiveInfoVO;
 import com.example.livecommerce_server.live.vo.LiveProductVO;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,10 @@ public class LiveServiceImpl implements LiveService {
 	private final LiveMapper liveMapper;
 	private final LiveProductMapper liveProductMapper;
 
+	private String nowCompactString() {
+		return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+	}
+
 	/**
 	 * 라이브 방송 정보 저장하는 메서드
 	 * @param liveDTO
@@ -34,7 +40,7 @@ public class LiveServiceImpl implements LiveService {
 				.vendor_id(liveDTO.getVendorId())
 				.session_id(liveDTO.getSessionId())
 				.title(liveDTO.getTitle())
-				.start_time(liveDTO.getStartTime())
+				.start_time(nowCompactString())
 				.status("ON") // 추후 변경
 				.announcement(liveDTO.getAnnouncement())
 				.category(liveDTO.getCategory())
@@ -72,7 +78,7 @@ public class LiveServiceImpl implements LiveService {
 	public void saveLiveInfo(String sessionId) {
 		LiveEndRequestDto liveEndRequestDto = LiveEndRequestDto.builder()
 				.sessionId(sessionId)
-				.endTime(Instant.now().toString())
+				.endTime(nowCompactString())
 				.build();
 
 		liveMapper.updateLiveInfo(liveEndRequestDto);
@@ -96,5 +102,14 @@ public class LiveServiceImpl implements LiveService {
 	@Override
 	public int findVendorId(int userId) {
 		return liveMapper.selectVendorId(userId);
+	}
+
+	/**
+	 * 시청자 퇴장 로그 기록
+	 * @param sessionId
+	 */
+	@Override
+	public void saveViewerLeave(String sessionId) {
+		liveMapper.updateViewerLeave(sessionId, nowCompactString());
 	}
 }
