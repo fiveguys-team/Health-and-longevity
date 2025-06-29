@@ -8,8 +8,8 @@
         values (#{email}, #{password}, #{name}, #{interest}, #{socialId}, #{socialType}, #{emailVerified})
     </insert>
 
-    <select id="findBySocialId" resultType="com.example.livecommerce_server.member.domain.Member">
-        select * from USER_M where social_id = #{socialId}
+    <select id="findById" resultType="com.example.livecommerce_server.member.domain.Member">
+        select * from USER_M where user_id = #{userId}
     </select>
 
     <select id="findByEmail" resultType="com.example.livecommerce_server.member.domain.Member">
@@ -21,7 +21,8 @@
     </update>
 
     <insert id="createVendor" parameterType="com.example.livecommerce_server.member.dto.VendorRegistrationDto">
-        insert into VENDOR_M (user_id, business_number, permit_number) values (#{userId}, #{businessNumber}, #{permitNumber})
+        insert into VENDOR_M (user_id, name, address, business_number, permit_number, vendor_img, b_img, p_img)
+        values (#{userId}, #{name}, #{address}, #{businessNumber}, #{permitNumber}, #{vendorImg}, #{bImg}, #{pImg})
     </insert>
 
     <update id="updateUserRole" parameterType="map">
@@ -34,5 +35,12 @@
         where user_id = #{userId}
         order by vendor_id desc
         limit 1
+    </select>
+
+    <select id="findVendorInfoByUserId" resultType="com.example.livecommerce_server.vendor.dto.VendorInfoDto">
+        select u.name, u.email, v.user_id, v.business_number, v.permit_number, v.status, v.b_img, v.p_img
+        from VENDOR_M v join USER_M u
+        where v.user_id = u.user_id
+        and v.user_id = #{userId}
     </select>
 </mapper>

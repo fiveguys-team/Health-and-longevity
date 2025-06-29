@@ -3,13 +3,16 @@ package com.example.livecommerce_server.common.config;
 
 import com.example.livecommerce_server.chat.service.ChatSubscriber;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * Redis 설정 클래스 (Step 2: JSON 직렬화 + Pub/Sub 지원)
@@ -107,5 +110,37 @@ public class RedisConfig {
         log.info("   📌 이제 다른 서버에서 메시지 발행하면 자동으로 수신됩니다!");
 
         return container;
+    }
+
+    /**
+     * 리프레시 토큰 전용 RedisTemplate (DB 1번 사용)
+     */
+    @Bean
+    @Qualifier("refreshTokenRedisTemplate")
+    public StringRedisTemplate refreshTokenRedisTemplate(RedisConnectionFactory connectionFactory) {
+        StringRedisTemplate template = new StringRedisTemplate();
+        template.setConnectionFactory(connectionFactory);
+
+        // 중요: DB 번호 설정 (기본 0번과 다른 1번 사용)
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        template.setConnectionFactory(connectionFactoryWithDb1(connectionFactory));
+
+        log.info("🔑 리프레시 토큰용 RedisTemplate 빈 생성 완료 (DB: 1)");
+        return template;
+    }
+
+
+    /**
+     * DB 번호가 1인 Redis 연결 팩토리 생성
+     */
+    private RedisConnectionFactory connectionFactoryWithDb1(RedisConnectionFactory originalFactory) {
+        // 원본 팩토리에서 새로운 구성 생성
+        LettuceConnectionFactory lettuceFactory = (LettuceConnectionFactory) originalFactory;
+        LettuceConnectionFactory newFactory = new LettuceConnectionFactory(
+                lettuceFactory.getStandaloneConfiguration());
+        newFactory.setDatabase(1); // 핵심: DB 번호 1로 설정
+        newFactory.afterPropertiesSet();
+        return newFactory;
     }
 }
