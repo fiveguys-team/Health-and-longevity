@@ -17,24 +17,24 @@
                           <span v-if="nameError" class="text-red-500 text-sm">{{ nameError }}</span>
                         </div>
                     </div>
-                    <div class="mt-5" data-aos="fade-up" data-aos-delay="300">
+                    <div class="mt-4" data-aos="fade-up" data-aos-delay="300">
                         <label class="text-base sm:text-lg font-medium leading-none mb-2.5 block dark:text-white">이메일</label>
                         <input v-model="email" @input="validateEmail" :class="['w-full h-12 md:h-14 bg-white dark:bg-transparent border', emailError ? 'border-red-500 focus:border-red-500' : 'border-bdr-clr focus:border-primary', 'p-4 outline-none duration-300']" type="email" placeholder="이메일 주소를 입력하세요">
                         <div class="min-h-[20px] mt-1">
                           <span v-if="emailError" class="text-red-500 text-sm">{{ emailError }}</span>
                         </div>
                     </div>
-                    <div class="mt-5" data-aos="fade-up" data-aos-delay="400">
+                    <div class="mt-3" data-aos="fade-up" data-aos-delay="400">
                         <label class="text-base sm:text-lg font-medium leading-none mb-2.5 block dark:text-white">비밀번호</label>
                         <input v-model="password" @input="validatePassword" :class="['w-full h-12 md:h-14 bg-white dark:bg-transparent border', passwordError ? 'border-red-500 focus:border-red-500' : 'border-bdr-clr focus:border-primary', 'p-4 outline-none duration-300 placeholder:text-xl placeholder:transform placeholder:translate-y-[10px]']" type="password" placeholder="* * * * * * * *">
                         <div class="min-h-[20px] mt-1">
                           <span v-if="passwordError" class="text-red-500 text-sm">{{ passwordError }}</span>
                         </div>
                     </div>
-                    <div data-aos="fade-up" data-aos-delay="500">
-                        <button @click="memberCreate" class="btn btn-theme-solid mt-[15px]" data-text="회원가입"><span>회원가입</span></button>
+                    <div data-aos="fade-up" class="flex justify-center" data-aos-delay="500">
+                        <button @click="memberCreate" class="btn btn-theme-solid mt-4" data-text="회원가입"><span>회원가입</span></button>
                     </div>
-                    <div class="mt-5 text-center" data-aos="fade-up" data-aos-delay="600" data-aos-offset="0">
+                    <div class="mt-3 text-center" data-aos="fade-up" data-aos-delay="600" data-aos-offset="0">
                       <span class="text-base">이미 계정이 있으신가요?</span>
                       <router-link to="/login" class="text-primary font-medium ml-1 inline-block">로그인</router-link>
                     </div>

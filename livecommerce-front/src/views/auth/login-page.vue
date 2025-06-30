@@ -38,7 +38,7 @@
                           <span style="display: none;">구글 로그인</span>
                         </div>
                       </button>
-                      <button @click="kakaoServerLogin" class="flex-[1.5] h-12 md:h-14 flex items-center justify-center p-0 bg-white border border-gray-300 shadow rounded-[8px] transition hover:shadow-md min-w-0 overflow-hidden cursor-pointer">
+                      <button @click="kakaoServerLogin" class="flex-[1.5] h-12 md:h-14 flex items-center justify-center p-0 bg-white shadow rounded-[8px] transition hover:shadow-md min-w-0 overflow-hidden cursor-pointer">
                         <img src="@/assets/img/kakao_login_large.png" class="h-full w-auto" alt="카카오 로그인 버튼" />
                       </button>
                     </div>
