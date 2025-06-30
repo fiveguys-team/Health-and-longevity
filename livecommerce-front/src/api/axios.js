@@ -1,7 +1,6 @@
 import axios from 'axios';
 // 서버 URL 설정 (배포 시 이 부분만 변경하면 됨)
-// export const SERVER_BASE_URL = 'https://healthy-and-longevity.shop/';
-const SERVER_BASE_URL = 'http://localhost:8080';
+export const SERVER_BASE_URL = 'https://healthy-and-longevity.shop/';
 const axiosInstance = axios.create({
     baseURL: SERVER_BASE_URL,
     withCredentials: true,
@@ -13,8 +12,7 @@ const axiosRefreshInstance = axios.create({
     withCredentials: true,
 });
 // WebSocket 연결용 URL (같은 서버 사용)
-// export const WS_BASE_URL = 'https://healthy-and-longevity.shop';
-export const WS_BASE_URL = 'http://localhost:8080';
+export const WS_BASE_URL = 'https://healthy-and-longevity.shop';
 // 응답 에러 처리 (401 등)
 
 let isRefreshing = false;

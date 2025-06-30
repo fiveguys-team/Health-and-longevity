@@ -77,11 +77,11 @@ onMounted(() => {
 })
 
 const googleServerLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google"
+    window.location.href = "https://healthy-and-longevity.shop/oauth2/authorization/google"
 }
 
 const kakaoServerLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/kakao"
+    window.location.href = "https://healthy-and-longevity.shop/oauth2/authorization/kakao"
 }
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

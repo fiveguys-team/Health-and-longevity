@@ -247,6 +247,6 @@ async function removeItem(cartItemId) {
 }
 
 function getImageUrl(filename) {
-  return `http://localhost:8080/uploads/images/${filename}`;
+  return `https://healthy-and-longevity.shop/uploads/images/${filename}`;
 }
 </script>

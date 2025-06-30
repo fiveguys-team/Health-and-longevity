@@ -81,6 +81,6 @@ public class KakaoOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
         response.addCookie(jwtCookie);
         response.addCookie(refreshTokenCookie);
 
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("https://healthy-and-longevity.shop");
     }
 }

@@ -379,7 +379,7 @@ const handleImageError = (event) => {
 function getProductImageSrc(item) {
   if (!item.image) return '/no-image.png';
   if (item.image.startsWith('http')) return item.image;
-  return `http://localhost:8080/uploads/images/${item.image}`;
+  return `https://healthy-and-longevity.shop/uploads/images/${item.image}`;
 }
 </script>
 

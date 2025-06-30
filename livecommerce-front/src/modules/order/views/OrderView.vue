@@ -459,8 +459,8 @@ async function requestPayment() {
       orderId,
       orderName,
       customerName,
-      successUrl: "http://localhost:3000/#/payment-success",
-      failUrl: "http://localhost:3000/#/payment-failure",
+      successUrl: "https://healthy-and-longevity.shop/#/payment-success",
+      failUrl: "https://healthy-and-longevity.shop/#/payment-failure",
     });
 
   } catch (error) {
