@@ -34,4 +34,10 @@ public interface LiveMapper {
 	 */
 	int selectVendorId(int userId);
 
+	/**
+	 * 라이브 종료 후 시청자 퇴장 log 변경
+	 * @param sessionId
+	 */
+	void updateViewerLeave(String sessionId, String endTime);
+
 }

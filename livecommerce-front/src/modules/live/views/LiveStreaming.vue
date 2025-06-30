@@ -81,6 +81,9 @@ const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 
+ const sessionId = ref(undefined);
+ sessionId.value = route.params.sessionId;
+
 // OpenVidu 관련 상태 관리
 const OV = ref(undefined);
 const session = ref(undefined);
@@ -122,6 +125,7 @@ const getUserId = () => {
 const addViewerJoin = async () => {
   try {
     const sessionId = route.params.sessionId;
+    console.log("[입장 세션]", sessionId);
     const userId = getUserId();
     await axiosInstance.post(`/api/sessions/${sessionId}/users/${userId}/join`, {
       isAnonymous: !auth.user?.id // 익명 사용자 여부 전달
@@ -135,9 +139,11 @@ const addViewerJoin = async () => {
 // 시청자 퇴장 처리
 const saveViewerLeave = async () => {
   try {
-    const sessionId = route.params.sessionId;
+    console.log("[퇴장]: 퇴장 처리 호출");
+    // const sessionId = route.params.sessionId;
+    console.log("[sessionId]", sessionId.value);
     const userId = getUserId();
-    await axiosInstance.post(`/api/sessions/${sessionId}/users/${userId}/leave`, {
+    await axiosInstance.post(`/api/sessions/${sessionId.value}/users/${userId}/leave`, {
       isAnonymous: !auth.user?.id
     });
     console.log('시청자 퇴장 처리 완료');
@@ -201,7 +207,7 @@ const handleStreamDestroyed = (event) => {
 const handleSessionDisconnected = (event) => {
   console.log('Session disconnected event:', event);
   cleanupSession();
-  loadingMessage.value = '세션이 종료되었습니다.';
+  loadingMessage.value = '방송이 종료되었습니다. 시청해주셔서 감사합니다.';
   setTimeout(() => {
     router.push('/');
   }, 2000);

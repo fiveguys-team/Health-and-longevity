@@ -65,9 +65,9 @@
                                   </a>
                                 </div>
                                 <div v-if="vendorInfo.pImg" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col gap-2 items-center">
-                                  <span class="text-gray-500 dark:text-gray-400 text-sm">통신판매증</span>
+                                  <span class="text-gray-500 dark:text-gray-400 text-sm">통신판매업신고증</span>
                                   <a :href="vendorInfo.pImg" target="_blank">
-                                    <img :src="vendorInfo.pImg" alt="통신판매증" class="w-24 h-24 object-contain rounded border" />
+                                    <img :src="vendorInfo.pImg" alt="통신판매업신고증" class="w-24 h-24 object-contain rounded border" />
                                     <span class="block mt-2 text-blue-500 underline text-xs">이미지 보기</span>
                                   </a>
                                 </div>

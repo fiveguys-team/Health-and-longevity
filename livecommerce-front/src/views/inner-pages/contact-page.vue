@@ -122,6 +122,7 @@
     import axiosInstance from "@/api/axios";
     import {useAuthStore} from "@/modules/auth/stores/auth";
     import { uploadFileToNcp } from '@/data/uploadApi.js';
+    import { useRouter } from 'vue-router';
 
     const authStore = useAuthStore()
     const businessNumber = ref("")
@@ -149,6 +150,8 @@
     const onlineImageUrl = ref('');
     const shopImage = ref(null);
     const shopImageUrl = ref('');
+
+    const router = useRouter();
 
     onMounted(()=>{
         Aos.init()
@@ -274,7 +277,14 @@
     const onSubmit = async (event) => {
       event?.preventDefault?.();
       if (canSubmit.value) {
-        await vendorRegistration();
+        try {
+          await vendorRegistration();
+          alert("신청이 완료되었습니다.");
+          router.push('/my-profile');
+        } catch (error) {
+          console.error('입점 신청 실패:', error);
+          alert("입점 신청에 실패했습니다. 다시 시도해주세요.");
+        }
       }
     };
 
