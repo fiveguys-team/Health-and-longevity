@@ -21,4 +21,12 @@
 		SELECT vendor_id FROM VENDOR_M WHERE user_id = #{userId}
 	</select>
 
+	<update id="updateViewerLeave">
+		UPDATE LIVE_VIEWER_LOG l
+			JOIN LIVE_M m ON l.live_id = m.live_id
+			SET l.leave_at = #{endTime}
+		WHERE m.session_id = #{sessionId};
+
+	</update>
+
 </mapper>

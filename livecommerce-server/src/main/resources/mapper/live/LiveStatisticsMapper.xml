@@ -68,60 +68,42 @@
 
 <!--	총 매출액 조회-->
 	<select id="selectTotalRevenue" resultType="Integer" parameterType="string">
-
-		SELECT COALESCE(SUM(m.total_amount), 0)
-		from PAYMENT_D p, LIVE_M l, LIVE_PRODUCT_J j, PRODUCT pr, ORDER_ITEM_D o, ORDERS_M m, PAYMENT_D
-		where l.live_id = #{liveId} and l.live_id = j.live_id and j.product_id = pr.product_id and o.product_id = pr.product_id
-		    and m.order_id = o.order_id and p.payments_id = m.payments_id
-		    and p.paid_at BETWEEN
-			DATE_FORMAT(
-				STR_TO_DATE(
-					REPLACE(REPLACE(l.start_at, 'T', ''), 'Z', ''),
-					'%Y-%m-%dT%H:%i:%s.%f'),
-				'%Y%m%d%H%i%s')
-			and DATE_FORMAT(
-				STR_TO_DATE(
-					REPLACE(REPLACE(l.end_cd, 'T', ''), 'Z', ''),
-					'%Y-%m-%dT%H:%i:%s.%f'),
-				'%Y%m%d%H%i%s')
-		  AND p.payment_status_code = 'DONE'
+		SELECT COALESCE(SUM(sub.total_amount), 0)
+		FROM (
+				 SELECT DISTINCT m.order_id, m.total_amount
+				 FROM LIVE_M l
+						  JOIN LIVE_PRODUCT_J j ON l.live_id = j.live_id
+						  JOIN PRODUCT pr ON j.product_id = pr.product_id
+						  JOIN ORDER_ITEM_D o ON pr.product_id = o.product_id
+						  JOIN ORDERS_M m ON o.order_id = m.order_id
+						  JOIN PAYMENT_D p ON p.payments_id = m.payments_id
+				 WHERE l.live_id = #{liveId}
+				   AND p.payment_status_code = 'DONE'
+				   AND m.order_date BETWEEN l.start_at AND l.end_cd
+			 ) sub
 	</select>
 
 <!--	주문 건 수 -->
 	<select id="selectTotalOrders" resultType="Integer" parameterType="string">
-		SELECT COUNT(DISTINCT o.order_id) as total_order_count
-		FROM LIVE_M l,LIVE_PRODUCT_J j, PRODUCT p, ORDER_ITEM_D oi,ORDERS_M o
-		WHERE l.live_id = #{liveId} and l.live_id = j.live_id
-		  and j.product_id = p.product_id and p.product_id = oi.product_id
-		  and oi.order_id = o.order_id and o.order_date BETWEEN
-			DATE_FORMAT(
-				STR_TO_DATE(
-					REPLACE(REPLACE(l.start_at, 'T', ''), 'Z', ''),
-					'%Y-%m-%dT%H:%i:%s.%f'),
-				'%Y%m%d%H%i%s')
-			and DATE_FORMAT(
-				STR_TO_DATE(
-					REPLACE(REPLACE(l.end_cd, 'T', ''), 'Z', ''),
-					'%Y-%m-%dT%H:%i:%s.%f'),
-				'%Y%m%d%H%i%s')
+		SELECT COUNT(DISTINCT o.order_id) AS total_order_count
+		FROM LIVE_M l
+				 JOIN LIVE_PRODUCT_J j ON l.live_id = j.live_id
+				 JOIN PRODUCT p ON j.product_id = p.product_id
+				 JOIN ORDER_ITEM_D oi ON p.product_id = oi.product_id
+				 JOIN ORDERS_M o ON oi.order_id = o.order_id
+		WHERE l.live_id = #{liveId}
+		  AND o.order_date BETWEEN
+			l.start_at
+			AND l.end_cd
 	</select>
 
 <!--	구매 전환율-->
 	<select id="selectPurchaseRatio" resultType="Integer" parameterType="string">
 		SELECT IFNULL(ROUND((COUNT(DISTINCT o.user_id) / COUNT(DISTINCT lvl.user_id)) * 100, 2), 0) as conversion_rate
 		FROM LIVE_M l, LIVE_VIEWER_LOG lvl, ORDERS_M o
-		WHERE  l.live_id = #{liveId} and  l.live_id = lvl.live_id
+		WHERE  lvl.live_id = #{liveId} and  l.live_id = lvl.live_id
 		  and o.order_date BETWEEN
-			DATE_FORMAT(
-				STR_TO_DATE(
-					REPLACE(REPLACE(l.start_at, 'T', ''), 'Z', ''),
-					'%Y-%m-%dT%H:%i:%s.%f'),
-				'%Y%m%d%H%i%s')
-			and DATE_FORMAT(
-				STR_TO_DATE(
-					REPLACE(REPLACE(l.end_cd, 'T', ''), 'Z', ''),
-					'%Y-%m-%dT%H:%i:%s.%f'),
-				'%Y%m%d%H%i%s')
-		  and lvl.is_anonymous = FALSE
+			l.start_at
+			and l.end_cd
 	</select>
 </mapper> 
