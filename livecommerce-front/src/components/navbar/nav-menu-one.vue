@@ -69,7 +69,7 @@
     }
 
     const props = defineProps({
-    toggle: Boolean,
+      toggle: Boolean,
     });
 
     const emit = defineEmits(['toggle-change']);

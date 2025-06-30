@@ -40,6 +40,9 @@
           </div>
         </div>
       </div>
+      <div v-if="!loading && displayedStreams.length === 0" class="no-stream-message">
+        현재 진행중인 방송이 없습니다
+      </div>
     </div>
 
     <!-- 무한 스크롤 로딩 인디케이터 -->
@@ -379,5 +382,13 @@ onBeforeUnmount(() => {
   .live-stream-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.no-stream-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #888;
+  font-size: 1.2rem;
+  padding: 40px 0;
 }
 </style>

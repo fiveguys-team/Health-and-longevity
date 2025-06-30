@@ -144,15 +144,23 @@ const formatDuration = (seconds) => {
   return `${hours}시간 ${minutes}분 ${remainingSeconds}초`
 }
 
+// YYYYMMDDHHmmss 형식 변환 함수
+const parseYYYYMMDDHHmmss = (str) => {
+  if (!str || str.length !== 14) return null;
+  const year = str.slice(0, 4);
+  const month = str.slice(4, 6);
+  const day = str.slice(6, 8);
+  const hour = str.slice(8, 10);
+  const min = str.slice(10, 12);
+  const sec = str.slice(12, 14);
+  return new Date(year, month - 1, day, hour, min, sec);
+}
+
 const formatDate = (dateStr) => {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  const date = parseYYYYMMDDHHmmss(dateStr);
+  return date && !isNaN(date)
+    ? date.toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    : 'Invalid Date';
 }
 
 // 레포트 가져오기
@@ -198,12 +206,15 @@ const filteredreports = computed(() => {
   let filtered = reports.value;
   if (searchDate.value) {
     filtered = filtered.filter(item => {
-      const itemDate = new Date(item.streamDate).toISOString().split('T')[0];
+      if (!item.streamDate || item.streamDate.length !== 14) return false;
+      const y = item.streamDate.slice(0, 4);
+      const m = item.streamDate.slice(4, 6);
+      const d = item.streamDate.slice(6, 8);
+      const itemDate = `${y}-${m}-${d}`;
       return itemDate.includes(searchDate.value);
     });
   }
-  // 최신순 정렬 (streamDate 내림차순)
-  return filtered.slice().sort((a, b) => new Date(b.streamDate) - new Date(a.streamDate));
+  return filtered.slice().sort((a, b) => b.streamDate.localeCompare(a.streamDate));
 })
 
 // 페이징

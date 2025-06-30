@@ -38,6 +38,10 @@ onMounted( ()=> {
   currentMonthRevenue();
 });
 
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('ko-KR').format(amount);
+}
+
 </script>
 
 <template>
@@ -45,7 +49,7 @@ onMounted( ()=> {
     <div class="flex items-center justify-between">
       <div>
         <p class="text-sm font-medium text-gray-600">이번 달 매출</p>
-        <p class="text-2xl font-bold text-gray-900">{{revenue.totalRevenue}}</p>
+        <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(revenue.totalRevenue) }}원</p>
         <p class="text-sm mt-1" :class="changeIndicator.color">
           {{changeIndicator.arrow}} {{revenue.revenueChangeRate}}% 지난달 대비
         </p>

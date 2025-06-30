@@ -4,6 +4,7 @@ import com.example.livecommerce_server.live.dto.LiveStatisticsDTO;
 import com.example.livecommerce_server.live.dto.LiveViewerStatsDTO;
 import com.example.livecommerce_server.live.mapper.LiveStatisticsMapper;
 import com.example.livecommerce_server.live.vo.LiveStatisticsVO;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,17 @@ public class LiveStatisticsServiceImpl implements LiveStatisticsService {
 
     private final LiveStatisticsMapper liveStatisticsMapper;
 
+    private String nowCompactString() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+    }
+
     @Override
     @Transactional
     public void addViewerJoin(String liveId, String userId) {
         LiveViewerStatsDTO viewerLog = LiveViewerStatsDTO.builder()
                 .liveId(liveId)
                 .userId(userId)
-                .joinAt(DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
+                .joinAt(nowCompactString())
                 .isAnonymous(false) // 익명 여부 확인 필요
                 .build();
         liveStatisticsMapper.insertViewerJoin(viewerLog);
@@ -36,8 +41,7 @@ public class LiveStatisticsServiceImpl implements LiveStatisticsService {
     @Override
     @Transactional
     public void saveViewerLeave(String liveId, String userId) {
-        String leaveAt = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
-        liveStatisticsMapper.updateViewerLeave(liveId, userId, leaveAt);
+        liveStatisticsMapper.updateViewerLeave(liveId, userId, nowCompactString());
     }
 
     @Override

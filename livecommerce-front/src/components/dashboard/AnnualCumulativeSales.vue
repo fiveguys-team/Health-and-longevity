@@ -28,6 +28,10 @@ const changeIndicator = computed(() => {
   }
 });
 
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('ko-KR').format(amount);
+}
+
 const monthOrders = async () => {
   try {
     const response = await axiosInstance.get(`/api/admin/revenues/annual`);
@@ -46,7 +50,7 @@ onMounted( ()=> {
   <div class="flex items-center justify-between">
     <div>
       <p class="text-sm font-medium text-gray-600">연간 누적 매출</p>
-      <p class="text-2xl font-bold text-gray-900">{{ revenue.totalRevenue }}</p>
+      <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(revenue.totalRevenue) }}원</p>
       <p class="text-sm mt-1" :class="changeIndicator.color">
         {{changeIndicator.arrow}} {{revenue.revenueChangeRate}}% 작년 대비
       </p>
