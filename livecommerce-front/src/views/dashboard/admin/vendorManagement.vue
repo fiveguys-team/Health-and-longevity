@@ -22,7 +22,21 @@
                     <td class="px-4 py-3 text-base text-title dark:text-white">{{ vendor.email }}</td>
                     <td class="px-4 py-3 text-base text-title dark:text-white">{{ vendor.businessNumber }}</td>
                     <td class="px-4 py-3 text-base text-title dark:text-white">{{ vendor.permitNumber }}</td>
-                    <td class="px-4 py-3 text-base text-title dark:text-white">{{ vendor.status }}</td>
+                    <td class="px-4 py-3 text-base text-title dark:text-white">
+                      <span
+                        v-if="vendor.status === 'APPROVED'"
+                        class="bg-green-100 text-green-700 px-4 py-1 rounded font-semibold text-base inline-block"
+                      >승인</span>
+                      <span
+                        v-else-if="vendor.status === 'PENDING'"
+                        class="bg-yellow-100 text-yellow-800 px-4 py-1 rounded font-semibold text-base inline-block"
+                      >대기중</span>
+                      <span
+                        v-else-if="vendor.status === 'REJECTED'"
+                        class="bg-red-100 text-red-700 px-4 py-1 rounded font-semibold text-base inline-block"
+                      >반려</span>
+                      <span v-else>{{ vendor.status }}</span>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -36,40 +50,69 @@
 
   <!-- 상세 정보 모달 -->
   <div v-if="modalVisible" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-    <div class="bg-white dark:bg-dark-secondary p-8 rounded-lg shadow-xl w-full max-w-[600px] max-h-[80vh] overflow-y-auto">
-      <h3 class="text-xl font-bold mb-4">입점업체 상세정보</h3>
-      <p><strong>이름:</strong> {{ selectedVendor?.name }}</p>
-      <p><strong>이메일:</strong> {{ selectedVendor?.email }}</p>
-
-      <div class="mt-4">
-        <h4 class="font-semibold">사업자 등록 정보</h4>
+    <div class="bg-white dark:bg-dark-secondary p-8 rounded-xl shadow-2xl w-full max-w-[540px] max-h-[85vh] overflow-y-auto relative">
+      <h3 class="text-2xl font-bold mb-2 text-title dark:text-white">입점업체 상세정보</h3>
+      <hr class="my-3 border-gray-200 dark:border-gray-700">
+      <div class="mb-4 flex flex-col gap-1">
+        <div class="flex items-center gap-2 text-base">
+          <span class="font-semibold text-gray-700 dark:text-gray-200">이름:</span>
+          <span>{{ selectedVendor?.name }}</span>
+        </div>
+        <div class="flex items-center gap-2 text-base">
+          <span class="font-semibold text-gray-700 dark:text-gray-200">이메일:</span>
+          <span>{{ selectedVendor?.email }}</span>
+        </div>
+      </div>
+      <div class="mb-6">
+        <h4 class="font-semibold text-lg mb-2 text-title dark:text-white">사업자 등록 정보</h4>
         <div v-if="parsedBizInfo">
-          <p v-for="(value, key) in parsedBizInfo" :key="key" class="text-sm">
-            <strong>{{ key }} : </strong> {{ value }}
-          </p>
+          <table class="w-full text-sm border rounded overflow-hidden">
+            <tbody>
+              <tr v-for="(value, key) in parsedBizInfo" :key="key" class="border-b last:border-b-0">
+                <td class="py-1 px-2 font-medium bg-gray-50 dark:bg-dark-light w-1/3">{{ key }}</td>
+                <td class="py-1 px-2">{{ value }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div v-else class="text-sm text-gray-500">정보 없음</div>
+        <div v-else class="text-sm text-gray-400">정보 없음</div>
       </div>
-
-      <div class="mt-4">
-        <h4 class="font-semibold">인허가 정보</h4>
+      <div class="mb-6">
+        <h4 class="font-semibold text-lg mb-2 text-title dark:text-white">인허가 정보</h4>
         <div v-if="parsedPermitInfo">
-          <p v-for="(value, key) in parsedPermitInfo" :key="key" class="text-sm">
-            <strong>{{ key }} : </strong> {{ value }}
-          </p>
+          <table class="w-full text-sm border rounded overflow-hidden">
+            <tbody>
+              <tr v-for="(value, key) in parsedPermitInfo" :key="key" class="border-b last:border-b-0">
+                <td class="py-1 px-2 font-medium bg-gray-50 dark:bg-dark-light w-1/3">{{ key }}</td>
+                <td class="py-1 px-2">{{ value }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div v-else class="text-sm text-gray-500">정보 없음</div>
+        <div v-else class="text-sm text-gray-400">정보 없음</div>
       </div>
-
-      <img :src="selectedVendor?.bImg" alt="vendor image" class="w-full h-auto">
-      <img :src="selectedVendor?.pImg" alt="vendor image" class="w-full h-auto">
-
-      <div class="mt-6 text-right space-x-2">
+      <div class="flex gap-4 mb-6 justify-center items-center">
+        <div class="flex flex-col items-center">
+          <span class="text-xs text-gray-500 mb-1">사업자등록증</span>
+          <a :href="selectedVendor?.bImg" target="_blank" rel="noopener">
+            <img :src="selectedVendor?.bImg || 'https://via.placeholder.com/240x160?text=No+Image'" alt="사업자등록증"
+              class="w-56 h-36 object-contain border rounded bg-gray-50 shadow" />
+          </a>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-xs text-gray-500 mb-1">통신판매신고증</span>
+          <a :href="selectedVendor?.pImg" target="_blank" rel="noopener">
+            <img :src="selectedVendor?.pImg || 'https://via.placeholder.com/240x160?text=No+Image'" alt="통신판매신고증"
+              class="w-56 h-36 object-contain border rounded bg-gray-50 shadow" />
+          </a>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 mt-2">
         <template v-if="selectedVendor?.status !== 'APPROVED' && selectedVendor?.status !== 'REJECTED'">
-          <button @click="updateVendorStatus('APPROVED')" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500">승인</button>
-          <button @click="updateVendorStatus('REJECTED')" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500">반려</button>
+          <button @click="updateVendorStatus('APPROVED')" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500 transition">승인</button>
+          <button @click="updateVendorStatus('REJECTED')" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500 transition">반려</button>
         </template>
-        <button @click="modalVisible = false" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700">닫기</button>
+        <button @click="modalVisible = false" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition">닫기</button>
       </div>
     </div>
   </div>
