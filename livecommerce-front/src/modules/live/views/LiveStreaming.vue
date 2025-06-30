@@ -385,7 +385,7 @@ function getProductImageSrc(item) {
 
 <style scoped>
 .live-streaming-page {
-  background-color: #f4f4f5;
+  background-color: #fff;
   min-height: 100vh;
   height: auto;
   overflow: visible;

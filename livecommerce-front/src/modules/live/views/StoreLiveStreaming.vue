@@ -142,9 +142,9 @@
 
     <!-- 라이브 스트리밍 화면 -->
     <div v-if="session" class="max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- 메인 콘텐츠 영역 (2/3 차지) -->
-        <div class="lg:col-span-2 flex flex-col gap-4">
+      <div class="flex gap-6" style="height: calc(100vh - 180px);">
+        <!-- 왼쪽: 영상+상품 -->
+        <div class="flex-1 flex flex-col gap-4 min-w-0">
           <!-- 헤더 -->
           <div class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
             <h2 class="text-2xl font-bold text-gray-800">{{ streamTitle }}</h2>
@@ -175,16 +175,17 @@
           </div>
 
           <!-- 상품 정보 -->
-          <div class="bg-white rounded-lg shadow-md p-4">
+          <div class="bg-white rounded-lg shadow-md p-4 flex-1 min-h-0 overflow-y-auto">
             <h3 class="text-lg font-bold text-gray-800 mb-3">판매 상품</h3>
-            <div class="space-y-4 max-h-48 overflow-y-auto">
+            <div class="space-y-4">
               <div v-for="item in discountedProducts" :key="item.id"
                 class="flex items-center gap-4 pb-4 border-b last:border-b-0 last:pb-0">
                 <!-- <img :src="item.thumbnail" alt="상품 이미지" class="w-20 h-20 rounded-md object-cover"> -->
                 <div class="flex-1">
                   <div class="flex items-center gap-2 mb-1">
                     <h4 class="text-base font-semibold text-gray-800">{{ item.name }}</h4>
-                    <span v-if="item.discountRate > 0" class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                    <span v-if="item.discountRate > 0"
+                      class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
                       {{ item.discountRate }}% 할인
                     </span>
                   </div>
@@ -199,13 +200,10 @@
           </div>
         </div>
 
-        <!-- 채팅 영역 (1/3 차지) -->
-        <div class="bg-white rounded-lg shadow-md flex flex-col">
-          <!-- 채팅방 ID가 생성된 경우에만 ChatContainer를 렌더링 -->
+        <!-- 오른쪽: 채팅 -->
+        <div class="w-[370px] flex flex-col bg-white rounded-lg shadow-md min-h-0 h-full">
           <ChatContainer v-if="chatRoomId" :room-id="chatRoomId" :initial-announcement="chatAnnouncement"
             class="flex-1 min-h-0" />
-
-          <!-- 채팅방 생성 중 또는 실패 시 표시 -->
           <div v-else class="h-full flex items-center justify-center p-4">
             <div class="text-center text-gray-500">
               <i class="fas fa-spinner fa-spin text-2xl mb-3"></i>
@@ -519,7 +517,7 @@ const createSession = async () => {
 // 백엔드에서 토큰을 생성하고 반환한다. 
 const createToken = async (sessionId) => {
   const response = await axiosInstance.post(
-      '/api/sessions/' + sessionId + '/connections',
+    '/api/sessions/' + sessionId + '/connections',
     {},
     { headers: { 'Content-Type': 'application/json' } }
   );
