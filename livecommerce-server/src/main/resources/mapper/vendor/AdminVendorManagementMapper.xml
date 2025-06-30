@@ -11,5 +11,7 @@
 
     <update id="updateInfo" parameterType="com.example.livecommerce_server.vendor.dto.VendorUpdateDto">
         update VENDOR_M set name = #{name}, address = #{address}, status = #{status} where user_id = #{userId}
+        order by vendor_id desc
+        limit 1;
     </update>
 </mapper>

@@ -42,5 +42,7 @@
         from VENDOR_M v join USER_M u
         where v.user_id = u.user_id
         and v.user_id = #{userId}
+        order by v.vendor_id desc
+        limit 1
     </select>
 </mapper>
