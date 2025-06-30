@@ -15,8 +15,6 @@ public class LiveInfoVO {
 	private String session_id;
 	private String title;
 	private String start_time;
-	//private String end_time;
-	//private String thumbnail;
 	private String status;
 	private String announcement;
 	private String category;

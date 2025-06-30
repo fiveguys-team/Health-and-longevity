@@ -13,8 +13,8 @@
                         <li class="relative">
                             <router-link to="#">라이브<span></span></router-link>
                             <ul class="sub-menu lg:absolute z-50 lg:top-full lg:left-0 lg:min-w-[220px] lg:invisible lg:transition-all lg:bg-white lg:dark:bg-title lg:py-[15px] lg:pr-[30px]">
-                                <li :class="current === '/live-test' ? 'active' : ''"><router-link to="/live-streaming" class="menu-item">Live</router-link></li>
-                                <li :class="current === '/live-test' ? 'active' : ''"><router-link to="/live-chart" class="menu-item">편성표</router-link></li>
+<!--                                <li :class="current === '/live-test' ? 'active' : ''"><router-link to="/live-streaming" class="menu-item">Live</router-link></li>-->
+                                <li :class="current === '/live-test' ? 'active' : ''"><router-link to="/live-chart" class="menu-item">Live</router-link></li>
                             </ul>
                         </li>
                         <!-- <li class="relative" :class="['/shop-v1','/shop-v2','/shop-v3','/shop-v4','/product-details','/cart','/checkout'].includes(current) ? 'active' : ''"> -->
