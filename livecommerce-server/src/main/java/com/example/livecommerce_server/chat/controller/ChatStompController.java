@@ -67,6 +67,11 @@ public class ChatStompController {
                 log.info("메시지 딜레이 적용 - 사용자 ID: {}, 딜레이: {}초",
                         messageDto.getUserId(), validationResult.getDelaySeconds());
 
+                // 🆕 딜레이 경고 메시지를 사용자에게 전송
+                if (validationResult.getMessage() != null) {
+                    sendWarningToUser(messageDto.getUserId(), validationResult.getMessage());
+                }
+
                 // 비동기로 딜레이 처리 (메인 스레드 블로킹 방지)
                 CompletableFuture.delayedExecutor(
                         validationResult.getDelaySeconds(), TimeUnit.SECONDS

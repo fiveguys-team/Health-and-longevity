@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a ->
                         a
                                 // 모든 경로를 인증 없이 열기
+                                .requestMatchers("/connect", "/connect/**").permitAll()  // 1순위: WebSocket 허용
                                 .requestMatchers("/test/ping").hasRole("ADMIN")
                                 .anyRequest().permitAll()
                 )

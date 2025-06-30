@@ -31,4 +31,13 @@
         WHERE live_id = #{liveId}
     </select>
 
+    <!-- 채팅방 ID로 라이브 ID 조회 -->
+    <select id="getLiveIdByRoomId" parameterType="Long" resultType="String">
+        SELECT live_id
+        FROM CHAT_ROOM_M
+        WHERE room_id = #{roomId}
+    </select>
+
+
+
 </mapper>
