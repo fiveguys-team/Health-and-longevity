@@ -1,7 +1,8 @@
 <template>
   <div class="live-streaming-page">
-    <!-- 헤더 없이 바로 메인 컨텐츠 -->
+    <navbar-one />
     <div class="main-wrapper">
+      <!-- 헤더 없이 바로 메인 컨텐츠 -->
       <div v-if="!session || !mainStreamManager" class="loading-overlay">
         <div class="text-center">
           <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
@@ -75,14 +76,15 @@ import UserVideo from '@/modules/live/components/UserVideo.vue';
 import ChatContainer from '@/modules/chat/components/ChatContainer.vue';
 import { v4 as uuidv4 } from 'uuid';
 import axiosInstance from "@/api/axios";
+import NavbarOne from '@/components/navbar/navbar-one.vue';
 
 // 라우터 설정
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 
- const sessionId = ref(undefined);
- sessionId.value = route.params.sessionId;
+const sessionId = ref(undefined);
+sessionId.value = route.params.sessionId;
 
 // OpenVidu 관련 상태 관리
 const OV = ref(undefined);
@@ -385,20 +387,26 @@ function getProductImageSrc(item) {
 .live-streaming-page {
   background-color: #f4f4f5;
   min-height: 100vh;
+  height: auto;
+  overflow: visible;
 }
 
 .main-wrapper {
-  max-width: 1280px;
+  max-width: 1500px;
   margin: 0 auto;
-  padding: 0 1.5rem 2rem 1.5rem;
+  padding: 0 1rem 2.5rem 1rem;
+  background: #fff;
+  border-radius: 1.5rem;
+  border: 1.5px solid #e5e7eb;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.08);
 }
 
 .header-bar {
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  padding: 1.25rem 2rem 1.25rem 2rem;
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem 2.5rem 1.5rem 2.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -462,44 +470,44 @@ function getProductImageSrc(item) {
 
 .main-container {
   display: flex;
-  gap: 2rem;
-  margin-top: 1.5rem;
+  gap: 1.5rem;
+  margin-top: 2rem;
 }
 
 .content-area {
-  flex: 1 1 0%;
+  flex: 2 1 0%;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .video-wrapper.home-shopping {
   width: 100%;
-  max-width: 800px;
+  max-width: 1100px;
   aspect-ratio: 16/9;
   background: #000;
-  border-radius: 1rem;
+  border-radius: 1.2rem;
   overflow: hidden;
   margin: 0 auto;
   position: relative;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
 }
 
 .products-row {
   display: flex;
-  gap: 1.5rem;
-  margin-top: 1rem;
+  gap: 2rem;
+  margin-top: 1.2rem;
   justify-content: center;
 }
 
 .product-card-row {
   flex: 1 1 0;
-  max-width: 220px;
+  max-width: 250px;
   background: #fff;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -508,31 +516,31 @@ function getProductImageSrc(item) {
 }
 
 .product-card-row:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  transform: translateY(-3px) scale(1.04);
 }
 
 .product-image-row {
-  width: 90px;
-  height: 90px;
-  margin-bottom: 0.75rem;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
 }
 
 .product-image-row img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0.5rem;
+  border-radius: 0.7rem;
 }
 
 .product-info-row .name-container {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.7rem;
   text-align: center;
 }
 
 .product-info-row .name {
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.1rem;
   margin-bottom: 0.5rem;
   text-align: center;
 }
@@ -540,29 +548,29 @@ function getProductImageSrc(item) {
 .product-info-row .discount-badge {
   background-color: #dc2626;
   color: white;
-  padding: 0.25rem 0.5rem;
+  padding: 0.3rem 0.7rem;
   border-radius: 9999px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   margin-left: 0.5rem;
 }
 
 .product-info-row .price-container {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.7rem;
   text-align: center;
 }
 
 .discount-price {
   color: #dc2626;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
 }
 
 .original-price {
   color: #a1a1aa;
   text-decoration: line-through;
   margin-left: 0.5rem;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .buy-button {
@@ -570,11 +578,11 @@ function getProductImageSrc(item) {
   background: #2563eb;
   color: #fff;
   border: none;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0;
-  font-weight: 600;
-  font-size: 1rem;
-  margin-top: 0.5rem;
+  border-radius: 0.7rem;
+  padding: 0.6rem 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-top: 0.7rem;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -584,16 +592,16 @@ function getProductImageSrc(item) {
 }
 
 .chat-column {
-  width: 350px;
+  width: 370px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  min-height: 500px;
-  max-height: 700px;
+  min-height: 540px;
+  max-height: 800px;
 }
 
 @media (max-width: 1200px) {
@@ -603,7 +611,7 @@ function getProductImageSrc(item) {
   }
 
   .main-container {
-    gap: 1rem;
+    gap: 1.2rem;
   }
 
   .video-wrapper.home-shopping {
