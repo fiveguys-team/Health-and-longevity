@@ -49,6 +49,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest req) throws JsonProcessingException {
 
+        // 1. 락을 걸고 결제 정보 조회 (동시성 제어)
+        PaymentDTO payment = paymentMapper.selectPaymentForUpdate(req.getOrderId());
+
+        // 2. 이미 처리된 결제인지 체크
+        if (!"PEND".equals(payment.getPaymentStatusCode())) {
+            throw new IllegalStateException("이미 처리된 결제입니다: " + payment.getPaymentStatusCode());
+
+        }
         // 1. Toss API 호출
         HttpHeaders headers = new HttpHeaders();
         String secretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6"; // 환경변수로 분리 예정 (지금은 테스트키니까)
