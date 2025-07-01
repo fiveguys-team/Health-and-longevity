@@ -299,6 +299,8 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-height: 700px;
+    height: 100%;
 }
 
 /* 채팅 메시지 영역은 유동적으로 늘어나고 스크롤 가능 */
