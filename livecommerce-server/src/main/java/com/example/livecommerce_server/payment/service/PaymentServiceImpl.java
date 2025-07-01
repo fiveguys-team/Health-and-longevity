@@ -8,6 +8,7 @@ import com.example.livecommerce_server.payment.mapper.PaymentMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -47,8 +48,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest req) throws JsonProcessingException {
 
+        // 1. 락을 걸고 결제 정보 조회 (동시성 제어)
+        PaymentDTO payment = paymentMapper.selectPaymentForUpdate(req.getOrderId());
+
+        // 2. 이미 처리된 결제인지 체크
+        if (!"PEND".equals(payment.getPaymentStatusCode())) {
+            throw new IllegalStateException("이미 처리된 결제입니다: " + payment.getPaymentStatusCode());
+
+        }
         // 1. Toss API 호출
         HttpHeaders headers = new HttpHeaders();
         String secretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6"; // 환경변수로 분리 예정 (지금은 테스트키니까)
@@ -96,7 +106,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         return result;
     }
-
+    // 재고 동시성 제어
     @Override
     public void modifyStockCountByOrderId(String orderId) {
         int affected = orderMapper.updateStockCountByOrderId(orderId);
@@ -104,6 +114,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new IllegalStateException("재고 부족 또는 재고 차감 실패");
         }
     }
+
 
     @Override
     public int updateRefundStatus(PaymentRefundUpdateDTO paymentRefundUpdateDTO) {
