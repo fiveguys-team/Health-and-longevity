@@ -38,7 +38,7 @@
           </div>
 
           <router-link
-              :to="`/admin/product/detail/${product.id}`"
+              :to="`/admin-dashboard/product/detail/${product.id}`"
               class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg transition-all duration-200"
           >
             상세보기

@@ -9,6 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductRegisterRequestDTO {
     private ProductDTO product;
     private ProductDetailDTO productDetail;
-    private MultipartFile productImage;
+    private String productImage;
 
 }
