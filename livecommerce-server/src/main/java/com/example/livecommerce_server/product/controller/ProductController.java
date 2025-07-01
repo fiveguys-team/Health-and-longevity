@@ -29,13 +29,12 @@ public class ProductController {
     }
 
     // 2. 상품 등록 요청 (입점업체 → 관리자 승인 대기)
-    @PostMapping(value = "/request", consumes = "multipart/form-data")
+    @PostMapping(value = "/request")
     public ResponseEntity<String> requestProductAdd(
-            @RequestPart("product") ProductRegisterRequestDTO request,
-            @RequestPart("image") MultipartFile imageFile
+            @RequestBody ProductRegisterRequestDTO request
     ) {
         try {
-            productService.saveProductRequestadd(request, imageFile);
+            productService.saveProductRequestadd(request);
             return ResponseEntity.ok("상품 등록 요청이 완료되었습니다.");
         } catch (Exception e) {
             e.printStackTrace();

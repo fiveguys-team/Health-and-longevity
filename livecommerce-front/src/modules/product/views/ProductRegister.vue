@@ -62,6 +62,7 @@
 <script setup>
 import { ref } from 'vue'
 import axiosInstance from '@/api/axios'
+import { uploadFileToNcp } from '@/data/uploadApi'
 
 const certNo = ref('')
 const productDetail = ref({
@@ -167,42 +168,44 @@ const submitRequest = async () => {
     return alert('모든 항목을 입력해주세요.')
   }
 
-  const productPayload = {
-    product: {
-      name: productDetail.value.productName,
-      price: parseInt(customInput.value.price),
-      stockCount: parseInt(customInput.value.quantity),
-      categoryId: mapCategoryToId(customInput.value.category),
-      vendorId: 1 // TODO: 로그인한 입점업체의 ID로 교체
-    },
-    productDetail: {
-      certNo: certNo.value,
-      productName: productDetail.value.productName,
-      expiryDate: productDetail.value.expiryDate,
-      approvalDate: productDetail.value.approvalDate,
-      howToTake: productDetail.value.howToTake,
-      mainFunction: productDetail.value.mainFunction,
-      precautions: productDetail.value.precautions,
-      storageMethod: productDetail.value.storageMethod,
-      standard: productDetail.value.standard,
-      ingredients: productDetail.value.ingredients
-    }
-  }
-
-  const formData = new FormData()
-  formData.append('product', new Blob([JSON.stringify(productPayload)], { type: 'application/json' }))
-  formData.append('image', selectedImage.value)
-
   try {
-    await axiosInstance.post('/api/product/request', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+    // 1. 이미지 업로드
+    const imageUrl = await uploadFileToNcp(selectedImage.value, 1); // TODO: userId 동적 처리
+
+    // 2. 상품 데이터 준비
+    const productPayload = {
+      product: {
+        name: productDetail.value.productName,
+        price: parseInt(customInput.value.price),
+        stockCount: parseInt(customInput.value.quantity),
+        categoryId: mapCategoryToId(customInput.value.category),
+        vendorId: 1, // TODO: 로그인한 입점업체의 ID로 교체
+        productImage: imageUrl
+      },
+      productDetail: {
+        certNo: certNo.value,
+        productName: productDetail.value.productName,
+        expiryDate: productDetail.value.expiryDate,
+        approvalDate: productDetail.value.approvalDate,
+        howToTake: productDetail.value.howToTake,
+        mainFunction: productDetail.value.mainFunction,
+        precautions: productDetail.value.precautions,
+        storageMethod: productDetail.value.storageMethod,
+        standard: productDetail.value.standard,
+        ingredients: productDetail.value.ingredients
       }
-    })
-    alert('등록 요청이 전송되었습니다!')
+    };
+
+    // 3. 상품 등록 요청 (JSON)
+    await axiosInstance.post('/api/product/request', productPayload, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    alert('등록 요청이 전송되었습니다!');
   } catch (err) {
-    console.error('❌ 등록 실패:', err)
-    alert('등록 요청 실패')
+    console.error('❌ 등록 실패:', err);
+    alert('등록 요청 실패');
   }
 }
 </script>

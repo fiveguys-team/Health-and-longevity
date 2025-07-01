@@ -33,7 +33,7 @@
       <div v-if="product.productImage">
         <p class="mb-2"><strong>상품 이미지:</strong></p>
         <img
-            :src="`/uploads/images/${product.productImage}`"
+            :src="getProductImageUrl(product?.productImage)"
             alt="상품 이미지"
             class="w-64 rounded-lg border shadow hover:scale-105 transition-transform duration-200"
         />
@@ -87,7 +87,7 @@ const handleApprove = async () => {
   try {
     await axiosInstance.post(`/api/admin/products/approve/${productId}`)
     alert('상품이 승인되었습니다.')
-    router.push('/admin/products')
+    router.push('/admin-dashboard/products')
   } catch (err) {
     alert('승인 실패')
   }
@@ -97,7 +97,7 @@ const handleReject = async () => {
   try {
     await axiosInstance.post(`/api/admin/products/reject/${productId}`)
     alert('상품이 반려되었습니다.')
-    router.push('/admin/products')
+    router.push('/admin-dashboard/products')
   } catch (err) {
     alert('반려 실패')
   }
@@ -122,6 +122,14 @@ const getStatusClass = (status) => {
     case 'RESUBMITTED': return `${base} bg-purple-100 text-purple-800`
     default: return `${base} bg-gray-200 text-gray-700`
   }
+}
+
+const getProductImageUrl = (url) => {
+  if (!url) return '/no-image.png';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  return `/uploads/images/${url}`;
 }
 
 onMounted(() => {
