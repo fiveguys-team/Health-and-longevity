@@ -48,13 +48,14 @@ public class MemberController {
 
         Cookie tokenCookie = new Cookie("token", jwtToken);
         tokenCookie.setHttpOnly(true);
-//        tokenCookie.setSecure(true);
+        tokenCookie.setSecure(true);
         tokenCookie.setPath("/");
         tokenCookie.setMaxAge(60 * 60);
 
         // Refresh token 쿠키
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7);
 
@@ -69,12 +70,14 @@ public class MemberController {
         Cookie tokenCookie = new Cookie("token", null);
         tokenCookie.setPath("/");
         tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(true);
         tokenCookie.setMaxAge(0); // 즉시 만료
 
         // Refresh token 쿠키도 만료 처리
         Cookie refreshTokenCookie = new Cookie("refresh_token", null);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setMaxAge(0); // 즉시 만료
 
         // 다른 쿠키들도 필요하면 여기에 추가

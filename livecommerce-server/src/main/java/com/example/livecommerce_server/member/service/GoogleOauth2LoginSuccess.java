@@ -59,7 +59,7 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(), member.getName(), member.getUserId().toString());
         Cookie jwtCookie = new Cookie("token", jwtToken);
         jwtCookie.setHttpOnly(true);
-//        jwtCookie.setSecure(true);
+        jwtCookie.setSecure(true);
         jwtCookie.setPath("/"); // 모든 경로에서 쿠키 사용가능
         jwtCookie.setMaxAge(60 * 60);
 

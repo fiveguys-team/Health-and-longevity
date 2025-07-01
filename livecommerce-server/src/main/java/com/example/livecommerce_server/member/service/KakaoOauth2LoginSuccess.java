@@ -66,7 +66,7 @@ public class KakaoOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
         // Set secure, HttpOnly token cookie only
         Cookie jwtCookie = new Cookie("token", jwtToken);
         jwtCookie.setHttpOnly(true);
-//        jwtCookie.setSecure(true);
+        jwtCookie.setSecure(true);
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(60 * 60);
 
