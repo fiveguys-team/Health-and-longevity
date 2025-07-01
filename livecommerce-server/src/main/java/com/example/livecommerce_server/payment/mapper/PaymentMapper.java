@@ -18,4 +18,6 @@ public interface PaymentMapper {
 
     int updatePaymentRefundByPaymentKey(PaymentRefundUpdateDTO paymentRefundUpdateDTO);
 
+    PaymentDTO selectPaymentForUpdate( String orderId );
+
 }

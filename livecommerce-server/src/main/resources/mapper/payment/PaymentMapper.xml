@@ -54,4 +54,22 @@
             payment_payload = #{payload}
         WHERE payment_key = #{paymentKey}
     </update>
+
+    <select id="selectPaymentForUpdate" parameterType="String" resultType="com.example.livecommerce_server.payment.dto.PaymentDTO">
+        SELECT
+            payments_id,
+            payment_method,
+            payment_Key,
+            payment_payload,
+            paid_at,
+            created_at,
+            payment_status_code
+        FROM PAYMENT_D
+        WHERE payments_id = (
+            SELECT payments_id
+            FROM ORDERS_M
+            WHERE order_id = #{orderId}
+        )
+            FOR UPDATE
+    </select>
 </mapper>
