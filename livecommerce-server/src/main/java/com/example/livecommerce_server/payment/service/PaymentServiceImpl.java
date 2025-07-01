@@ -8,6 +8,7 @@ import com.example.livecommerce_server.payment.mapper.PaymentMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -47,6 +48,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest req) throws JsonProcessingException {
 
         // 1. 락을 걸고 결제 정보 조회 (동시성 제어)
@@ -104,7 +106,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         return result;
     }
-
+    // 재고 동시성
     @Override
     public void modifyStockCountByOrderId(String orderId) {
         int affected = orderMapper.updateStockCountByOrderId(orderId);
