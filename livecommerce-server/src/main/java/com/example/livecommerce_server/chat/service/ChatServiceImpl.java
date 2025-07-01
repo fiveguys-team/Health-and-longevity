@@ -54,33 +54,35 @@ public class ChatServiceImpl implements ChatService {
     }
 
     /**
-     * 🆕 세션 추적 기반 참여자 수 증가
+     * 세션 추적 기반 참여자 수 증가
      */
     @Override
     public int increaseParticipantCount(Long roomId, Long userId, String sessionId) {
         try {
             if (!isRoomExists(roomId)) {
-                log.warn("❌ 채팅방을 찾을 수 없습니다. roomId={}", roomId);
+                log.warn("채팅방을 찾을 수 없습니다. roomId={}", roomId);
                 return -1;
             }
 
             // 세션 추적 방식으로 사용자 세션 추가
             int count = participantRedisService.addUserSession(roomId, userId, sessionId);
 
-            log.info("✅ 참여자 수 증가 완료 (세션 추적) - roomId: {}, userId: {}, sessionId: {}, 현재 사용자: {}명",
-                    roomId, userId, sessionId, count);
+            String liveId = chatRoomMapper.getLiveIdByRoomId(roomId);
+            if (liveId != null) {
+                participantRedisService.addToTotalViewers(liveId, userId);
+            }
 
             return count;
 
         } catch (Exception e) {
-            log.error("❌ 참여자 수 증가 중 오류 발생 - roomId: {}, userId: {}, sessionId: {}",
+            log.error(" 참여자 수 증가 중 오류 발생 - roomId: {}, userId: {}, sessionId: {}",
                     roomId, userId, sessionId, e);
             return -1;
         }
     }
 
     /**
-     * 🆕 세션 추적 기반 참여자 수 감소
+     *  세션 추적 기반 참여자 수 감소
      */
     @Override
     public int decreaseParticipantCount(Long roomId, Long userId, String sessionId) {
@@ -88,13 +90,13 @@ public class ChatServiceImpl implements ChatService {
             // 세션 추적 방식으로 사용자 세션 제거
             int count = participantRedisService.removeUserSession(roomId, userId, sessionId);
 
-            log.info("✅ 참여자 수 감소 완료 (세션 추적) - roomId: {}, userId: {}, sessionId: {}, 현재 사용자: {}명",
+            log.info(" 참여자 수 감소 완료 (세션 추적) - roomId: {}, userId: {}, sessionId: {}, 현재 사용자: {}명",
                     roomId, userId, sessionId, count);
 
             return count;
 
         } catch (Exception e) {
-            log.error("❌ 참여자 수 감소 중 오류 발생 - roomId: {}, userId: {}, sessionId: {}",
+            log.error(" 참여자 수 감소 중 오류 발생 - roomId: {}, userId: {}, sessionId: {}",
                     roomId, userId, sessionId, e);
             return -1;
         }
@@ -111,7 +113,7 @@ public class ChatServiceImpl implements ChatService {
                     .orElse(0);
 
         } catch (Exception e) {
-            log.error("❌ 참여자 수 조회 중 오류 발생 - roomId: {}", roomId, e);
+            log.error(" 참여자 수 조회 중 오류 발생 - roomId: {}", roomId, e);
             return 0;
         }
     }

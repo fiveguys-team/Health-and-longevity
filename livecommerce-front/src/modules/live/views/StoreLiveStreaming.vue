@@ -142,9 +142,9 @@
 
     <!-- 라이브 스트리밍 화면 -->
     <div v-if="session" class="max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- 메인 콘텐츠 영역 (2/3 차지) -->
-        <div class="lg:col-span-2 flex flex-col gap-4">
+      <div class="flex gap-6" style="height: calc(100vh - 180px);">
+        <!-- 왼쪽: 영상+상품 -->
+        <div class="flex-1 flex flex-col gap-4 min-w-0">
           <!-- 헤더 -->
           <div class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
             <h2 class="text-2xl font-bold text-gray-800">{{ streamTitle }}</h2>
@@ -175,37 +175,28 @@
           </div>
 
           <!-- 상품 정보 -->
-          <div class="bg-white rounded-lg shadow-md p-4">
-            <h3 class="text-lg font-bold text-gray-800 mb-3">판매 상품</h3>
-            <div class="space-y-4 max-h-48 overflow-y-auto">
-              <div v-for="item in discountedProducts" :key="item.id"
-                class="flex items-center gap-4 pb-4 border-b last:border-b-0 last:pb-0">
-                <!-- <img :src="item.thumbnail" alt="상품 이미지" class="w-20 h-20 rounded-md object-cover"> -->
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-1">
-                    <h4 class="text-base font-semibold text-gray-800">{{ item.name }}</h4>
-                    <span v-if="item.discountRate > 0" class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                      {{ item.discountRate }}% 할인
-                    </span>
-                  </div>
-                  <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
-                  <div class="flex items-baseline gap-2 mt-2">
-                    <span class="text-xl font-bold text-red-600">{{ item.discountedPrice.toLocaleString() }}원</span>
-                    <span class="text-sm text-gray-500 line-through">{{ item.price.toLocaleString() }}원</span>
-                  </div>
+          <div class="products-row" style="margin-top: 1.2rem;">
+            <div class="product-card-row" v-for="item in discountedProducts" :key="item.id">
+              <div class="product-info-row">
+                <div class="name-container">
+                  <div class="name">{{ item.name }}</div>
+                  <span v-if="item.discountRate > 0" class="discount-badge">
+                    {{ item.discountRate }}% 할인
+                  </span>
+                </div>
+                <div class="price-container">
+                  <span class="discount-price">{{ item.discountedPrice.toLocaleString() }}원</span>
+                  <span class="original-price">{{ item.price.toLocaleString() }}원</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 채팅 영역 (1/3 차지) -->
-        <div class="bg-white rounded-lg shadow-md flex flex-col">
-          <!-- 채팅방 ID가 생성된 경우에만 ChatContainer를 렌더링 -->
+        <!-- 오른쪽: 채팅 -->
+        <div class="w-[370px] flex flex-col bg-white rounded-lg shadow-md min-h-0 h-full">
           <ChatContainer v-if="chatRoomId" :room-id="chatRoomId" :initial-announcement="chatAnnouncement"
             class="flex-1 min-h-0" />
-
-          <!-- 채팅방 생성 중 또는 실패 시 표시 -->
           <div v-else class="h-full flex items-center justify-center p-4">
             <div class="text-center text-gray-500">
               <i class="fas fa-spinner fa-spin text-2xl mb-3"></i>
@@ -519,7 +510,7 @@ const createSession = async () => {
 // 백엔드에서 토큰을 생성하고 반환한다. 
 const createToken = async (sessionId) => {
   const response = await axiosInstance.post(
-      '/api/sessions/' + sessionId + '/connections',
+    '/api/sessions/' + sessionId + '/connections',
     {},
     { headers: { 'Content-Type': 'application/json' } }
   );
@@ -573,5 +564,94 @@ const removeThumbnail = () => {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.products-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  border: 2px solid #e5e7eb;
+  border-radius: 1.2rem;
+  background: #f9fafb;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  padding: 2rem 1rem;
+}
+
+.product-card-row {
+  flex: 1 1 0;
+  max-width: 250px;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.product-card-row:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  transform: translateY(-3px) scale(1.04);
+}
+
+.product-info-row .name-container {
+  margin-bottom: 0.7rem;
+  text-align: center;
+}
+
+.product-info-row .name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.product-info-row .discount-badge {
+  background-color: #dc2626;
+  color: white;
+  padding: 0.3rem 0.7rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+}
+
+.product-info-row .price-container {
+  margin-bottom: 0.7rem;
+  text-align: center;
+}
+
+.discount-price {
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.original-price {
+  color: #a1a1aa;
+  text-decoration: line-through;
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+
+.buy-button {
+  width: 100%;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 0.7rem;
+  padding: 0.6rem 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-top: 0.7rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.buy-button:hover {
+  background: #1d4ed8;
 }
 </style>

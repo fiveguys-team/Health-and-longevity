@@ -1,5 +1,6 @@
 package com.example.livecommerce_server.live.service;
 
+import com.example.livecommerce_server.chat.service.ChatParticipantRedisService;
 import com.example.livecommerce_server.live.dto.LiveStatisticsDTO;
 import com.example.livecommerce_server.live.dto.LiveViewerStatsDTO;
 import com.example.livecommerce_server.live.mapper.LiveStatisticsMapper;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 public class LiveStatisticsServiceImpl implements LiveStatisticsService {
 
     private final LiveStatisticsMapper liveStatisticsMapper;
+    private final ChatParticipantRedisService chatParticipantRedisService;
 
     private String nowCompactString() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
@@ -48,7 +50,7 @@ public class LiveStatisticsServiceImpl implements LiveStatisticsService {
     @Transactional
     public LiveStatisticsVO calculateAndSaveStatistics(String liveId) {
         String uuid = UUID.randomUUID().toString();
-        int totalViewers = liveStatisticsMapper.selectTotalViewers(liveId);
+        int totalViewers = chatParticipantRedisService.getFinalTotalViewers(liveId);
         int maxConcurrentViewers = liveStatisticsMapper.selectMaxConcurrentViewers(liveId);
         int averageWatchDuration = liveStatisticsMapper.selectAverageWatchDuration(liveId);
         long totalReve = liveStatisticsMapper.selectTotalRevenue(liveId);

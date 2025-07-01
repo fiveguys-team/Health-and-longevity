@@ -73,7 +73,7 @@ public class RedisConfig {
     }
 
     /**
-     * 🆕 Redis 채널 구독이 설정된 컨테이너 (Phase 2-3: 실제 구독 연결)
+     * 🆕Redis 채널 구독이 설정된 컨테이너 (Phase 2-3: 실제 구독 연결)
      *
      * 이 메소드가 핵심입니다!
      *
@@ -97,7 +97,7 @@ public class RedisConfig {
 
         // 패턴 토픽 생성: "chat:room:*"
         // 의미: "chat:room:" 뒤에 뭐가 와도 다 구독
-        // 예시: chat:room:123 ✅, chat:room:456 ✅
+        // 예시: chat:room:123 , chat:room:456
         PatternTopic chatPattern = new PatternTopic("chat:room:*");
 
         // 컨테이너에 리스너 등록

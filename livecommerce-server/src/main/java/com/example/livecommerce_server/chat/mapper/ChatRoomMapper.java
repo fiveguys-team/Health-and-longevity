@@ -31,6 +31,13 @@ public interface ChatRoomMapper {
                                @Param("count") int count);
 
 
+    /**
+     * 채팅방 ID로 라이브 ID 조회
+     * @param roomId 채팅방 ID
+     * @return 라이브 ID
+     */
+    String getLiveIdByRoomId(Long roomId);
+
     // 추가: liveId로 announcement 조회
     String selectAnnouncementByLiveId(@Param("liveId") String liveId);
 }

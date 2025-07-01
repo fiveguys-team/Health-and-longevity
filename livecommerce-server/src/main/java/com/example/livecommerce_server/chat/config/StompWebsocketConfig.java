@@ -1,6 +1,7 @@
 package com.example.livecommerce_server.chat.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -8,7 +9,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class StompWebsocketConfig  implements WebSocketMessageBrokerConfigurer {
+public class StompWebsocketConfig implements WebSocketMessageBrokerConfigurer {
 
 
 //    private final StompHandler stompHandler;
@@ -39,12 +40,14 @@ public class StompWebsocketConfig  implements WebSocketMessageBrokerConfigurer {
         // 사용자별 메시지를 위한 설정 추가!!
         registry.setUserDestinationPrefix("/user");
     }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+
     }
 
+}
 
-//    //    웹소켓요청(connect, subscribe, disconnect)등의 요청시에는 http header등 http메시지를 넣어올수 있고, 이를 interceptor를 통해 가로채 토큰등을 검증할수 있음.
-//
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
-////        registration.interceptors(stompHandler);
-//    }
+
+
+

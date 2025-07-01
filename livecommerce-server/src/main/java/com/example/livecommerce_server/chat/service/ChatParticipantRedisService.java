@@ -232,6 +232,45 @@ public class ChatParticipantRedisService {
     }
 
     /**
+     * 총 시청자 목록에 사용자 추가 (중복 자동 제거)
+     */
+    public void addToTotalViewers(String liveId, Long userId) {
+        String key = "live:total_viewers:" + liveId;
+
+        // Set에 추가 (중복이면 자동으로 무시됨)
+        Long added = stringRedisTemplate.opsForSet().add(key, userId.toString());
+
+        if (added != null && added > 0) {
+            log.debug(" 신규 시청자 추가 - liveId: {}, userId: {}", liveId, userId);
+        }
+    }
+    /**
+     * 방송 종료 시 최종 총 시청자 수 조회
+     */
+    public int getFinalTotalViewers(String liveId) {
+        try {
+            String key = "live:total_viewers:" + liveId;
+
+            // Set 크기 = 중복 제거된 총 시청자 수
+            Long count = stringRedisTemplate.opsForSet().size(key);
+
+            int totalViewers = count != null ? count.intValue() : 0;
+
+            log.info(" 최종 총 시청자 수 - liveId: {}, 총 {}명", liveId, totalViewers);
+
+            //  사용 후 Redis 키 삭제 (메모리 절약)
+            stringRedisTemplate.delete(key);
+
+            return totalViewers;
+
+        } catch (Exception e) {
+            log.error(" 총 시청자 수 조회 실패 - liveId: {}", liveId, e);
+            return 0;
+        }
+    }
+
+
+    /**
      * Redis 키 생성 유틸리티들
      */
     private String getParticipantKey(Long roomId) {
