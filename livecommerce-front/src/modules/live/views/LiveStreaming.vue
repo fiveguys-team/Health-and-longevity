@@ -496,9 +496,15 @@ function getProductImageSrc(item) {
 
 .products-row {
   display: flex;
-  gap: 2rem;
+  gap: 6rem;
   margin-top: 1.2rem;
   justify-content: center;
+  flex-wrap: wrap;
+  border: 2px solid #e5e7eb;
+  border-radius: 1.2rem;
+  background: #f9fafb;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  padding: 2rem 1rem;
 }
 
 .product-card-row {
@@ -600,8 +606,8 @@ function getProductImageSrc(item) {
   border-radius: 1rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  min-height: 540px;
-  max-height: 800px;
+  min-height: 700px;
+  max-height: 1200px;
 }
 
 @media (max-width: 1200px) {
