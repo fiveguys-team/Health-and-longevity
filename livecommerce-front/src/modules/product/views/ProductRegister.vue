@@ -7,8 +7,11 @@
     <!-- 인증번호 입력 -->
     <div class="flex gap-3 mb-6 items-center">
       <label class="w-32 font-semibold text-right">인증번호</label>
-      <input v-model="certNo" type="text" class="flex-1 border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="품목제조번호" />
-      <button @click="fetchProductDetail" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded shadow">인증</button>
+      <input v-model="certNo" type="text"
+        class="flex-1 border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="품목제조번호" />
+      <button @click="fetchProductDetail"
+        class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded shadow">인증</button>
     </div>
 
     <p class="text-sm text-gray-500 mb-6 text-center italic">아래는 API로 받은 정보입니다 (수정불가)</p>
@@ -17,7 +20,8 @@
     <div class="space-y-3 mb-8">
       <div class="flex items-center" v-for="(label, key) in fieldMap" :key="key">
         <label class="w-32 font-medium text-right">{{ label }}</label>
-        <input type="text" class="flex-1 border border-gray-300 px-4 py-2 bg-gray-100 text-gray-600 rounded" :value="productDetail[key]" readonly />
+        <input type="text" class="flex-1 border border-gray-300 px-4 py-2 bg-gray-100 text-gray-600 rounded"
+          :value="productDetail[key]" readonly />
       </div>
     </div>
 
@@ -26,12 +30,14 @@
     <div class="space-y-3 mb-8">
       <div class="flex items-center">
         <label class="w-32 font-medium text-right">수량</label>
-        <input v-model="customInput.quantity" type="text" @input="onNumberInput('quantity')" class="flex-1 border border-gray-300 px-4 py-2 rounded" />
+        <input v-model="customInput.quantity" type="text" @input="onNumberInput('quantity')"
+          class="flex-1 border border-gray-300 px-4 py-2 rounded" />
       </div>
 
       <div class="flex items-center">
         <label class="w-32 font-medium text-right">가격</label>
-        <input v-model="customInput.price" type="text" @input="onNumberInput('price')" class="flex-1 border border-gray-300 px-4 py-2 rounded" />
+        <input v-model="customInput.price" type="text" @input="onNumberInput('price')"
+          class="flex-1 border border-gray-300 px-4 py-2 rounded" />
       </div>
 
       <div class="flex items-center">
@@ -48,13 +54,15 @@
 
       <div class="flex items-center">
         <label class="w-32 font-medium text-right">상품 이미지</label>
-        <input type="file" @change="onImageChange" accept="image/*" class="flex-1 border border-gray-300 px-4 py-2 rounded" />
+        <input type="file" @change="onImageChange" accept="image/*"
+          class="flex-1 border border-gray-300 px-4 py-2 rounded" />
       </div>
     </div>
 
     <div class="flex justify-center gap-6">
       <button class="px-6 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">취소</button>
-      <button @click="submitRequest" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded shadow">등록 요청</button>
+      <button @click="submitRequest" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded shadow">등록
+        요청</button>
     </div>
   </div>
 </template>
@@ -63,7 +71,9 @@
 import { ref } from 'vue'
 import axiosInstance from '@/api/axios'
 import { uploadFileToNcp } from '@/data/uploadApi'
+import { useAuthStore } from '@/modules/auth/stores/auth'
 
+const authStore = useAuthStore()
 const certNo = ref('')
 const productDetail = ref({
   productName: '',
@@ -159,18 +169,18 @@ const mapCategoryToId = (name) => {
 
 const submitRequest = async () => {
   if (
-      !certNo.value ||
-      !customInput.value.quantity ||
-      !customInput.value.price ||
-      !customInput.value.category ||
-      !selectedImage.value
+    !certNo.value ||
+    !customInput.value.quantity ||
+    !customInput.value.price ||
+    !customInput.value.category ||
+    !selectedImage.value
   ) {
     return alert('모든 항목을 입력해주세요.')
   }
 
   try {
     // 1. 이미지 업로드
-    const imageUrl = await uploadFileToNcp(selectedImage.value, 1); // TODO: userId 동적 처리
+    const imageUrl = await uploadFileToNcp(selectedImage.value, authStore.id);
 
     // 2. 상품 데이터 준비
     const productPayload = {
@@ -179,7 +189,7 @@ const submitRequest = async () => {
         price: parseInt(customInput.value.price),
         stockCount: parseInt(customInput.value.quantity),
         categoryId: mapCategoryToId(customInput.value.category),
-        vendorId: 1, // TODO: 로그인한 입점업체의 ID로 교체
+        vendorId: authStore.vendorId,
         productImage: imageUrl
       },
       productDetail: {
