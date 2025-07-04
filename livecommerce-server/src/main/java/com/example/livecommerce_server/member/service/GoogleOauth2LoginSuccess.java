@@ -59,7 +59,7 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString(), member.getName(), member.getUserId().toString());
         Cookie jwtCookie = new Cookie("token", jwtToken);
         jwtCookie.setHttpOnly(true);
-//        jwtCookie.setSecure(true);
+        jwtCookie.setSecure(true);
         jwtCookie.setPath("/"); // 모든 경로에서 쿠키 사용가능
         jwtCookie.setMaxAge(60 * 60);
 
@@ -68,6 +68,7 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
 
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 7일 동안 유효
 
@@ -75,6 +76,6 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         response.addCookie(refreshTokenCookie);
 
         // 클라이언트 redirect 방식으로 token 전달
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("https://healthy-and-longevity.shop");
     }
 }

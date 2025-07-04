@@ -32,13 +32,13 @@ spring:
             client-id: ${GOOGLE_ID}
             client-secret: ${GOOGLE_SECRET}
             scope: openid, email, profile
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            redirect-uri: https://healthy-and-longevity.shop/login/oauth2/code/google
             authorization-grant-type: authorization_code
           kakao:
             client-id: ${KAKAO_ID}
             client-secret: ${KAKAO_SECRET}
             client-authentication-method: client_secret_post
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: https://healthy-and-longevity.shop/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             client-name: kakao
             scope:
