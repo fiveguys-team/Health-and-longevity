@@ -70,6 +70,8 @@ mybatis:
 openvidu:
   url: ${OPENVIDU_URL}
   secret: ${OPENVIDU_SECRET}
+  webhook:
+    url: ${WEBHOOK_URL:https://healthy-and-longevity.shop/api/webhook/openvidu}
 ncp:
   object-storage:
     endpoint: https://kr.object.ncloudstorage.com

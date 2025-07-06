@@ -342,6 +342,60 @@ public class LiveController {
 	}
 
 	/**
+	 * OpenVidu webhook을 처리합니다.
+	 * sessionDestroyed 이벤트가 발생하면 방송 종료 처리를 수행합니다.
+	 *
+	 * @param webhookData OpenVidu에서 전송하는 webhook 데이터
+	 * @return 처리 결과
+	 */
+	@PostMapping("/api/webhook/openvidu")
+	public ResponseEntity<String> handleOpenViduWebhook(@RequestBody Map<String, Object> webhookData) {
+		try {
+			log.info("OpenVidu webhook 수신: {}", webhookData);
+			
+			String event = (String) webhookData.get("event");
+			String sessionId = (String) webhookData.get("sessionId");
+			
+			if ("sessionDestroyed".equals(event) && sessionId != null) {
+				log.info("sessionDestroyed 이벤트 감지: sessionId = {}", sessionId);
+				
+				// 활성 세션 목록에서 제거
+				LiveDTO liveDTO = activeSessions.remove(sessionId);
+				if (liveDTO != null) {
+					log.info("라이브 방송 종료 처리 시작: liveId = {}", liveDTO.getLiveId());
+					
+					// 라이브 종료 후 종료 시간, 상태 변경
+					liveService.saveLiveInfo(sessionId);
+
+					// 라이브 종료 후 시청자 퇴장 시간 null 값 종료 처리
+					liveService.saveViewerLeave(sessionId);
+
+					// 통계 계산 및 저장
+					liveStatisticsService.calculateAndSaveStatistics(liveDTO.getLiveId());
+					
+					log.info("라이브 방송 종료 처리 완료: liveId = {}", liveDTO.getLiveId());
+				} else {
+					log.warn("활성 세션에서 찾을 수 없음: sessionId = {}", sessionId);
+				}
+			}
+			
+			return ResponseEntity.ok("Webhook processed successfully");
+		} catch (Exception e) {
+			log.error("Webhook 처리 중 오류 발생", e);
+			return ResponseEntity.internalServerError().body("Error processing webhook: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * webhook 테스트용 엔드포인트
+	 */
+	@PostMapping("/api/webhook/test")
+	public ResponseEntity<String> testWebhook(@RequestBody Map<String, Object> testData) {
+		log.info("Webhook 테스트 수신: {}", testData);
+		return ResponseEntity.ok("Test webhook received successfully");
+	}
+
+	/**
 	 * 방송에 포함된 상품 리스트(이미지 포함)를 반환합니다.
 	 */
 	@GetMapping("/api/sessions/{sessionId}/products")

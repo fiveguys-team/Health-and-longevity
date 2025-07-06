@@ -47,6 +47,7 @@ public class SecurityConfig {
                         a
                                 // 모든 경로를 인증 없이 열기
                                 .requestMatchers("/connect", "/connect/**").permitAll()  // 1순위: WebSocket 허용
+                                .requestMatchers("/api/webhook/openvidu").permitAll()
                                 .requestMatchers("/test/ping").hasRole("ADMIN")
                                 .anyRequest().permitAll()
                 )
