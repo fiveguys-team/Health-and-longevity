@@ -66,7 +66,7 @@ public class KakaoOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
         // Set secure, HttpOnly token cookie only
         Cookie jwtCookie = new Cookie("token", jwtToken);
         jwtCookie.setHttpOnly(true);
-//        jwtCookie.setSecure(true);
+        jwtCookie.setSecure(true);
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(60 * 60);
 
@@ -75,12 +75,13 @@ public class KakaoOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHandl
 
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 7일 동안 유효
 
         response.addCookie(jwtCookie);
         response.addCookie(refreshTokenCookie);
 
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("https://healthy-and-longevity.shop");
     }
 }

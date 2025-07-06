@@ -42,7 +42,7 @@
                 </div>
 
                 <img
-                    :src="getImageUrl(data?.productImage)"
+                    :src="data?.productImage || '/no-image.png'"
                     alt="product"
                     class="w-full"
                     @error="onImageError"
@@ -189,18 +189,9 @@ onMounted(async () => {
   }
 })
 
-function getImageUrl(url) {
-  if (!url || url === '') {
-    return '/no-image.png';
-  }
-  return url; // 전체 URL이면 그대로 반환
-}
-
 function onImageError(event) {
   event.target.src = '/no-image.png';
 }
-
-
 
 // 타이머
 const now = ref(new Date().getTime())

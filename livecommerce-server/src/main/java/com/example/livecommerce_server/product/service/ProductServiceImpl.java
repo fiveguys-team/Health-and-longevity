@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     // 저장 로직
-    public void saveProductRequestadd(ProductRegisterRequestDTO request, MultipartFile imageFile) {
+    public void saveProductRequestadd(ProductRegisterRequestDTO request) {
         ProductDTO productDto = request.getProduct();
         ProductDetailDTO detailDto = request.getProductDetail();
 
@@ -100,17 +100,6 @@ public class ProductServiceImpl implements ProductService {
 
         String ProductId = UUID.randomUUID().toString();
 
-        // 1. 이미지 저장
-        String uploadDir = System.getProperty("user.dir") + "/uploads/images";
-        String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
-        Path imagePath = Paths.get(uploadDir, fileName);
-        try {
-            Files.createDirectories(imagePath.getParent());
-            imageFile.transferTo(imagePath.toFile());
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 저장 실패", e);
-        }
-
         // 2. product 저장 (status는 PENDING)
         ProductDTO product = new ProductDTO();
         product.setProductId(ProductId);
@@ -120,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(productDto.getPrice());
         product.setStockCount(productDto.getStockCount());
         product.setStatus("PENDING");
-        product.setProductImage(fileName);
+        product.setProductImage(productDto.getProductImage());
         productMapper.insertProduct(product);
 
         // 3. product_detail 저장

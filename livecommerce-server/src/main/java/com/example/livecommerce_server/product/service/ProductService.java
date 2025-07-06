@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
     ProductDetailDTO fetchProductDetailFromAPIfind(String certNo);
-    void saveProductRequestadd(ProductRegisterRequestDTO request, MultipartFile imageFile);
+    void saveProductRequestadd(ProductRegisterRequestDTO request);
     public List<ProductDTO> getProductsByVendor(Long vendorId, String status);
     ProductDetailDTO getProductDetailById(String productId);
     List<ProductListDTO> getRequestedProducts();
