@@ -63,7 +63,9 @@
 import { ref } from 'vue'
 import axiosInstance from '@/api/axios'
 import { uploadFileToNcp } from '@/data/uploadApi'
+import { useAuthStore } from "@/modules/auth/stores/auth";
 
+const authStore = useAuthStore();
 const certNo = ref('')
 const productDetail = ref({
   productName: '',
@@ -170,7 +172,7 @@ const submitRequest = async () => {
 
   try {
     // 1. 이미지 업로드
-    const imageUrl = await uploadFileToNcp(selectedImage.value, 1); // TODO: userId 동적 처리
+    const imageUrl = await uploadFileToNcp(selectedImage.value, authStore.id); // TODO: userId 동적 처리
 
     // 2. 상품 데이터 준비
     const productPayload = {
@@ -179,7 +181,7 @@ const submitRequest = async () => {
         price: parseInt(customInput.value.price),
         stockCount: parseInt(customInput.value.quantity),
         categoryId: mapCategoryToId(customInput.value.category),
-        vendorId: 1, // TODO: 로그인한 입점업체의 ID로 교체
+        vendorId: authStore.vendorId, // TODO: 로그인한 입점업체의 ID로 교체
         productImage: imageUrl
       },
       productDetail: {
