@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.springframework.ai:spring-ai-openai:1.0.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.springframework.ai" artifactId="spring-ai-openai" version="1.0.0" baseVersion="1.0.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.ai/spring-ai-openai/1.0.0/4295046abf7d29e5911fffd31097125973d2bff8/spring-ai-openai-1.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.ai/spring-ai-openai/1.0.0/cc27a3140fd7580144b57d8c5f555dd7636d0d05/spring-ai-openai-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

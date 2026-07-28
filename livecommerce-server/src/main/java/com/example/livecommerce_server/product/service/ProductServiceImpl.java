@@ -8,7 +8,9 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -17,9 +19,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -27,6 +31,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductDetailMapper productDetailMapper;
+
+    @Autowired
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    public ProductServiceImpl(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     // API를 통한 상세 정보 조회
     public ProductDetailDTO fetchProductDetailFromAPIfind(String certNo) {
@@ -126,6 +137,8 @@ public class ProductServiceImpl implements ProductService {
         detail.setStandard(detailDto.getStandard());
         detail.setIngredients(detailDto.getIngredients());
         productDetailMapper.insertProductDetail(detail);
+
+        clearRecommendationCache();
     }
 
     @Override
@@ -215,5 +228,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<MainPageProduct> getMainPageProducts() {
        return productMapper.selectMainPageProducts();
+    }
+
+    /**
+     * 추천 캐시 무효화(Eviction) 공통 메서분
+     */
+    private void clearRecommendationCache() {
+        try {
+            // "rec:"로 시작하는 모든 키를 찾아서 삭제
+            Set<String> keys = redisTemplate.keys("rec:*");
+            if (keys != null && !keys.isEmpty()) {
+                redisTemplate.delete(keys);
+                log.info("♻️ 상품 정보 변경으로 인해 AI 추천 캐시 {}건을 삭제했습니다.", keys.size());
+            }
+        } catch (Exception e) {
+            log.error("캐시 삭제 중 오류 발생: ", e);
+        }
     }
 }

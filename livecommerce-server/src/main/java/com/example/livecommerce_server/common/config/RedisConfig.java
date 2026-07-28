@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
@@ -41,11 +42,28 @@ public class RedisConfig {
      * 기본 RedisTemplate
      * 일단 간단하게 Object 저장용
      */
+//    @Bean
+//    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+//        RedisTemplate<String, Object> template = new RedisTemplate<>();
+//        template.setConnectionFactory(connectionFactory);
+//        log.info("RedisTemplate 빈 생성 완료");
+//        return template;
+//    }
+
+    /**
+     * AI 추천 결과(객체) 저장용 RedisTemplate
+     * 핵심: Serializer 설정을 추가하여 객체를 JSON으로 저장합니다.
+     */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
-        log.info("RedisTemplate 빈 생성 완료");
+
+        // Key는 일반 문자열, Value는 JSON으로 직렬화
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        log.info("✅ AI 추천용 RedisTemplate 설정 완료 (JSON Serializer 적용)");
         return template;
     }
 
